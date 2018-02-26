@@ -1,14 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <string>//For std::to_string
 
-//Next two are temporary!!!
-#include <cstdlib>//random number generator//FIXME: Remove
-#include <ctime>//Includes the "time" function, to seed the RNG//FIXME: Remove
-
 
 /*Eventually, there is going to be a base class "HUD" from which all other
  *classes in this file are derived.
- *
  */
 
 /*The MessageBox class is for boxes displaying messages to the player. When
@@ -18,6 +13,14 @@
  *string and makes it the first message displayed (shifting everything else down
  *one), and "draw", which draws the message box to the window.
  */
+
+/*The OptionsBox class is for listing the options available to the player. When
+ *constructed, specify the window that the font displays in, the font the titles
+ *use, and the font everything else uses. Optionally, specify the position and
+ *size of the box, as well as the horizontal position of the divider line.
+ *Member function is "draw", which draws the options box to the window.
+ */
+
 
 
 
@@ -33,9 +36,12 @@
  */
 
 
-//Note that if the box has a width of 200, one can fit 22 characters
-//std::to_string is going to be very useful as soon as we have to output damage
+//Note that if the message box has a width of 200, one can fit 22 characters
 
+
+//This should eventually end up in HUD.cpp (as opposed to in HUD.h)
+//I use upper case to be consistant with SFML
+sf::Color Gray = sf::Color(192,192,192);
 
 
 class MessageBox{
@@ -64,6 +70,32 @@ class MessageBox{
 
 };
 
+
+class OptionsBox{
+  public:
+    OptionsBox(sf::RenderWindow& theWindow,
+               sf::Font& titleFont,
+               sf::Font& mainFont,
+               sf::Vector2f thePosition = sf::Vector2f(0,405),
+               sf::Vector2f theSize = sf::Vector2f(800, 195),
+               float dividerPosition = 420 );
+    void draw();//"Draw" would be consistant with our funcion naming convention,
+                //but "draw" is consistant with SFML
+
+  private:
+    sf::RenderWindow* window;
+    const sf::Vector2f position;
+    const sf::Vector2f size;
+    const float divPosition;
+    sf::RectangleShape background;
+    sf::RectangleShape divLine;
+    sf::Text punchTitle;
+    sf::Text punch[3];
+    sf::Text notPunchTitle;
+    sf::Text notPunch[3];
+};
+
+
 MessageBox::MessageBox(
   sf::RenderWindow& theWindow,
   sf::Font& titleFont,
@@ -80,7 +112,7 @@ MessageBox::MessageBox(
 {
   //Make the background rectangle
   background.setSize(size);
-  background.setFillColor(sf::Color(192,192,192));//Gray
+  background.setFillColor(Gray);
 
   //Make the title
   line[0].setFont(titleFont);
@@ -119,12 +151,85 @@ void MessageBox::draw(){
   }
 }
 
+OptionsBox::OptionsBox(
+  sf::RenderWindow& theWindow,
+  sf::Font& titleFont,
+  sf::Font& mainFont,
+  sf::Vector2f thePosition,
+  sf::Vector2f theSize,
+  float dividerPosition
+):
+  window(&theWindow),
+  position(thePosition),
+  size(theSize),
+  divPosition(dividerPosition)
+{
+  //Make the background rectangle
+  background.setSize(size);
+  background.setFillColor(Gray);
+  background.setPosition(position.x, position.y);
+
+  //Make the divider line
+  divLine.setSize(sf::Vector2f(2, size.y));
+  divLine.setFillColor(sf::Color::Black);
+  divLine.setPosition(divPosition, position.y);
+
+  //Make the first title
+  punchTitle.setFont(titleFont);
+  punchTitle.setString("PUNCH:Where Punch Bear?");
+  punchTitle.setCharacterSize(30);
+  punchTitle.setFillColor(sf::Color::Black);
+  punchTitle.setPosition(position.x, position.y);
+
+  //Make the first set of options
+  for(int i = 0; i < 3; i++){
+    punch[i].setFont(mainFont);
+    punch[i].setCharacterSize(30);
+    punch[i].setFillColor(sf::Color::Black);
+    punch[i].setPosition(position.x, position.y + 30 * (i + 1) );
+  }
+  punch[0].setString("1:Leg");
+  punch[1].setString("2:Eye");
+  punch[2].setString("3:John Hopkins");
+
+  //Make the second title
+  notPunchTitle.setFont(titleFont);
+  notPunchTitle.setString("NOT PUNCH:What Do?");
+  notPunchTitle.setCharacterSize(30);
+  notPunchTitle.setFillColor(sf::Color::Black);
+  notPunchTitle.setPosition(divPosition + 10, position.y);
+
+  //Make the second set of options
+  for(int i = 0; i < 3; i++){
+    notPunch[i].setFont(mainFont);
+    notPunch[i].setCharacterSize(30);
+    notPunch[i].setFillColor(sf::Color::Black);
+    notPunch[i].setPosition(divPosition + 10, position.y + 30 * (i + 1) );
+  }
+  notPunch[0].setString("4:Quaff Drank");
+  notPunch[1].setString("5:Cast Spell");
+  notPunch[2].setString("6:Flee");
+}
+
+void OptionsBox::draw(){
+  //Recall that a->b is equivalent to (*a).b
+  window -> draw(background);
+  window -> draw(divLine);
+  window -> draw(punchTitle);
+  for(int i = 0; i < 3; i++){
+    window -> draw(punch[i]);
+  }
+  window -> draw(notPunchTitle);
+  for(int i = 0; i < 3; i++){
+    window -> draw(notPunch[i]);
+  }
+}
 
 
+//The main function is temporary; it makes testing features easier
 int main(){
-  srand(unsigned(time(NULL)));//FIXME:Remove
 
-  //I'm gonna declare an array of strings. This is temporary
+  //Declare some strings
   sf::String TEMP[4];
   TEMP[0] = ">Carp, You miss.";
   TEMP[1] = ">You got bear for 69";
@@ -145,9 +250,14 @@ int main(){
 
   //Create the window
   sf::RenderWindow window(sf::VideoMode(800, 600), "BearFite", sf::Style::Titlebar | sf::Style::Close);
+  window.setKeyRepeatEnabled(false);
 
   //Create the dialog box
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
+
+  //Create the options box
+  OptionsBox options(window,courierNewBd,courierNew);
+
 
   while (window.isOpen()){
     sf::Event event;
@@ -155,13 +265,25 @@ int main(){
       if (event.type == sf::Event::Closed){
         window.close();
       }
-      if (event.type == sf::Event::MouseButtonPressed){
-        messages.Update(TEMP[rand() % 4]);
+      if (event.type == sf::Event::KeyPressed){
+        if (event.key.code == sf::Keyboard::Num0 || event.key.code == sf::Keyboard::Numpad0){
+          messages.Update(TEMP[0]);
+        }
+        if (event.key.code == sf::Keyboard::Num1 || event.key.code == sf::Keyboard::Numpad1){
+          messages.Update(TEMP[1]);
+        }
+        if (event.key.code == sf::Keyboard::Num2 || event.key.code == sf::Keyboard::Numpad2){
+          messages.Update(TEMP[2]);
+        }
+        if (event.key.code == sf::Keyboard::Num3 || event.key.code == sf::Keyboard::Numpad3){
+          messages.Update(TEMP[3]);
+        }
       }
     }
 
     window.clear();
     messages.draw();
+    options.draw();
     window.display();
   }
 
