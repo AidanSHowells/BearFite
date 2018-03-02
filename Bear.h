@@ -2,8 +2,8 @@
 #define BEAR_H
 
 #include "HUD.h"
-#include <string>//For std::to_string
-#include "Player.h"
+
+class Player;
 
 class Bear{
   public:
