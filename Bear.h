@@ -7,10 +7,12 @@ class Player;
 
 class Bear{
   public:
-    Bear(MessageBox& theMessages);
+    void SetMessageBox(MessageBox& theMessages);
     int AC();
+    sf::String GetName();
     void Bash(Player);
     void Hurt(int); //how the player lowers the bear's health
+    int GetHealth();
     void ShowHealth(); //TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
