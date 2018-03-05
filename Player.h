@@ -8,7 +8,7 @@ class Bear;
 
 class Player{
   public:
-    Player(MessageBox& theMessages);
+    void SetMessageBox(MessageBox& theMessages);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     void TakeAction(Action theAction, Bear& theBear);//See below for syntax
