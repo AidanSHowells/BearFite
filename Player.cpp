@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Bear.h"
 
-Player::Player(MessageBox& theMessages){Messages = &theMessages;}
+void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
 int Player::LegAttackBonus(){return (abil[0] - 10)/2;}
 
