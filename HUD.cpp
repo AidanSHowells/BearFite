@@ -1,5 +1,7 @@
 #include "HUD.h"
 #include <string>//For std::to_string
+#include "Player.h"
+#include "Bear.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to
@@ -34,8 +36,8 @@ MessageBox::MessageBox(
   sf::Font& titleFont,
   sf::Font& mainFont,
   sf::String theTitle,
-  sf::Vector2f thePosition,
-  sf::Vector2f theSize
+  sf::Vector2f thePosition, //Default is sf::Vector2f(0, 0)
+  sf::Vector2f theSize      //Default is sf::Vector2f(200, 400)
 ):
   window(&theWindow),
   position(thePosition),
@@ -81,7 +83,7 @@ void MessageBox::Update(sf::String inputString1, sf::String inputString2){
     line[i].setString(line[i-1].getString());
   }
   //Make the top line inputString2
-  line[1].setString(sf::String("  ") += inputString2);
+  line[1].setString(sf::String(" ") += inputString2);
 
   //Now move everything down one again and make the top line inputString1
   Update(inputString1);
@@ -99,27 +101,26 @@ void MessageBox::Update(sf::String inputString, int imputInt){
   }
   line[1].setString(spacing += sf::String(std::to_string(imputInt)));
 
-  //line[1].setString(sf::String("  ") += sf::String(std::to_string(imputInt)));
-
   //Now move everything down one again and make the top line inputString
   Update(inputString);
 }
 
 void MessageBox::draw(){
-  window -> draw(background);//Recall that -> is a member access operator.
-                             //In particular, a->b is equivalent to (*a).b
+  //Recall that a->b is equivalent to (*a).b
+  window -> draw(background);
   for(int i = 0; i < numLines; i++){
     window -> draw(line[i]);
   }
 }
 
+
 OptionsBox::OptionsBox(
   sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
-  sf::Vector2f thePosition,
-  sf::Vector2f theSize,
-  float dividerPosition
+  sf::Vector2f thePosition, //Default is sf::Vector2f(0,405)
+  sf::Vector2f theSize,     //Default is sf::Vector2f(800, 195)
+  float dividerPosition     //Default is 420.0f
 ):
   window(&theWindow),
   position(thePosition),
@@ -267,12 +268,125 @@ void OptionsBox::Highlight(){
 }
 
 
+BearStats::BearStats(
+  sf::RenderWindow& theWindow,
+  sf::Font& titleFont,
+  sf::Font& mainFont,
+  Bear& theBear,
+  sf::Vector2f thePosition, //Default is sf::Vector2f(205, 0)
+  sf::Vector2f theSize      //Default is sf::Vector2f(390, 50)
+):
+window(&theWindow),
+bear(&theBear),
+position(thePosition),
+size(theSize)
+{
+  //Make the fixed text
+  for(int i = 0; i < 6; i += 2){
+    bearInfo[i].setFont(titleFont);
+    bearInfo[i].setCharacterSize(20);
+    bearInfo[i].setFillColor(sf::Color::Black);
+  }
+  bearInfo[0].setString("Species:");
+  bearInfo[0].setPosition(position.x, position.y);
+  bearInfo[2].setString("Health:");
+  bearInfo[2].setPosition(position.x + 140, position.y);
+  bearInfo[4].setString("Modifer:");
+  bearInfo[4].setPosition(position.x + 232, position.y);
 
-//The main function and these include statements are temporary; they make it
-//easier to test new features
-#include "Player.h"
-#include "Bear.h"
+  //Make the dynamic text
+  for(int i = 1; i < 6; i += 2){
+    bearInfo[i].setFont(mainFont);
+    bearInfo[i].setCharacterSize(20);
+    bearInfo[i].setFillColor(sf::Color::Black);
+    bearInfo[i].setPosition(bearInfo[i-1].getPosition().x, position.y + 20);
+  }
+  sf::String spacing = "";//This is used to make the bear's health right-aligned
+  for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
+    spacing += sf::String(" ");
+  }
+  bearInfo[1].setString(bear -> GetName());
+  bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
+  bearInfo[5].setString("Horse Defense");//FIXME:This should be dynamic
 
+  //Make the background rectangles
+  background[0].setPosition(bearInfo[0].getPosition().x, position.y);
+  background[1].setPosition(bearInfo[2].getPosition().x - 2, position.y);
+  background[2].setPosition(bearInfo[4].getPosition().x - 2, position.y);
+
+  float xPosition[3] = {
+    background[1].getPosition().x - background[0].getPosition().x - 2,
+    background[2].getPosition().x - background[1].getPosition().x - 2,
+    size.x + position.x - background[2].getPosition().x
+  };
+
+  for(int i = 0; i < 3; i++){
+    background[i].setFillColor(Gray);
+    background[i].setSize(sf::Vector2f(xPosition[i],size.y));
+  }
+}
+
+void BearStats::Update(){
+  sf::String spacing = "";//This is used to make the bear's health right-aligned
+  for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
+    spacing += sf::String(" ");
+  }
+  bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
+}
+
+void BearStats::draw(){
+  //Recall that a->b is equivalent to (*a).b
+  for(int i = 0; i < 3; i++){
+    window -> draw(background[i]);
+  }
+  for(int i = 0; i < 6; i++){
+    window -> draw(bearInfo[i]);
+  }
+}
+
+
+Display::Display(sf::RenderWindow& theWindow,
+        sf::Font& titleFont,
+        sf::Font& mainFont,
+        Player& thePlayer,
+        Bear& theBear
+):
+messages(theWindow,titleFont,mainFont,"Messages:"),
+options(theWindow,titleFont,mainFont),
+bearStats(theWindow,titleFont,mainFont,theBear),
+window(&theWindow),
+player(&thePlayer),
+bear(&theBear)
+{
+  player -> SetMessageBox(messages);
+  bear -> SetMessageBox(messages);
+}
+
+Action Display::GetAction(sf::Event theEvent){
+  Action theAction = options.GetAction(theEvent);
+  if (theAction == Action::cast) {
+    //Get spells
+  }
+  return theAction;
+}
+
+void Display::draw(){
+  messages.draw();
+
+  options.draw();
+
+  //bearStats.Update();
+  //playerStats.draw();
+
+  bearStats.Update();
+  bearStats.draw();
+
+  options.Highlight();
+}
+
+
+
+//The main function is temporary; it makes it easier to test new features
 int main(){
 
 
@@ -286,20 +400,16 @@ int main(){
     return EXIT_FAILURE;
   }
 
-
   //Create the window
   sf::RenderWindow window(sf::VideoMode(800, 600), "BearFite", sf::Style::Titlebar | sf::Style::Close);
   window.setKeyRepeatEnabled(false);
 
-  //Create the dialog box
-  MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-
-  //Create the options box
-  OptionsBox options(window,courierNewBd,courierNew);
-
   //Make the player and bear
-  Player player(messages);
-  Bear bear(messages);
+  Player player;
+  Bear bear;
+
+  //Make the HUD
+  Display HUD(window,courierNewBd,courierNew,player,bear);
 
 
   while (window.isOpen()){
@@ -311,17 +421,15 @@ int main(){
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        player.TakeAction(options.GetAction(event), bear);
+        player.TakeAction(HUD.GetAction(event), bear);
       }
 
     }
 
 
-    //Order is important here
+    //Draw the stuff to the screen
     window.clear();
-    messages.draw();
-    options.draw();
-    options.Highlight();
+    HUD.draw();
     window.display();
   }
 
