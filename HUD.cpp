@@ -41,9 +41,11 @@ MessageBox::MessageBox(
 ):
   window(&theWindow),
   position(thePosition),
-  size(theSize),
-  numLines(int(theSize.y / 20))//My guess is that the number of lines of text
+  size(theSize)
+  //numLines(int(theSize.y / 20))//My guess is that the number of lines of text
   //displayed should be the integer part of size.y/20. Fix it if you disagree
+  //NOTE: numLines currently isn't dynamic because I'm not convinced I
+  //      understand "new" and "delete[]" well enought to safely use them.
 {
   //Make the background rectangle
   background.setSize(size);
@@ -66,7 +68,8 @@ MessageBox::MessageBox(
   }
 }
 
-MessageBox::~MessageBox(){delete[] line;}
+//Destructor removed since line[] is no longer dynamically allocated
+//MessageBox::~MessageBox(){delete[] line;}
 
 void MessageBox::Update(sf::String inputString){
   //Move everything down one
@@ -345,6 +348,130 @@ void BearStats::draw(){
 }
 
 
+PlayerStats::PlayerStats(
+  sf::RenderWindow& theWindow,
+  sf::Font& titleFont,
+  sf::Font& mainFont,
+  Player& thePlayer,
+  sf::Vector2f thePosition, //Default is sf::Vector2f(600, 0)
+  sf::Vector2f theSize      //Default is sf::Vector2f(200, 400)
+):
+window(&theWindow),
+player(&thePlayer),
+position(thePosition),
+size(theSize)
+{
+  //Make the background rectangle
+  background.setSize(size);
+  background.setFillColor(Gray);
+  background.setPosition(position.x, position.y);
+
+  //Make the header
+  header.setFont(titleFont);
+  header.setString("YOUR STATUS");
+  header.setCharacterSize(30);
+  header.setFillColor(sf::Color::Black);
+  header.setPosition(position.x, position.y);
+
+  //Make the health and drank info
+  health[0].setFont(titleFont);
+  health[0].setString("Health:");
+  health[1].setFont(mainFont);
+  health[1].setString("           40/40");//FIXME
+  health[2].setFont(titleFont);
+  health[2].setString("Dranks:");
+  health[3].setFont(mainFont);
+  health[3].setString("               5");//FIXME
+  for(int i = 0; i < 4; i++){
+    health[i].setCharacterSize(20);
+    health[i].setFillColor(sf::Color::Black);
+    health[i].setPosition(position.x, position.y + 30 + 20 * (i/2));
+  }
+
+  //Make the ability score header
+  ability[0].setFont(titleFont);
+  ability[0].setCharacterSize(20);
+  ability[0].setFillColor(sf::Color::Black);
+  ability[0].setString("Ablilities:");
+  ability[0].setPosition(position.x, position.y + 70);
+
+  //Make the ability score info
+  for(int i = 1; i < 13; i += 2){
+    ability[i].setFont(mainFont);
+    ability[i].setCharacterSize(20);
+    ability[i].setFillColor(sf::Color::Black);
+    ability[i].setPosition(position.x, position.y + 77 + i * 10);
+
+    ability[i+1].setFont(mainFont);
+    ability[i+1].setCharacterSize(20);
+    ability[i+1].setFillColor(sf::Color::Black);
+    ability[i+1].setPosition(position.x, position.y + 77 + i * 10);
+    ability[i+1].setString("           10/10");//FIXME
+  }
+  ability[1].setString("STR:");
+  ability[3].setString("DEX:");
+  ability[5].setString("CON:");
+  ability[7].setString("INT:");
+  ability[9].setString("WIS:");
+  ability[11].setString("CHA:");
+
+  //Make the spells header
+  spell[0].setFont(titleFont);
+  spell[0].setCharacterSize(20);
+  spell[0].setFillColor(sf::Color::Black);
+  spell[0].setString("Spells:");
+  spell[0].setPosition(position.x, position.y + 205);
+
+  //Make the spells info
+  for(int i = 1; i < 17; i += 2){
+    spell[i].setFont(mainFont);
+    spell[i].setCharacterSize(20);
+    spell[i].setFillColor(sf::Color::Black);
+    spell[i].setPosition(position.x, position.y + 213 + i * 10);
+
+    spell[i+1].setFont(mainFont);
+    spell[i+1].setCharacterSize(20);
+    spell[i+1].setFillColor(sf::Color::Black);
+    spell[i+1].setPosition(position.x, position.y + 213 + i * 10);
+    spell[i+1].setString("             5/5");//FIXME
+  }
+  //FIXME: This whole list should eventually be dynamic
+  spell[1].setString("Pleasure:");
+  spell[2].setString("           10/10");
+  spell[3].setString("Death:");
+  spell[5].setString("Fish:");
+  spell[7].setString("STR Boost:");
+  spell[9].setString("DEX Boost:");
+  spell[11].setString("WIS Boost:");
+  spell[13].setString("CHA Boost:");
+  spell[15].setString("Fireball:");
+}
+
+/*
+void PlayerStats::PlayerStats(){
+  sf::String spacing = "";//This is used to make the bear's health right-aligned
+  for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
+    spacing += sf::String(" ");
+  }
+  bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
+}*/
+
+void PlayerStats::draw(){
+  //Recall that a->b is equivalent to (*a).b
+  window -> draw(background);
+  window -> draw(header);
+  for(int i = 0; i < 4; i++){
+    window -> draw(health[i]);
+  }
+  for(int i = 0; i < 13; i++){
+    window -> draw(ability[i]);
+  }
+  for(int i = 0; i < 17; i++){
+    window -> draw(spell[i]);
+  }
+}
+
+
 Display::Display(sf::RenderWindow& theWindow,
         sf::Font& titleFont,
         sf::Font& mainFont,
@@ -354,6 +481,7 @@ Display::Display(sf::RenderWindow& theWindow,
 messages(theWindow,titleFont,mainFont,"Messages:"),
 options(theWindow,titleFont,mainFont),
 bearStats(theWindow,titleFont,mainFont,theBear),
+playerStats(theWindow,titleFont,mainFont,thePlayer),
 window(&theWindow),
 player(&thePlayer),
 bear(&theBear)
@@ -375,8 +503,8 @@ void Display::draw(){
 
   options.draw();
 
-  //bearStats.Update();
-  //playerStats.draw();
+  //playerStats.Update();
+  playerStats.draw();
 
   bearStats.Update();
   bearStats.draw();
@@ -388,6 +516,9 @@ void Display::draw(){
 
 //The main function is temporary; it makes it easier to test new features
 int main(){
+
+  //bool isPlayerTurn = true; //I think this (a bool inside of the main
+  //function) is how we should handle taking turns.
 
 
   //Load the fonts
