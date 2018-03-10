@@ -64,10 +64,11 @@ class MessageBox{
                sf::String theTitle,
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 400) );
-    ~MessageBox();
+    //~MessageBox();//Removed since line[] is no longer dynamically allocated
     void Update(sf::String inputString);//Details below
     void Update(sf::String inputString1, sf::String inputString2);
     void Update(sf::String inputString, int imputInt);
+    //void Update(sf::String inputString, Bear imputBear, Status imputStatus);
     void draw();//"Draw" would be consistant with our funcion naming convention,
                 //but "draw" is consistant with SFML
 
@@ -75,8 +76,10 @@ class MessageBox{
     sf::RenderWindow* window;
     const sf::Vector2f position;
     const sf::Vector2f size;
-    const int numLines;
-    sf::Text* line = new sf::Text[numLines];
+    const int numLines = 20;//Don't change unless you know what you're doing.
+    sf::Text line[20];//In particular, this "20" should be "numLines", but that
+                      //would require dynamic memory allocation
+    //sf::Text* line = new sf::Text[numLines];
     sf::RectangleShape background;
 };
 
@@ -132,6 +135,31 @@ class BearStats{
     sf::Text bearInfo[6];
 };
 
+
+class PlayerStats{
+  public:
+    PlayerStats(sf::RenderWindow& theWindow,
+              sf::Font& titleFont,
+              sf::Font& mainFont,
+              Player& thePlayer,
+              sf::Vector2f thePosition = sf::Vector2f(600, 0),
+              sf::Vector2f theSize = sf::Vector2f(200, 400) );
+    //void Update();
+    void draw();//See comment in MessageBox
+  private:
+    sf::RenderWindow* window;
+    Player* player;
+    const sf::Vector2f position;
+    const sf::Vector2f size;
+    sf::RectangleShape background;
+
+    sf::Text header;
+    sf::Text health[4];
+    sf::Text ability[13];
+    sf::Text spell[17];//number subject to change
+};
+
+
 class Display{
   public:
     Display(sf::RenderWindow& theWindow,
@@ -141,7 +169,7 @@ class Display{
             Bear& theBear);
     MessageBox messages;
     OptionsBox options;
-    //PlayerStats playerStats;
+    PlayerStats playerStats;
     BearStats bearStats;
     void draw();
     Action GetAction(sf::Event theEvent);
