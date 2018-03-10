@@ -516,10 +516,10 @@ void Display::draw(){
 
 //The main function is temporary; it makes it easier to test new features
 int main(){
-
+  srand(unsigned(time(NULL)));
+  
   //bool isPlayerTurn = true; //I think this (a bool inside of the main
   //function) is how we should handle taking turns.
-
 
   //Load the fonts
   sf::Font courierNew;
