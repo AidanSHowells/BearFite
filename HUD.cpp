@@ -43,9 +43,9 @@ MessageBox::MessageBox(
   position(thePosition),
   size(theSize)
   //numLines(int(theSize.y / 20))//My guess is that the number of lines of text
-  //displayed should be the integer part of size.y/20. Fix it if you disagree
+  //displayed should be the integer part of size.y/20. Change it if you disagree
   //NOTE: numLines currently isn't dynamic because I'm not convinced I
-  //      understand "new" and "delete[]" well enought to safely use them.
+  //      understand "new" and "delete[]" well enough to safely use them.
 {
   //Make the background rectangle
   background.setSize(size);
@@ -148,7 +148,7 @@ OptionsBox::OptionsBox(
   punch[0].setPosition(position.x, position.y);
 
   //Make the first set of options
-  for(int i = 1; i < 4; i++){
+  for(int i = 1; i < numPunch; i++){
     punch[i].setFont(mainFont);
     punch[i].setCharacterSize(30);
     punch[i].setFillColor(sf::Color::Black);
@@ -166,7 +166,7 @@ OptionsBox::OptionsBox(
   notPunch[0].setPosition(divPosition + 10, position.y);
 
   //Make the second set of options
-  for(int i = 1; i < 4; i++){
+  for(int i = 1; i < numNotPunch; i++){
     notPunch[i].setFont(mainFont);
     notPunch[i].setCharacterSize(30);
     notPunch[i].setFillColor(sf::Color::Black);
@@ -177,12 +177,12 @@ OptionsBox::OptionsBox(
   notPunch[3].setString("6:Flee");
 
   //Make the first set of bounding boxes
-  for(int i = 0; i < 3; i++){
+  for(int i = 0; i < numPunch - 1; i++){
     textBox[i] = punch[i + 1].getGlobalBounds();
   }
 
   //Make the second set of bounding boxes
-  for(int i = 3; i < 6; i++){
+  for(int i = 3; i < numTextBox; i++){
     textBox[i] = notPunch[i - 2].getGlobalBounds();
   }
 }
@@ -191,10 +191,10 @@ void OptionsBox::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
   window -> draw(divLine);
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numPunch; i++){
     window -> draw(punch[i]);
   }
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numNotPunch; i++){
     window -> draw(notPunch[i]);
   }
 }
@@ -260,7 +260,7 @@ void OptionsBox::Highlight(){
   sf::RectangleShape highlight;
   highlight.setFillColor(sf::Color(255,255,0,153));
 
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < numTextBox; i++){
     if(textBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
       highlight.setSize(sf::Vector2f(textBox[i].width,textBox[i].height));
       highlight.setPosition(textBox[i].left,textBox[i].top);
@@ -285,7 +285,7 @@ position(thePosition),
 size(theSize)
 {
   //Make the fixed text
-  for(int i = 0; i < 6; i += 2){
+  for(int i = 0; i < numBearInfo; i += 2){
     bearInfo[i].setFont(titleFont);
     bearInfo[i].setCharacterSize(20);
     bearInfo[i].setFillColor(sf::Color::Black);
@@ -298,7 +298,7 @@ size(theSize)
   bearInfo[4].setPosition(position.x + 232, position.y);
 
   //Make the dynamic text
-  for(int i = 1; i < 6; i += 2){
+  for(int i = 1; i < numBearInfo; i += 2){
     bearInfo[i].setFont(mainFont);
     bearInfo[i].setCharacterSize(20);
     bearInfo[i].setFillColor(sf::Color::Black);
@@ -323,7 +323,7 @@ size(theSize)
     size.x + position.x - background[2].getPosition().x
   };
 
-  for(int i = 0; i < 3; i++){
+  for(int i = 0; i < numBackground; i++){
     background[i].setFillColor(Gray);
     background[i].setSize(sf::Vector2f(xPosition[i],size.y));
   }
@@ -339,10 +339,10 @@ void BearStats::Update(){
 
 void BearStats::draw(){
   //Recall that a->b is equivalent to (*a).b
-  for(int i = 0; i < 3; i++){
+  for(int i = 0; i < numBackground; i++){
     window -> draw(background[i]);
   }
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < numBearInfo; i++){
     window -> draw(bearInfo[i]);
   }
 }
@@ -382,7 +382,7 @@ size(theSize)
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
   health[3].setString("                     5");//FIXME
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
     health[i].setPosition(position.x, position.y + 20 + 20 * (i/2));
@@ -396,7 +396,7 @@ size(theSize)
   ability[0].setPosition(position.x, position.y + 60);
 
   //Make the ability score info
-  for(int i = 1; i < 13; i += 2){
+  for(int i = 1; i < numAbility; i += 2){
     ability[i].setFont(mainFont);
     ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
@@ -423,7 +423,7 @@ size(theSize)
   spell[0].setPosition(position.x, position.y + 135);
 
   //Make the spells info
-  for(int i = 1; i < 25; i += 2){
+  for(int i = 1; i < numSpell; i += 2){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
@@ -450,7 +450,7 @@ size(theSize)
   spell[23].setString("Lightning:");
 
   //Divide up the spells
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numDivLine; i++){
     divLine[i].setSize(sf::Vector2f(200,1));
     divLine[i].setFillColor(sf::Color::Black);
     divLine[i].setPosition(position.x, position.y + 142 + 10 + i * 60);
@@ -470,16 +470,16 @@ void PlayerStats::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
   window -> draw(header);
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numHealth; i++){
     window -> draw(health[i]);
   }
-  for(int i = 0; i < 13; i++){
+  for(int i = 0; i < numAbility; i++){
     window -> draw(ability[i]);
   }
-  for(int i = 0; i < 25; i++){
+  for(int i = 0; i < numSpell; i++){
     window -> draw(spell[i]);
   }
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < numDivLine; i++){
     window -> draw(divLine[i]);
   }
 }
