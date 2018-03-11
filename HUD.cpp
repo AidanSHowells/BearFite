@@ -368,8 +368,8 @@ size(theSize)
 
   //Make the header
   header.setFont(titleFont);
-  header.setString("YOUR STATUS");
-  header.setCharacterSize(30);
+  header.setString("   YOUR STATUS");
+  header.setCharacterSize(20);
   header.setFillColor(sf::Color::Black);
   header.setPosition(position.x, position.y);
 
@@ -377,36 +377,36 @@ size(theSize)
   health[0].setFont(titleFont);
   health[0].setString("Health:");
   health[1].setFont(mainFont);
-  health[1].setString("           40/40");//FIXME
+  health[1].setString("                 40/40");//FIXME
   health[2].setFont(titleFont);
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
-  health[3].setString("               5");//FIXME
+  health[3].setString("                     5");//FIXME
   for(int i = 0; i < 4; i++){
-    health[i].setCharacterSize(20);
+    health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
-    health[i].setPosition(position.x, position.y + 30 + 20 * (i/2));
+    health[i].setPosition(position.x, position.y + 20 + 20 * (i/2));
   }
 
   //Make the ability score header
   ability[0].setFont(titleFont);
-  ability[0].setCharacterSize(20);
+  ability[0].setCharacterSize(15);
   ability[0].setFillColor(sf::Color::Black);
   ability[0].setString("Ablilities:");
-  ability[0].setPosition(position.x, position.y + 70);
+  ability[0].setPosition(position.x, position.y + 60);
 
   //Make the ability score info
   for(int i = 1; i < 13; i += 2){
     ability[i].setFont(mainFont);
-    ability[i].setCharacterSize(20);
+    ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
-    ability[i].setPosition(position.x, position.y + 77 + i * 10);
+    ability[i].setPosition(position.x + 100*(i/6), position.y + 67 + (i%6)*10);
 
     ability[i+1].setFont(mainFont);
-    ability[i+1].setCharacterSize(20);
+    ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
-    ability[i+1].setPosition(position.x, position.y + 77 + i * 10);
-    ability[i+1].setString("           10/10");//FIXME
+    ability[i+1].setPosition(position.x + 100*(i/6), position.y + 67+(i%6)*10);
+    ability[i+1].setString("     10/10");//FIXME
   }
   ability[1].setString("STR:");
   ability[3].setString("DEX:");
@@ -417,34 +417,44 @@ size(theSize)
 
   //Make the spells header
   spell[0].setFont(titleFont);
-  spell[0].setCharacterSize(20);
+  spell[0].setCharacterSize(15);
   spell[0].setFillColor(sf::Color::Black);
   spell[0].setString("Spells:");
-  spell[0].setPosition(position.x, position.y + 205);
+  spell[0].setPosition(position.x, position.y + 135);
 
   //Make the spells info
-  for(int i = 1; i < 17; i += 2){
+  for(int i = 1; i < 25; i += 2){
     spell[i].setFont(mainFont);
-    spell[i].setCharacterSize(20);
+    spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
-    spell[i].setPosition(position.x, position.y + 213 + i * 10);
+    spell[i].setPosition(position.x, position.y + 143 + i * 10);
 
     spell[i+1].setFont(mainFont);
-    spell[i+1].setCharacterSize(20);
+    spell[i+1].setCharacterSize(15);
     spell[i+1].setFillColor(sf::Color::Black);
-    spell[i+1].setPosition(position.x, position.y + 213 + i * 10);
-    spell[i+1].setString("             5/5");//FIXME
+    spell[i+1].setPosition(position.x, position.y + 143 + i * 10);
+    spell[i+1].setString("           5");//FIXME
   }
   //FIXME: This whole list should eventually be dynamic
-  spell[1].setString("Pleasure:");
-  spell[2].setString("           10/10");
+  spell[1].setString("Pain:");
   spell[3].setString("Death:");
-  spell[5].setString("Fish:");
-  spell[7].setString("STR Boost:");
-  spell[9].setString("DEX Boost:");
-  spell[11].setString("WIS Boost:");
-  spell[13].setString("CHA Boost:");
-  spell[15].setString("Fireball:");
+  spell[5].setString("Pleasure:");
+  spell[7].setString("STR Up:");
+  spell[9].setString("STR Jump:");
+  spell[11].setString("STR Boost:");
+  spell[13].setString("Fish:");
+  spell[15].setString("Big Fish:");
+  spell[17].setString("Invuln:");
+  spell[19].setString("Fireball:");
+  spell[21].setString("Iceball:");
+  spell[23].setString("Lightning:");
+
+  //Divide up the spells
+  for(int i = 0; i < 4; i++){
+    divLine[i].setSize(sf::Vector2f(200,1));
+    divLine[i].setFillColor(sf::Color::Black);
+    divLine[i].setPosition(position.x, position.y + 142 + 10 + i * 60);
+  }
 }
 
 /*
@@ -466,8 +476,11 @@ void PlayerStats::draw(){
   for(int i = 0; i < 13; i++){
     window -> draw(ability[i]);
   }
-  for(int i = 0; i < 17; i++){
+  for(int i = 0; i < 25; i++){
     window -> draw(spell[i]);
+  }
+  for(int i = 0; i < 4; i++){
+    window -> draw(divLine[i]);
   }
 }
 
@@ -517,7 +530,7 @@ void Display::draw(){
 //The main function is temporary; it makes it easier to test new features
 int main(){
   srand(unsigned(time(NULL)));
-  
+
   //bool isPlayerTurn = true; //I think this (a bool inside of the main
   //function) is how we should handle taking turns.
 
