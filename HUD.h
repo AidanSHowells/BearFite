@@ -156,7 +156,8 @@ class PlayerStats{
     sf::Text header;
     sf::Text health[4];
     sf::Text ability[13];
-    sf::Text spell[17];//number subject to change
+    sf::Text spell[25];//This number isn't set in stone
+    sf::RectangleShape divLine[4];
 };
 
 
