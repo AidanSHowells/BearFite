@@ -65,7 +65,7 @@ class MessageBox{
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 400) );
     //~MessageBox();//Removed since line[] is no longer dynamically allocated
-    void Update(sf::String inputString);//Details below
+    void Update(sf::String inputString);//Details of Update below
     void Update(sf::String inputString1, sf::String inputString2);
     void Update(sf::String inputString, int imputInt);
     //void Update(sf::String inputString, Bear imputBear, Status imputStatus);
@@ -76,20 +76,19 @@ class MessageBox{
     sf::RenderWindow* window;
     const sf::Vector2f position;
     const sf::Vector2f size;
-    const int numLines = 20;//Don't change unless you know what you're doing.
-    sf::Text line[20];//In particular, this "20" should be "numLines", but that
-                      //would require dynamic memory allocation
+    static const int numLines = 20;
+    sf::Text line[numLines];
     //sf::Text* line = new sf::Text[numLines];
     sf::RectangleShape background;
 };
 
- /*MessageBox::Update can take a single sf::String, add a '>' to the front, and
-  *make that sf::String the first thing displayed in the message box. Given extra
-  *arguments, it adds those to the dispay as well, each argument below the
-  *arguments listed before it. If the second argument is a sf::String, it get two
-  *spaces prepended. If it is an int, it is right aligned, and if it is a object
-  *of class Bear, the bear's name is displayed (right aligned).
-  */
+/*MessageBox::Update can take a single sf::String, add a '>' to the front, and
+ *make that sf::String the first thing displayed in the message box. Given extra
+ *arguments, it adds those to the dispay as well, each argument below the
+ *arguments listed before it. If the second argument is a sf::String, it gets a
+ *space prepended. If it is an int, it is right aligned, and if it is a object
+ *of class Bear, the bear's name is displayed (right aligned).
+ */
 
 
 class OptionsBox{
@@ -110,9 +109,14 @@ class OptionsBox{
     const float divPosition;
     sf::RectangleShape background;
     sf::RectangleShape divLine;
-    sf::Text punch[4];
-    sf::Text notPunch[4];
-    sf::FloatRect textBox[6];
+
+    static const int numPunch = 4;
+    static const int numNotPunch = 4;
+    static const int numTextBox = numPunch + numNotPunch - 2;//-2 for the headers
+
+    sf::Text punch[numPunch];
+    sf::Text notPunch[numNotPunch];
+    sf::FloatRect textBox[numTextBox];
 };
 
 
@@ -131,8 +135,12 @@ class BearStats{
     Bear* bear;
     const sf::Vector2f position;
     const sf::Vector2f size;
-    sf::RectangleShape background[3];
-    sf::Text bearInfo[6];
+
+    static const int numBackground = 3;
+    static const int numBearInfo = 6;
+
+    sf::RectangleShape background[numBackground];
+    sf::Text bearInfo[numBearInfo];
 };
 
 
@@ -153,11 +161,16 @@ class PlayerStats{
     const sf::Vector2f size;
     sf::RectangleShape background;
 
+    static const int numHealth = 4;
+    static const int numAbility = 13;
+    static const int numSpell = 25;
+    static const int numDivLine = 4;
+
     sf::Text header;
-    sf::Text health[4];
-    sf::Text ability[13];
-    sf::Text spell[25];//This number isn't set in stone
-    sf::RectangleShape divLine[4];
+    sf::Text health[numHealth];
+    sf::Text ability[numAbility];
+    sf::Text spell[numSpell];
+    sf::RectangleShape divLine[numDivLine];
 };
 
 
