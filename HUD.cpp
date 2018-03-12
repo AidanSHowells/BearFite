@@ -143,16 +143,16 @@ OptionsBox::OptionsBox(
   //Make the first title
   punch[0].setFont(titleFont);
   punch[0].setString("PUNCH:Where Punch Bear?");
-  punch[0].setCharacterSize(30);
+  punch[0].setCharacterSize(25);
   punch[0].setFillColor(sf::Color::Black);
   punch[0].setPosition(position.x, position.y);
 
   //Make the first set of options
   for(int i = 1; i < numPunch; i++){
     punch[i].setFont(mainFont);
-    punch[i].setCharacterSize(30);
+    punch[i].setCharacterSize(25);
     punch[i].setFillColor(sf::Color::Black);
-    punch[i].setPosition(position.x, position.y + 40 * i);
+    punch[i].setPosition(position.x, position.y + 30 * i);
   }
   punch[1].setString("1:Leg");
   punch[2].setString("2:Eye");
@@ -160,17 +160,17 @@ OptionsBox::OptionsBox(
 
   //Make the second title
   notPunch[0].setFont(titleFont);
-  notPunch[0].setString("NOT PUNCH:What Do?");
-  notPunch[0].setCharacterSize(30);
+  notPunch[0].setString("ELSE:What Do?");
+  notPunch[0].setCharacterSize(25);
   notPunch[0].setFillColor(sf::Color::Black);
   notPunch[0].setPosition(divPosition + 10, position.y);
 
   //Make the second set of options
   for(int i = 1; i < numNotPunch; i++){
     notPunch[i].setFont(mainFont);
-    notPunch[i].setCharacterSize(30);
+    notPunch[i].setCharacterSize(25);
     notPunch[i].setFillColor(sf::Color::Black);
-    notPunch[i].setPosition(divPosition + 10, position.y + 40 * i);
+    notPunch[i].setPosition(divPosition + 10, position.y + 30 * i);
   }
   notPunch[1].setString("4:Quaff Drank");
   notPunch[2].setString("5:Cast Spell");
@@ -382,6 +382,10 @@ size(theSize)
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
   health[3].setString("                     5");//FIXME
+  health[4].setFont(titleFont);
+  health[4].setString("Effects:");
+  health[5].setFont(mainFont);
+  health[5].setString("                  None");//FIXME
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
@@ -393,19 +397,19 @@ size(theSize)
   ability[0].setCharacterSize(15);
   ability[0].setFillColor(sf::Color::Black);
   ability[0].setString("Ablilities:");
-  ability[0].setPosition(position.x, position.y + 60);
+  ability[0].setPosition(position.x, position.y + 80);
 
   //Make the ability score info
   for(int i = 1; i < numAbility; i += 2){
     ability[i].setFont(mainFont);
     ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
-    ability[i].setPosition(position.x + 100*(i/6), position.y + 67 + (i%6)*10);
+    ability[i].setPosition(position.x + 100*(i/6), position.y + 87 + (i%6)*10);
 
     ability[i+1].setFont(mainFont);
     ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
-    ability[i+1].setPosition(position.x + 100*(i/6), position.y + 67+(i%6)*10);
+    ability[i+1].setPosition(position.x + 100*(i/6), position.y + 87+(i%6)*10);
     ability[i+1].setString("     10/10");//FIXME
   }
   ability[1].setString("STR:");
@@ -420,40 +424,49 @@ size(theSize)
   spell[0].setCharacterSize(15);
   spell[0].setFillColor(sf::Color::Black);
   spell[0].setString("Spells:");
-  spell[0].setPosition(position.x, position.y + 135);
+  spell[0].setPosition(position.x, position.y + 155);
 
   //Make the spells info
   for(int i = 1; i < numSpell; i += 2){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
-    spell[i].setPosition(position.x, position.y + 143 + i * 10);
+    spell[i].setPosition(position.x, position.y + 163 + i * 10);
 
     spell[i+1].setFont(mainFont);
     spell[i+1].setCharacterSize(15);
     spell[i+1].setFillColor(sf::Color::Black);
-    spell[i+1].setPosition(position.x, position.y + 143 + i * 10);
-    spell[i+1].setString("           5");//FIXME
+    spell[i+1].setPosition(position.x, position.y + 163 + i * 10);
+    spell[i+1].setString("            5");//FIXME
   }
   //FIXME: This whole list should eventually be dynamic
-  spell[1].setString("Pain:");
-  spell[3].setString("Death:");
-  spell[5].setString("Pleasure:");
-  spell[7].setString("STR Up:");
-  spell[9].setString("STR Jump:");
-  spell[11].setString("STR Boost:");
-  spell[13].setString("Fish:");
-  spell[15].setString("Big Fish:");
-  spell[17].setString("Invuln:");
-  spell[19].setString("Fireball:");
-  spell[21].setString("Iceball:");
-  spell[23].setString("Lightning:");
+  spell[1].setString(" Pain:");
+  spell[3].setString(" Death:");
+  spell[5].setString(" Pleasure:");
+  spell[7].setString(" STR Up:");
+  spell[9].setString(" STR Jump:");
+  spell[11].setString(" STR Boost:");
+  spell[13].setString(" Fish:");
+  spell[15].setString(" Big Fish:");
+  spell[17].setString(" Invuln:");
+  spell[19].setString(" Fireball:");
+  spell[21].setString(" Iceball:");
+  spell[23].setString(" Lightning:");
+  spell[25].setString(" STR Down:");
+  spell[27].setString(" STR Drain:");
+  spell[29].setString(" Weakness:");
+  spell[31].setString(" Reversal:");
+  spell[33].setString(" HP Drain:");
+  spell[35].setString(" Vampirism:");
+  spell[37].setString(" Detect:");
+  spell[39].setString(" Dispel:");
+  spell[41].setString(" Cleanse:");
 
   //Divide up the spells
   for(int i = 0; i < numDivLine; i++){
     divLine[i].setSize(sf::Vector2f(200,1));
     divLine[i].setFillColor(sf::Color::Black);
-    divLine[i].setPosition(position.x, position.y + 142 + 10 + i * 60);
+    divLine[i].setPosition(position.x, position.y + 162 + 10 + i * 60);
   }
 }
 
