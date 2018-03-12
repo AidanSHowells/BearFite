@@ -63,7 +63,7 @@ class MessageBox{
                sf::Font& mainFont,
                sf::String theTitle,
                sf::Vector2f thePosition = sf::Vector2f(0,0),
-               sf::Vector2f theSize = sf::Vector2f(200, 400) );
+               sf::Vector2f theSize = sf::Vector2f(200, 460) );
     //~MessageBox();//Removed since line[] is no longer dynamically allocated
     void Update(sf::String inputString);//Details of Update below
     void Update(sf::String inputString1, sf::String inputString2);
@@ -76,7 +76,7 @@ class MessageBox{
     sf::RenderWindow* window;
     const sf::Vector2f position;
     const sf::Vector2f size;
-    static const int numLines = 20;
+    static const int numLines = 23;
     sf::Text line[numLines];
     //sf::Text* line = new sf::Text[numLines];
     sf::RectangleShape background;
@@ -96,9 +96,9 @@ class OptionsBox{
     OptionsBox(sf::RenderWindow& theWindow,
                sf::Font& titleFont,
                sf::Font& mainFont,
-               sf::Vector2f thePosition = sf::Vector2f(0,405),
-               sf::Vector2f theSize = sf::Vector2f(800, 195),
-               float dividerPosition = 420.0f );
+               sf::Vector2f thePosition = sf::Vector2f(0,465),
+               sf::Vector2f theSize = sf::Vector2f(595, 135),
+               float dividerPosition = 350.0f );
     Action GetAction(sf::Event theEvent);
     void Highlight();
     void draw();//See comment in MessageBox
@@ -151,7 +151,7 @@ class PlayerStats{
               sf::Font& mainFont,
               Player& thePlayer,
               sf::Vector2f thePosition = sf::Vector2f(600, 0),
-              sf::Vector2f theSize = sf::Vector2f(200, 400) );
+              sf::Vector2f theSize = sf::Vector2f(200, 600) );
     //void Update();
     void draw();//See comment in MessageBox
   private:
@@ -161,10 +161,10 @@ class PlayerStats{
     const sf::Vector2f size;
     sf::RectangleShape background;
 
-    static const int numHealth = 4;
+    static const int numHealth = 6;
     static const int numAbility = 13;
-    static const int numSpell = 25;
-    static const int numDivLine = 4;
+    static const int numSpell = 43;
+    static const int numDivLine = 7;
 
     sf::Text header;
     sf::Text health[numHealth];
