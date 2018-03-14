@@ -10,7 +10,7 @@ class Bear{
     void SetMessageBox(MessageBox& theMessages);
     int AC();
     sf::String GetName();
-    void Bash(Player);
+    void Bash(Player& thePlayer);
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     void ShowHealth(); //TEMP
