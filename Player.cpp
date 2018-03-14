@@ -1,7 +1,18 @@
 #include "Player.h"
 #include "Bear.h"
+#include <string>//for std::to_string
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
+
+sf::String Player::GetHealth(){
+  sf::String tempString = std::to_string(health);
+  tempString += "/";
+  tempString += std::to_string(maxHealth);
+
+  return tempString;
+}
+
+int Player::GetNumDranks(){return numDranks;}
 
 int Player::LegAttackBonus(){return (abil[0] - 10)/2;}
 
@@ -11,19 +22,19 @@ int Player::AC(){return BaseAC + Armor + (abil[1] - 10)/2;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
-void Player::TakeAction(Action theAction, Bear& theBear){
+bool Player::TakeAction(Action theAction, Bear& theBear){
   if(theAction == Action::leg){
-    LegPunch(theBear);
+    return LegPunch(theBear);
   }
   else if(theAction == Action::eye){
-    //EyePunch(theBear);
+    //return EyePunch(theBear);
     Messages -> Update("Eye punching", "is unsupported.");//TEMP
   }
   else if(theAction == Action::john_hopkins){
     Messages -> Update("John Hopkins punching", "is unsupported.");//TEMP
   }
   else if(theAction == Action::quaff){
-    //Quaff();
+    //return Quaff();
     Messages -> Update("Dranking", "is unsupported.");//TEMP
   }
   else if(theAction == Action::cast){
@@ -31,12 +42,12 @@ void Player::TakeAction(Action theAction, Bear& theBear){
     //I actually don't know how this is going to work at all.
   }
   else if(theAction == Action::flee){
-    //Flee(theBear);
+    //return Flee(theBear);
     Messages -> Update("Fleeing", "is unsupported.");//TEMP
   }
 }
 
-void Player::LegPunch(Bear& bear){
+bool Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   if(rand() % 20 + LegAttackBonus() >= bear.AC()){
     dmg = rand() % 8 + 1 + LegDamageBonus();
@@ -44,4 +55,6 @@ void Player::LegPunch(Bear& bear){
     bear.Hurt(dmg);
   }
   else{Messages -> Update("Carp, you miss.");}
+
+  return false;//Not the player's turn anymore
 }
