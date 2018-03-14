@@ -152,7 +152,7 @@ class PlayerStats{
               Player& thePlayer,
               sf::Vector2f thePosition = sf::Vector2f(600, 0),
               sf::Vector2f theSize = sf::Vector2f(200, 600) );
-    //void Update();
+    void Update();
     void draw();//See comment in MessageBox
   private:
     sf::RenderWindow* window;
