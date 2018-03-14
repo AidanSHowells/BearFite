@@ -37,7 +37,7 @@ MessageBox::MessageBox(
   sf::Font& mainFont,
   sf::String theTitle,
   sf::Vector2f thePosition, //Default is sf::Vector2f(0, 0)
-  sf::Vector2f theSize      //Default is sf::Vector2f(200, 400)
+  sf::Vector2f theSize      //Default is sf::Vector2f(200, 460)
 ):
   window(&theWindow),
   position(thePosition),
@@ -121,9 +121,9 @@ OptionsBox::OptionsBox(
   sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
-  sf::Vector2f thePosition, //Default is sf::Vector2f(0,405)
-  sf::Vector2f theSize,     //Default is sf::Vector2f(800, 195)
-  float dividerPosition     //Default is 420.0f
+  sf::Vector2f thePosition, //Default is sf::Vector2f(0,465)
+  sf::Vector2f theSize,     //Default is sf::Vector2f(595, 135)
+  float dividerPosition     //Default is 350.0f
 ):
   window(&theWindow),
   position(thePosition),
@@ -284,7 +284,7 @@ bear(&theBear),
 position(thePosition),
 size(theSize)
 {
-  //Make the fixed text
+  //Make the static text
   for(int i = 0; i < numBearInfo; i += 2){
     bearInfo[i].setFont(titleFont);
     bearInfo[i].setCharacterSize(20);
@@ -304,12 +304,8 @@ size(theSize)
     bearInfo[i].setFillColor(sf::Color::Black);
     bearInfo[i].setPosition(bearInfo[i-1].getPosition().x, position.y + 20);
   }
-  sf::String spacing = "";//This is used to make the bear's health right-aligned
-  for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
-    spacing += sf::String(" ");
-  }
   bearInfo[1].setString(bear -> GetName());
-  bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
+  //no need to set health here, since Update is called by Display.draw
   bearInfo[5].setString("Horse Defense");//FIXME:This should be dynamic
 
   //Make the background rectangles
@@ -354,7 +350,7 @@ PlayerStats::PlayerStats(
   sf::Font& mainFont,
   Player& thePlayer,
   sf::Vector2f thePosition, //Default is sf::Vector2f(600, 0)
-  sf::Vector2f theSize      //Default is sf::Vector2f(200, 400)
+  sf::Vector2f theSize      //Default is sf::Vector2f(200, 600)
 ):
 window(&theWindow),
 player(&thePlayer),
@@ -377,11 +373,11 @@ size(theSize)
   health[0].setFont(titleFont);
   health[0].setString("Health:");
   health[1].setFont(mainFont);
-  health[1].setString("                 40/40");//FIXME
+  //no need to set health here, since Update is called by Display.draw
   health[2].setFont(titleFont);
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
-  health[3].setString("                     5");//FIXME
+  //no need to set numDranks here, since Update is called by Display.draw
   health[4].setFont(titleFont);
   health[4].setString("Effects:");
   health[5].setFont(mainFont);
@@ -470,14 +466,19 @@ size(theSize)
   }
 }
 
-/*
-void PlayerStats::PlayerStats(){
-  sf::String spacing = "";//This is used to make the bear's health right-aligned
-  for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
-    spacing += sf::String(" ");
+void PlayerStats::Update(){
+  sf::String spacing = "";//This is used to make things right-aligned
+  for(int i = 0; i < 22 - player -> GetHealth().getSize(); i++){
+    spacing += " ";
   }
-  bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
-}*/
+  health[1].setString(spacing + player -> GetHealth());
+
+  spacing = "";
+  for(int i = 0; i < 22 - numDigits(player -> GetNumDranks() ); i++){
+    spacing += " ";
+  }
+  health[3].setString(spacing + std::to_string(player -> GetNumDranks()));
+}
 
 void PlayerStats::draw(){
   //Recall that a->b is equivalent to (*a).b
@@ -529,7 +530,7 @@ void Display::draw(){
 
   options.draw();
 
-  //playerStats.Update();
+  playerStats.Update();
   playerStats.draw();
 
   bearStats.Update();
@@ -544,8 +545,8 @@ void Display::draw(){
 int main(){
   srand(unsigned(time(NULL)));
 
-  //bool isPlayerTurn = true; //I think this (a bool inside of the main
-  //function) is how we should handle taking turns.
+  bool isPlayerTurn = true; //I think this (a bool inside of the main function)
+                            //is how we should handle taking turns.
 
   //Load the fonts
   sf::Font courierNew;
@@ -571,16 +572,19 @@ int main(){
 
   while (window.isOpen()){
     sf::Event event;
-    while (window.pollEvent(event)){
+    while (window.pollEvent(event) && isPlayerTurn){
       if (event.type == sf::Event::Closed){
         window.close();
       }
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        player.TakeAction(HUD.GetAction(event), bear);
+        isPlayerTurn = player.TakeAction(HUD.GetAction(event), bear);
       }
-
+    }
+    if(!isPlayerTurn){//FIXME:This is kinda fast...
+      HUD.messages.Update("Bear Spare You");
+      isPlayerTurn = true;
     }
 
 
@@ -592,3 +596,4 @@ int main(){
 
   return 0;
 }
+
