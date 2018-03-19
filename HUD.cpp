@@ -545,8 +545,7 @@ void Display::draw(){
 int main(){
   srand(unsigned(time(NULL)));
 
-  bool isPlayerTurn = true;//I think this (a bool inside of the main function)
-                           //is how we should handle taking turns.
+  TurnOf turn = TurnOf::player;
 
   //Load the fonts
   sf::Font courierNew;
@@ -572,21 +571,21 @@ int main(){
 
   while (window.isOpen()){
 
-    if(!isPlayerTurn){
+    if(TurnOf::bear == turn){
       sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
       bear.Bash(player);
-      isPlayerTurn = true;
+      turn = TurnOf::player;
     }
 
     sf::Event event;
-    while (isPlayerTurn && window.pollEvent(event)){
+    while (TurnOf::player == turn && window.pollEvent(event)){
       if (event.type == sf::Event::Closed){
         window.close();
       }
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        isPlayerTurn = player.TakeAction(HUD.GetAction(event), bear);
+        turn = player.TakeAction(HUD.GetAction(event), bear);
       }
     }
 
