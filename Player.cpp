@@ -4,13 +4,9 @@
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
-sf::String Player::GetHealth(){
-  sf::String tempString = std::to_string(health);
-  tempString += "/";
-  tempString += std::to_string(maxHealth);
+int Player::GetHealth(){return health;}
 
-  return tempString;
-}
+int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 

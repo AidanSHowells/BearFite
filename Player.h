@@ -9,7 +9,8 @@ class Bear;
 class Player{
   public:
     void SetMessageBox(MessageBox& theMessages);
-    sf::String GetHealth();//Returns a string of the form "20/40" (w/out quotes)
+    int GetHealth();
+    int GetMaxHealth();
     int GetNumDranks();
     //void Quaff();
     int AC(); //Combines all AC-affecting factors

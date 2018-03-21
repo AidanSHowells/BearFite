@@ -467,11 +467,15 @@ size(theSize)
 }
 
 void PlayerStats::Update(){
+  sf::String playerHealth = std::to_string(player -> GetHealth());
+  playerHealth += "/";
+  playerHealth += std::to_string(player -> GetMaxHealth());
+
   sf::String spacing = "";//This is used to make things right-aligned
-  for(int i = 0; i < 22 - player -> GetHealth().getSize(); i++){
+  for(int i = 0; i < 22 - playerHealth.getSize(); i++){
     spacing += " ";
   }
-  health[1].setString(spacing + player -> GetHealth());
+  health[1].setString(spacing + playerHealth);
 
   spacing = "";
   for(int i = 0; i < 22 - numDigits(player -> GetNumDranks() ); i++){
@@ -540,12 +544,13 @@ void Display::draw(){
 }
 
 
+//TEMP:Belongs in BearBattle.h
+bool BearBattle(sf::RenderWindow&, sf::Font&, sf::Font&, Player&, Bear&);
+
 
 //The main function is temporary; it makes it easier to test new features
 int main(){
   srand(unsigned(time(NULL)));
-
-  TurnOf turn = TurnOf::player;
 
   //Load the fonts
   sf::Font courierNew;
@@ -561,40 +566,39 @@ int main(){
   sf::RenderWindow window(sf::VideoMode(800, 600), "BearFite", sf::Style::Titlebar | sf::Style::Close);
   window.setKeyRepeatEnabled(false);
 
-  //Make the player and bear
-  Player player;
-  Bear bear;
+  //Keep track of wins
+  int playerWins = 0;
+  int bearWins = 0;
 
-  //Make the HUD
-  Display HUD(window,courierNewBd,courierNew,player,bear);
-
+  MessageBox messages(window,courierNewBd,courierNew,"Messages:");
 
   while (window.isOpen()){
 
-    if(TurnOf::bear == turn){
-      sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
-      bear.Bash(player);
-      turn = TurnOf::player;
-    }
-
     sf::Event event;
-    while (TurnOf::player == turn && window.pollEvent(event)){
+    while (window.pollEvent(event)){
       if (event.type == sf::Event::Closed){
         window.close();
       }
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        turn = player.TakeAction(HUD.GetAction(event), bear);
+        Player player;
+        Bear bear;
+        if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
+          playerWins++;
+          messages.Update("Your's Final Health:", player.GetHealth());
+        }
+        else{
+          bearWins++;
+          messages.Update("Bear's Final Health:", bear.GetHealth());
+        }
+        messages.Update("Your Kills:", playerWins);
+        messages.Update("Your Deaths:", bearWins);
       }
     }
 
-
-    //Draw the stuff to the screen
     window.clear();
-    HUD.draw();
+    messages.draw();
     window.display();
   }
-
-  return 0;
 }
