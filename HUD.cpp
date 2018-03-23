@@ -92,6 +92,21 @@ void MessageBox::Update(sf::String inputString1, sf::String inputString2){
   Update(inputString1);
 }
 
+void MessageBox::Update(sf::String inputString1,
+                        sf::String inputString2,
+                        sf::String inputString3)
+{
+  //Move everything down one
+  for(int i = numLines - 1; i > 1; i--){
+    line[i].setString(line[i-1].getString());
+  }
+  //Make the top line inputString3
+  line[1].setString(sf::String(" ") += inputString3);
+
+  //Now put in the first two strings
+  Update(inputString1, inputString2);
+}
+
 void MessageBox::Update(sf::String inputString, int imputInt){
   //Move everything down one
   for(int i = numLines - 1; i > 1; i--){
@@ -229,7 +244,7 @@ Action OptionsBox::GetAction(sf::Event theEvent){
       return Action::nothing;
     }
   }
-  if(theEvent.type == sf::Event::MouseButtonPressed){
+  else if(theEvent.type == sf::Event::MouseButtonPressed){
     sf::Vector2f clickLocation(theEvent.mouseButton.x,theEvent.mouseButton.y);
 
     if (textBox[0].contains(clickLocation)){
@@ -253,6 +268,9 @@ Action OptionsBox::GetAction(sf::Event theEvent){
     else{
       return Action::nothing;
     }
+  }
+  else{
+    //FIXME: There should probably be an error message here
   }
 }
 
@@ -521,12 +539,23 @@ bear(&theBear)
   bear -> SetMessageBox(messages);
 }
 
-Action Display::GetAction(sf::Event theEvent){
-  Action theAction = options.GetAction(theEvent);
-  if (theAction == Action::cast) {
-    //Get spells
+
+TurnOf Display::TakeAction(sf::Event theEvent, Player& thePlayer, Bear& theBear)
+{
+  if(isPickingSpell){
+    //playerStats.GetSpell(theEvent);
   }
-  return theAction;
+  else{
+    Action theAction = options.GetAction(theEvent);
+    if (theAction == Action::cast) {
+      //isPickingSpell = true;
+      messages.Update("Spellcasting", "is unsupported.");//TEMP
+    }
+    else{
+      return thePlayer.TakeAction(theAction, theBear);
+    }
+  }
+  return TurnOf::player;
 }
 
 void Display::draw(){
@@ -586,7 +615,7 @@ int main(){
         Bear bear;
         if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
           playerWins++;
-          messages.Update("Your's Final Health:", player.GetHealth());
+          messages.Update("Your Final Health:", player.GetHealth());
         }
         else{
           bearWins++;

@@ -32,13 +32,11 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
     return TurnOf::player;//TEMP
   }
   else if(theAction == Action::quaff){
-    //return Quaff();
-    Messages -> Update("Dranking", "is unsupported.");//TEMP
-    return TurnOf::player;//TEMP
+    return Quaff();
   }
   else if(theAction == Action::cast){
-    Messages -> Update("Spellcasting", "is unsupported.");//TEMP
-    return TurnOf::player;//TEMP
+    Messages -> Update("Whoops!", "Spellcasting Error");
+    return TurnOf::player;
   }
   else if(theAction == Action::flee){
     //return Flee(theBear);
@@ -60,4 +58,21 @@ TurnOf Player::LegPunch(Bear& bear){
   else{Messages -> Update("Carp, you miss.");}
 
   return TurnOf::bear;//Not the player's turn anymore
+}
+
+TurnOf Player::Quaff(){
+  if(numDranks < 1){
+    Messages -> Update("You're drank pauper.");
+    return TurnOf::player;
+  }
+  else if(health >= maxHealth){
+    Messages -> Update("You aren't thirst.");
+    return TurnOf::player;
+  }
+  else{
+    Messages -> Update("Down the hatch");
+    health = std::min(maxHealth, health + 25);//No soft max yet
+    numDranks--;
+    return TurnOf::bear;
+  }
 }

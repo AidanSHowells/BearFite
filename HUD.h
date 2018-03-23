@@ -68,6 +68,9 @@ class MessageBox{
     //~MessageBox();//Removed since line[] is no longer dynamically allocated
     void Update(sf::String inputString);//Details of Update below
     void Update(sf::String inputString1, sf::String inputString2);
+    void Update(sf::String inputString1,
+                sf::String inputString2,
+                sf::String inputString3);
     void Update(sf::String inputString, int imputInt);
     //void Update(sf::String inputString, Bear imputBear, Status imputStatus);
     void draw();//"Draw" would be consistant with our funcion naming convention,
@@ -86,7 +89,7 @@ class MessageBox{
 /*MessageBox::Update can take a single sf::String, add a '>' to the front, and
  *make that sf::String the first thing displayed in the message box. Given extra
  *arguments, it adds those to the dispay as well, each argument below the
- *arguments listed before it. If the second argument is a sf::String, it gets a
+ *arguments listed before it. If a later argument is a sf::String, it gets a
  *space prepended. If it is an int, it is right aligned, and if it is a object
  *of class Bear, the bear's name is displayed (right aligned).
  */
@@ -187,7 +190,7 @@ class Display{
     PlayerStats playerStats;
     BearStats bearStats;
     void draw();
-    Action GetAction(sf::Event theEvent);
+    TurnOf TakeAction(sf::Event theEvent, Player& thePlayer, Bear& theBear);
     //void Highlight();//This should eventually be in charge of all highlighting
 
   private:

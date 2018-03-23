@@ -23,6 +23,7 @@ bool BearBattle(sf::RenderWindow& window,
       bear.Bash(player);
       turn = TurnOf::player;
     }
+    if(player.GetHealth()<=0){return false;}
 
     sf::Event event;
     while (TurnOf::player == turn && window.pollEvent(event)){
@@ -32,7 +33,7 @@ bool BearBattle(sf::RenderWindow& window,
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        turn = player.TakeAction(HUD.GetAction(event), bear);
+        turn = HUD.TakeAction(event, player, bear);
       }
     }
 
@@ -42,7 +43,6 @@ bool BearBattle(sf::RenderWindow& window,
     window.display();
 
     if(bear.GetHealth()<=0){return true;}
-    if(player.GetHealth()<=0){return false;}
   }
   return true;//This shouldn't matter; we should only get here if !window.isOpen
 }

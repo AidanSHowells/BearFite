@@ -28,6 +28,7 @@ class Player{
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
     TurnOf LegPunch(Bear& bear);
+    TurnOf Quaff();
 };
 
 /*Syntax for TakeAction:
