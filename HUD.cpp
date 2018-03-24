@@ -107,17 +107,33 @@ void MessageBox::Update(sf::String inputString1,
   Update(inputString1, inputString2);
 }
 
-void MessageBox::Update(sf::String inputString, int imputInt){
+void MessageBox::Update(sf::String inputString, int inputInt){
   //Move everything down one
   for(int i = numLines - 1; i > 1; i--){
     line[i].setString(line[i-1].getString());
   }
   //Make the top line inputInt
   sf::String spacing = "";
-  for(int i = 0; i < 22 - numDigits(imputInt); i++){
+  for(int i = 0; i < 22 - numDigits(inputInt); i++){
     spacing += sf::String(" ");
   }
-  line[1].setString(spacing += sf::String(std::to_string(imputInt)));
+  line[1].setString(spacing += sf::String(std::to_string(inputInt)));
+
+  //Now move everything down one again and make the top line inputString
+  Update(inputString);
+}
+
+void MessageBox::Update(sf::String inputString, Bear inputBear){
+  //Move everything down one
+  for(int i = numLines - 1; i > 1; i--){
+    line[i].setString(line[i-1].getString());
+  }
+  sf::String outputString = inputBear.GetName() + "bear";
+  sf::String spacing = "";
+  for(int i = 0; i < 22 - outputString.getSize(); i++){
+    spacing += sf::String(" ");
+  }
+  line[1].setString(spacing + outputString);
 
   //Now move everything down one again and make the top line inputString
   Update(inputString);
@@ -573,13 +589,17 @@ void Display::draw(){
 }
 
 
-//TEMP:Belongs in BearBattle.h
+//TEMP: Belongs in BearBattle.h
 bool BearBattle(sf::RenderWindow&, sf::Font&, sf::Font&, Player&, Bear&);
+
+//TEMP: Belongs with the main function
 
 
 //The main function is temporary; it makes it easier to test new features
 int main(){
   srand(unsigned(time(NULL)));
+
+  #include "BearList.h"
 
   //Load the fonts
   sf::Font courierNew;
@@ -600,6 +620,7 @@ int main(){
   int bearWins = 0;
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
+  messages.Update("8 = Babby, 9 = Black", "and 0 = Brown");
 
   while (window.isOpen()){
 
@@ -608,23 +629,37 @@ int main(){
       if (event.type == sf::Event::Closed){
         window.close();
       }
-      if (event.type == sf::Event::KeyPressed ||
-          event.type == sf::Event::MouseButtonPressed)
-      {
-        Player player;
-        Bear bear;
-        if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
-          playerWins++;
-          messages.Update("Your Final Health:", player.GetHealth());
-        }
-        else{
-          bearWins++;
-          messages.Update("Bear's Final Health:", bear.GetHealth());
-        }
-        messages.Update("Your Kills:", playerWins);
-        messages.Update("Your Deaths:", bearWins);
-      }
-    }
+      if (event.type == sf::Event::KeyPressed){
+        if(event.key.code == sf::Keyboard::Num8 ||
+           event.key.code == sf::Keyboard::Num9 ||
+           event.key.code == sf::Keyboard::Num0)
+        {
+          Player player;
+          Bear bear;
+          if(event.key.code == sf::Keyboard::Num8){
+            bear = babbyBear;
+          }
+          else if(event.key.code == sf::Keyboard::Num9){
+            bear = blackBear;
+          }
+          else{
+            bear = brownBear;
+          }
+          if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
+            playerWins++;
+            messages.Update("Your Final Health:", player.GetHealth());
+          }
+          else{
+            bearWins++;
+            messages.Update("Bear's Final Health:", bear.GetHealth());
+          }
+          messages.Update("Last Bear Was:", bear);
+          messages.Update("Your Kills:", playerWins);
+          messages.Update("Your Deaths:", bearWins);
+          messages.Update("8 = Babby, 9 = Black", "and 0 = Brown");
+        }//endif specific key
+      }//endif keypress
+    }//end while loop
 
     window.clear();
     messages.draw();

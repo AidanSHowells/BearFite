@@ -22,9 +22,9 @@ class Player{
     int maxHealth = 40;
     int health = maxHealth;
     int numDranks = 5;
-    int BaseAttackBonus = 0; //This will be level-based
-    int BaseAC = 10; //This will be level-based
-    int Armor = 0; //This will be determined by equipped items and magic
+    int baseAttackBonus = 0; //This will be level-based
+    int baseAC = 10; //This will be level-based
+    int armor = 0; //This will be determined by equipped items and magic
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
     TurnOf LegPunch(Bear& bear);

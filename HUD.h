@@ -71,8 +71,9 @@ class MessageBox{
     void Update(sf::String inputString1,
                 sf::String inputString2,
                 sf::String inputString3);
-    void Update(sf::String inputString, int imputInt);
-    //void Update(sf::String inputString, Bear imputBear, Status imputStatus);
+    void Update(sf::String inputString, int inputInt);
+    void Update(sf::String inputString, Bear inputBear);
+    //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
     void draw();//"Draw" would be consistant with our funcion naming convention,
                 //but "draw" is consistant with SFML
 

@@ -14,7 +14,7 @@ int Player::LegAttackBonus(){return (abil[0] - 10)/2;}
 
 int Player::LegDamageBonus(){return (abil[0] - 10)/2;}
 
-int Player::AC(){return BaseAC + Armor + (abil[1] - 10)/2;}
+int Player::AC(){return baseAC + armor + (abil[1] - 10)/2;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
