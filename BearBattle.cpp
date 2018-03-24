@@ -15,6 +15,13 @@ bool BearBattle(sf::RenderWindow& window,
   //Make the HUD
   Display HUD(window,titleFont,mainFont,player,bear);
 
+  //Make the picture
+  sf::Texture finalBear;
+  finalBear.loadFromFile("Resources/Background.png");
+  sf::Sprite background;
+  background.setTexture(finalBear);
+  background.setPosition(205, 55);//(205, 193) to align it at the bottom
+
 
   while (window.isOpen()){
 
@@ -40,6 +47,7 @@ bool BearBattle(sf::RenderWindow& window,
     //Draw the stuff to the screen
     window.clear();
     HUD.draw();
+    window.draw(background);
     window.display();
 
     if(bear.GetHealth()<=0){return true;}
