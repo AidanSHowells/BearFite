@@ -616,11 +616,15 @@ int main(){
   window.setKeyRepeatEnabled(false);
 
   //Keep track of wins
-  int playerWins = 0;
-  int bearWins = 0;
+  int winsvBabby = 0;
+  int lossesToBabby = 0;
+  int winsvBlack = 0;
+  int lossesToBlack = 0;
+  int winsvBrown = 0;
+  int lossesToBrown = 0;
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-  messages.Update("8 = Babby, 9 = Black", "and 0 = Brown");
+  messages.Update("Q = Babby, W = Black", "and E = Brown");
 
   while (window.isOpen()){
 
@@ -630,33 +634,46 @@ int main(){
         window.close();
       }
       if (event.type == sf::Event::KeyPressed){
-        if(event.key.code == sf::Keyboard::Num8 ||
-           event.key.code == sf::Keyboard::Num9 ||
-           event.key.code == sf::Keyboard::Num0)
+        if(event.key.code == sf::Keyboard::Q ||
+           event.key.code == sf::Keyboard::W ||
+           event.key.code == sf::Keyboard::E)
         {
           Player player;
           Bear bear;
-          if(event.key.code == sf::Keyboard::Num8){
+          if(event.key.code == sf::Keyboard::Q){
             bear = babbyBear;
           }
-          else if(event.key.code == sf::Keyboard::Num9){
+          else if(event.key.code == sf::Keyboard::W){
             bear = blackBear;
           }
           else{
             bear = brownBear;
           }
           if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
-            playerWins++;
-            messages.Update("Your Final Health:", player.GetHealth());
+            if(event.key.code == sf::Keyboard::Q){winsvBabby++;}
+            if(event.key.code == sf::Keyboard::W){winsvBlack++;}
+            if(event.key.code == sf::Keyboard::E){winsvBrown++;}
           }
           else{
-            bearWins++;
-            messages.Update("Bear's Final Health:", bear.GetHealth());
+            if(event.key.code == sf::Keyboard::Q){lossesToBabby++;}
+            if(event.key.code == sf::Keyboard::W){lossesToBlack++;}
+            if(event.key.code == sf::Keyboard::E){lossesToBrown++;}
           }
+          messages.Update("Your Final Health:", player.GetHealth());
+          messages.Update("Bear's Final Health:", bear.GetHealth());
           messages.Update("Last Bear Was:", bear);
-          messages.Update("Your Kills:", playerWins);
-          messages.Update("Your Deaths:", bearWins);
-          messages.Update("8 = Babby, 9 = Black", "and 0 = Brown");
+          
+          messages.Update("Against Babby:",
+          std::to_string(winsvBabby) + "/" +
+          std::to_string(winsvBabby + lossesToBabby));
+          messages.Update("Against Black:",
+          std::to_string(winsvBlack) + "/" +
+          std::to_string(winsvBlack + lossesToBlack));
+          messages.Update("Against Brown:",
+          std::to_string(winsvBrown) + "/" +
+          std::to_string(winsvBrown + lossesToBrown));
+
+          messages.Update("Q = Babby, W = Black", "and E = Brown");
         }//endif specific key
       }//endif keypress
     }//end while loop
