@@ -12,7 +12,7 @@ int Player::GetNumDranks(){return numDranks;}
 
 int Player::LegAttackBonus(){return abil[0] - 10;}
 
-int Player::LegDamageBonus(){return abil[0] - 10;}
+int Player::LegDamageBonus(){return (abil[0] - 10)/2;}
 
 int Player::AC(){return baseAC + armor + abil[1] - 10;}
 

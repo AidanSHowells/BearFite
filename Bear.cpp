@@ -4,9 +4,9 @@
 
 void Bear::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
-int Bear::AttackBonus(){return abil[0] - 10;}
+int Bear::AttackBonus(){return abil[0] - 10 + (abil[1] - 10)/2;}
 
-int Bear::DamageBonus(){return abil[0] - 10;}
+int Bear::DamageBonus(){return (abil[0] - 10)/2;}
 
 int Bear::AC(){return baseAC + armor + abil[1] - 10;}
 
