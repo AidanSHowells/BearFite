@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Bear.h"
+#include "RollDice.h"
 
 
 void Bear::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
@@ -18,8 +19,8 @@ void Bear::Hurt(int dmg){health -= dmg;}
 
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(rand() % 60 + AttackBonus() >= thePlayer.AC()){
-    dmg = rand() % 8 + 1 + DamageBonus();
+  if(RollDice(1,60) + AttackBonus() >= thePlayer.AC()){
+    dmg = RollDice(1,8) + 1 + DamageBonus();
     Messages -> Update("Bear bash you for:", dmg);
     thePlayer.Hurt(dmg);
   }

@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Bear.h"
-#include <string>//for std::to_string
+#include "RollDice.h"
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
@@ -50,8 +50,8 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(rand() % 60 + LegAttackBonus() >= bear.AC()){
-    dmg = rand() % 8 + 1 + LegDamageBonus();
+  if(RollDice(1,60) + LegAttackBonus() >= bear.AC()){
+    dmg = RollDice(1,8) + 1 + LegDamageBonus();
     Messages -> Update("You got bear for:", dmg);
     bear.Hurt(dmg);
   }

@@ -593,6 +593,8 @@ void Display::draw(){
 bool BearBattle(sf::RenderWindow&, sf::Font&, sf::Font&, Player&, Bear&);
 
 //TEMP: Belongs with the main function
+#include <cstdlib>
+#include <ctime>
 #include "BearList.h"
 
 //The main function is temporary; it makes it easier to test new features
