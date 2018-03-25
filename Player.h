@@ -18,7 +18,7 @@ class Player{
     TurnOf TakeAction(Action theAction, Bear& theBear);//See below for syntax
   private:
     MessageBox* Messages; //So damage statements know where to print
-    int abil[6] = {10, 10, 10, 10, 10 , 10}; //STR, DEX, CON, INT, WIS, CHR
+    int abil[6] = {10, 10, 10, 10, 10, 10}; //STR, DEX, CON, INT, WIS, CHR
     int maxHealth = 40;
     int health = maxHealth;
     int numDranks = 5;

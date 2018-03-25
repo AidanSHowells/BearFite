@@ -5,6 +5,8 @@
 
 void Bear::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
+int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
+
 int Bear::AttackBonus(){return abil[0] - 10 + (abil[1] - 10)/2;}
 
 int Bear::DamageBonus(){return (abil[0] - 10)/2;}
@@ -20,7 +22,7 @@ void Bear::Hurt(int dmg){health -= dmg;}
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   if(Roll(1,60) + AttackBonus() >= thePlayer.AC()){
-    dmg = Roll(1,8) + 1 + DamageBonus();
+    dmg = std::max(1, Roll(1,8) + DamageBonus());
     Messages -> Update("Bear bash you for:", dmg);
     thePlayer.Hurt(dmg);
   }
@@ -31,4 +33,13 @@ void Bear::Bash(Player& thePlayer){
 
 void Bear::ShowHealth(){
   Messages -> Update("Bear is health:", health);
+}
+
+void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR){
+  abil[0] = STR;
+  abil[1] = DEX;
+  abil[2] = CON;
+  abil[3] = INT;
+  abil[4] = WIS;
+  abil[5] = CHR;
 }

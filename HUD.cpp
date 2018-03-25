@@ -623,9 +623,11 @@ int main(){
   int lossesToBlack = 0;
   int winsvBrown = 0;
   int lossesToBrown = 0;
+  int winsvPolar = 0;
+  int lossesToPolar = 0;
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-  messages.Update("Q = Babby, W = Black", "and E = Brown");
+  messages.Update("Q = Babby, W = Black", "E = Brown, R = Polar");
 
   while (window.isOpen()){
 
@@ -637,7 +639,8 @@ int main(){
       if (event.type == sf::Event::KeyPressed){
         if(event.key.code == sf::Keyboard::Q ||
            event.key.code == sf::Keyboard::W ||
-           event.key.code == sf::Keyboard::E)
+           event.key.code == sf::Keyboard::E ||
+           event.key.code == sf::Keyboard::R)
         {
           Player player;
           Bear bear = FindBear(event.key.code);
@@ -646,11 +649,13 @@ int main(){
             if(event.key.code == sf::Keyboard::Q){winsvBabby++;}
             if(event.key.code == sf::Keyboard::W){winsvBlack++;}
             if(event.key.code == sf::Keyboard::E){winsvBrown++;}
+            if(event.key.code == sf::Keyboard::R){winsvPolar++;}
           }
           else{
             if(event.key.code == sf::Keyboard::Q){lossesToBabby++;}
             if(event.key.code == sf::Keyboard::W){lossesToBlack++;}
             if(event.key.code == sf::Keyboard::E){lossesToBrown++;}
+            if(event.key.code == sf::Keyboard::R){lossesToPolar++;}
           }
           messages.Update("Your Final Health:", player.GetHealth());
           messages.Update("Bear's Final Health:", bear.GetHealth());
@@ -665,8 +670,11 @@ int main(){
           messages.Update("Against Brown:",
           std::to_string(winsvBrown) + "/" +
           std::to_string(winsvBrown + lossesToBrown));
+          messages.Update("Against Polar:",
+          std::to_string(winsvPolar) + "/" +
+          std::to_string(winsvPolar + lossesToPolar));
 
-          messages.Update("Q = Babby, W = Black", "and E = Brown");
+          messages.Update("Q = Babby, W = Black", "E = Brown, R = Polar");
         }//endif specific key
       }//endif keypress
     }//end while loop
