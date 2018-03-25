@@ -19,8 +19,8 @@ void Bear::Hurt(int dmg){health -= dmg;}
 
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(RollDice(1,60) + AttackBonus() >= thePlayer.AC()){
-    dmg = RollDice(1,8) + 1 + DamageBonus();
+  if(Roll(1,60) + AttackBonus() >= thePlayer.AC()){
+    dmg = Roll(1,8) + 1 + DamageBonus();
     Messages -> Update("Bear bash you for:", dmg);
     thePlayer.Hurt(dmg);
   }

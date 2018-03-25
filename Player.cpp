@@ -50,8 +50,8 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(RollDice(1,60) + LegAttackBonus() >= bear.AC()){
-    dmg = RollDice(1,8) + 1 + LegDamageBonus();
+  if(Roll(1,60) + LegAttackBonus() >= bear.AC()){
+    dmg = Roll(1,8) + 1 + LegDamageBonus();
     Messages -> Update("You got bear for:", dmg);
     bear.Hurt(dmg);
   }
