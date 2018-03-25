@@ -629,6 +629,8 @@ int main(){
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
   messages.Update("Q = Babby, W = Black", "E = Brown, R = Polar");
 
+  Player player;
+
   while (window.isOpen()){
 
     sf::Event event;
@@ -642,7 +644,6 @@ int main(){
            event.key.code == sf::Keyboard::E ||
            event.key.code == sf::Keyboard::R)
         {
-          Player player;
           Bear bear = FindBear(event.key.code);
 
           if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
@@ -674,8 +675,18 @@ int main(){
           std::to_string(winsvPolar) + "/" +
           std::to_string(winsvPolar + lossesToPolar));
 
-          messages.Update("Q = Babby, W = Black", "E = Brown, R = Polar");
+          messages.Update("Q = Babby, W = Black",
+                          "E = Brown, R = Polar",
+                          "D = Dranks, H = Heal");
         }//endif specific key
+        else if(event.key.code == sf::Keyboard::D){
+          player.Replenish();
+          messages.Update("Your Dranks:", 5);
+        }
+        else if(event.key.code == sf::Keyboard::H){
+          player.Heal();
+          messages.Update("Your Health:", player.GetHealth());
+        }
       }//endif keypress
     }//end while loop
 

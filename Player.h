@@ -16,6 +16,8 @@ class Player{
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     TurnOf TakeAction(Action theAction, Bear& theBear);//See below for syntax
+    void Heal(){health = maxHealth;}//TEMP
+    void Replenish(){numDranks = 5;}//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
     int abil[6] = {10, 10, 10, 10, 10, 10}; //STR, DEX, CON, INT, WIS, CHR
