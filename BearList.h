@@ -3,36 +3,60 @@
 
 #include "Bear.h"
 
-BearOutline bearOutline;
 
 //Babby Bear
-bearOutline.SetAbil(10,10,10,10,10,10);
-bearOutline.name = sf::String("Babby ");
-bearOutline.maxHealth = 20;
-bearOutline.baseAttackBonus = 0;
-bearOutline.baseAC = 10;
-bearOutline.armor = 0;
-const Bear babbyBear(bearOutline);
-
+class BabbyBear : public Bear{
+  public:
+    BabbyBear(){
+      name = sf::String("Babby ");
+      health = 20;
+      baseAttackBonus = 0;
+      baseAC = 10;
+      armor = 0;
+    }
+};
 
 //Black Bear
-bearOutline.SetAbil(10,10,10,10,10,10);
-bearOutline.name = sf::String("Black ");
-bearOutline.maxHealth = 40;
-bearOutline.baseAttackBonus = 5;
-bearOutline.baseAC = 10;
-bearOutline.armor = 0;
-const Bear blackBear(bearOutline);
+class BlackBear : public Bear{
+  public:
+    BlackBear(){
+      name = sf::String("Black ");
+      health = 40;
+      baseAttackBonus = 5;
+      baseAC = 10;
+      armor = 0;
+    }
+};
 
 //Brown Bear
-bearOutline.SetAbil(10,10,10,10,10,10);
-bearOutline.name = sf::String("Brown ");
-bearOutline.maxHealth = 50;
-bearOutline.baseAttackBonus = 0;
-bearOutline.baseAC = 10;
-bearOutline.armor = 0;
-const Bear brownBear(bearOutline);
+class BrownBear : public Bear{
+  public:
+    BrownBear(){
+      name = sf::String("Brown ");
+      health = 50;
+      baseAttackBonus = 0;
+      baseAC = 10;
+      armor = 0;
+    }
+};
 
 
+
+//TEMP: Belongs in its own file
+Bear FindBear(sf::Keyboard::Key theKey){
+  if(sf::Keyboard::Q == theKey){
+    BabbyBear bear;
+    return bear;
+  }
+  else if(sf::Keyboard::W == theKey){
+    BlackBear bear;
+    return bear;
+  }
+  else{
+    BrownBear bear;
+    return bear;
+  }
+}
+//end TEMP
 
 #endif

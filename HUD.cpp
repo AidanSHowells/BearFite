@@ -593,13 +593,12 @@ void Display::draw(){
 bool BearBattle(sf::RenderWindow&, sf::Font&, sf::Font&, Player&, Bear&);
 
 //TEMP: Belongs with the main function
-
+#include "BearList.h"
 
 //The main function is temporary; it makes it easier to test new features
 int main(){
   srand(unsigned(time(NULL)));
 
-  #include "BearList.h"
 
   //Load the fonts
   sf::Font courierNew;
@@ -639,16 +638,8 @@ int main(){
            event.key.code == sf::Keyboard::E)
         {
           Player player;
-          Bear bear;
-          if(event.key.code == sf::Keyboard::Q){
-            bear = babbyBear;
-          }
-          else if(event.key.code == sf::Keyboard::W){
-            bear = blackBear;
-          }
-          else{
-            bear = brownBear;
-          }
+          Bear bear = FindBear(event.key.code);
+
           if(BearBattle(window, courierNewBd, courierNew, player, bear) ){
             if(event.key.code == sf::Keyboard::Q){winsvBabby++;}
             if(event.key.code == sf::Keyboard::W){winsvBlack++;}
@@ -662,7 +653,7 @@ int main(){
           messages.Update("Your Final Health:", player.GetHealth());
           messages.Update("Bear's Final Health:", bear.GetHealth());
           messages.Update("Last Bear Was:", bear);
-          
+
           messages.Update("Against Babby:",
           std::to_string(winsvBabby) + "/" +
           std::to_string(winsvBabby + lossesToBabby));
