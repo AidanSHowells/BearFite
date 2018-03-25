@@ -10,11 +10,11 @@ int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 
-int Player::LegAttackBonus(){return (abil[0] - 10)/2;}
+int Player::LegAttackBonus(){return abil[0] - 10;}
 
-int Player::LegDamageBonus(){return (abil[0] - 10)/2;}
+int Player::LegDamageBonus(){return abil[0] - 10;}
 
-int Player::AC(){return baseAC + armor + (abil[1] - 10)/2;}
+int Player::AC(){return baseAC + armor + abil[1] - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
@@ -50,7 +50,7 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(rand() % 20 + LegAttackBonus() >= bear.AC()){
+  if(rand() % 60 + LegAttackBonus() >= bear.AC()){
     dmg = rand() % 8 + 1 + LegDamageBonus();
     Messages -> Update("You got bear for:", dmg);
     bear.Hurt(dmg);
@@ -71,7 +71,7 @@ TurnOf Player::Quaff(){
   }
   else{
     Messages -> Update("Down the hatch");
-    health = std::min(maxHealth, health + 25);//No soft max yet
+    health = std::min(maxHealth, health + 15);//No soft max yet
     numDranks--;
     return TurnOf::bear;
   }

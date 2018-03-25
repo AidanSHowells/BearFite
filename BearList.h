@@ -11,7 +11,7 @@ class BabbyBear : public Bear{
       name = sf::String("Babby ");
       health = 20;
       baseAttackBonus = 0;
-      baseAC = 10;
+      baseAC = 30;
       armor = 0;
     }
 };
@@ -23,7 +23,7 @@ class BlackBear : public Bear{
       name = sf::String("Black ");
       health = 40;
       baseAttackBonus = 5;
-      baseAC = 10;
+      baseAC = 30;
       armor = 0;
     }
 };
@@ -35,7 +35,7 @@ class BrownBear : public Bear{
       name = sf::String("Brown ");
       health = 50;
       baseAttackBonus = 0;
-      baseAC = 10;
+      baseAC = 30;
       armor = 0;
     }
 };
