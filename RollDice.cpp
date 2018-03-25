@@ -3,7 +3,11 @@
 int Roll(int diceNumber, int diceType){//roll (diceNumber)d(diceType).
   int total = 0;
   for (int i = 0; i < diceNumber; i++) {
-    total += ((rand() % diceType) + 1);
+    int tempNum = rand();
+    while(tempNum >= RAND_MAX - (RAND_MAX % diceType)){
+      tempNum = rand();
+    }
+    total += ((tempNum % diceType) + 1);
   }
   return (total);
 }
