@@ -10,6 +10,8 @@ int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 
+int Player::HealthBonus(){return (abil[2] - 10) * 2;}
+
 int Player::LegAttackBonus(){return abil[0] - 10;}
 
 int Player::LegDamageBonus(){return (abil[0] - 10)/2;}

@@ -21,7 +21,8 @@ class Player{
   private:
     MessageBox* Messages; //So damage statements know where to print
     int abil[6] = {10, 10, 10, 10, 10, 10}; //STR, DEX, CON, INT, WIS, CHR
-    int maxHealth = 40;
+    int HealthBonus(); //Calculates increased health from intrinsics
+    int maxHealth = 50 + HealthBonus();
     int health = maxHealth;
     int numDranks = 5;
     int baseAttackBonus = 0; //This will be level-based
