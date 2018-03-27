@@ -2,55 +2,51 @@
 #include "Player.h"
 #include "Bear.h"
 
-bool BearBattle(sf::RenderWindow& window,
-                sf::Font& titleFont,
-                sf::Font& mainFont,
-                Player& player,
-                Bear& bear)
-{
+
+bool BearBattle(Display& theHUD, int& tempInt){
   //Keep track of turns
   TurnOf turn = TurnOf::player;
-
-
-  //Make the HUD
-  Display HUD(window,titleFont,mainFont,player,bear);
 
   //Make the picture
   sf::Texture finalBear;
   finalBear.loadFromFile("Resources/Background.png");
   sf::Sprite background;
   background.setTexture(finalBear);
-  background.setPosition(205, 55);//(205, 193) to align it at the bottom
+  background.setPosition(205, 193);//(205, 55) to align it at the top
 
 
-  while (window.isOpen()){
+  while (theHUD.GetWindowPtr() -> isOpen()){
 
     if(TurnOf::bear == turn){
       sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
-      bear.Bash(player);
+      //theHUD.GetBearPtr() -> Bash(*theHUD.GetPlayerPtr());//Old
+      for(int i = 0; i < theHUD.GetNumBears(); i++){
+        theHUD.bearStats[i].GetBearPtr() -> Bash(*theHUD.GetPlayerPtr());
+      }
       turn = TurnOf::player;
     }
-    if(player.GetHealth()<=0){return false;}
+    if(theHUD.RemoveDeadCombatants()){return false;}
 
     sf::Event event;
-    while (TurnOf::player == turn && window.pollEvent(event)){
+    while (TurnOf::player == turn && theHUD.GetWindowPtr() -> pollEvent(event)){
       if (event.type == sf::Event::Closed){
-        window.close();
+        theHUD.GetWindowPtr() -> close();
       }
       if (event.type == sf::Event::KeyPressed ||
           event.type == sf::Event::MouseButtonPressed)
       {
-        turn = HUD.TakeAction(event, player, bear);
+        turn = theHUD.TakeAction(event);
       }
     }
+    tempInt = theHUD.GetBearPtr() -> GetHealth();//TEMP
+    if(theHUD.RemoveDeadCombatants()){return true;}
 
     //Draw the stuff to the screen
-    window.clear();
-    HUD.draw();
-    window.draw(background);
-    window.display();
-
-    if(bear.GetHealth()<=0){return true;}
+    theHUD.GetWindowPtr() -> clear();
+    theHUD.draw();
+    theHUD.GetWindowPtr() -> draw(background);
+    theHUD.GetWindowPtr() -> display();
   }
   return true;//This shouldn't matter; we should only get here if !window.isOpen
+  //FIXME: Instead of returning, there should be a error message printed
 }

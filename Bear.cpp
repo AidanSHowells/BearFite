@@ -1,9 +1,11 @@
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"
+#include <algorithm>//for std::max and std::min
 
-
-void Bear::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
+void Bear::SetMessageBox(MessageBox& theMessages){
+  Messages = &theMessages;
+}
 
 int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
 
@@ -21,6 +23,7 @@ void Bear::Hurt(int dmg){health -= dmg;}
 
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
+
   if(Roll(1,60) + AttackBonus() >= thePlayer.AC()){
     dmg = std::max(1, Roll(1,8) + DamageBonus());
     Messages -> Update("Bear bash you for:", dmg);

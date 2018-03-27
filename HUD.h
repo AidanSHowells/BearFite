@@ -71,6 +71,10 @@ class MessageBox{
     void Update(sf::String inputString1,
                 sf::String inputString2,
                 sf::String inputString3);
+    void Update(sf::String inputString1,
+                sf::String inputString2,
+                sf::String inputString3,
+                sf::String inputString4);
     void Update(sf::String inputString, int inputInt);
     void Update(sf::String inputString, Bear inputBear);
     //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
@@ -127,17 +131,21 @@ class OptionsBox{
 
 class BearStats{
   public:
+    BearStats();
     BearStats(sf::RenderWindow& theWindow,
               sf::Font& titleFont,
               sf::Font& mainFont,
-              Bear& theBear,
+              Bear* theBear,
+              bool titleBar = true,
               sf::Vector2f thePosition = sf::Vector2f(205, 0),
-              sf::Vector2f theSize = sf::Vector2f(390, 50) );
+              sf::Vector2f theSize = sf::Vector2f(390, 23) );//48 if hasTitleBar
     void Update();
+    void NewBearPtr(Bear* theNewBearPtr);
+    Bear* GetBearPtr();
     void draw();//See comment in MessageBox
   private:
     sf::RenderWindow* window;
-    Bear* bear;
+    Bear* bear = nullptr;
     const sf::Vector2f position;
     const sf::Vector2f size;
 
@@ -146,6 +154,8 @@ class BearStats{
 
     sf::RectangleShape background[numBackground];
     sf::Text bearInfo[numBearInfo];
+
+    bool hasTitleBar;
 };
 
 
@@ -188,16 +198,26 @@ class Display{
             Bear& theBear);
     MessageBox messages;
     OptionsBox options;
+    BearStats bearStats[5];
     PlayerStats playerStats;
-    BearStats bearStats;
-    void draw();
-    TurnOf TakeAction(sf::Event theEvent, Player& thePlayer, Bear& theBear);
+    sf::RenderWindow* GetWindowPtr(){return window;}
+    Player* GetPlayerPtr(){return player;}
+    Bear* GetBearPtr(){return bear;}
+    int GetNumBears();//The number of bears that exist
+    void AddEnemyBears(Bear* bear0,
+                       Bear* bear1 = nullptr,
+                       Bear* bear2 = nullptr,
+                       Bear* bear3 = nullptr);
+    bool RemoveDeadCombatants();//Returns true if fight is over
+    //void AddFriendBear(Bear* friendBearPtr);
+    TurnOf TakeAction(sf::Event theEvent);
     //void Highlight();//This should eventually be in charge of all highlighting
+    void draw();
 
   private:
     sf::RenderWindow* window;
     Player* player;
-    Bear* bear;
+    Bear* bear;//A pointer to the bear currently being targeted
     bool isPickingSpell = false;//The behavior of Hightlight changes based on
                                 //whether the user is picking spells or not
 };

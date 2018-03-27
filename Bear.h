@@ -14,6 +14,7 @@ class Bear{
     void Bash(Player& thePlayer);
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
+    bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     void ShowHealth(); //TEMP
   protected:
     MessageBox* Messages; //So damage statements know where to print

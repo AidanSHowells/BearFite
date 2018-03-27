@@ -3,7 +3,7 @@
 
 #include "Bear.h"
 #include "RollDice.h"
-
+#include <algorithm>//for std::max and std::min
 
 //Babby Bear
 class BabbyBear : public Bear{
@@ -64,22 +64,33 @@ class PolarBear : public Bear{
 
 
 //TEMP: Belongs in its own file
-Bear FindBear(sf::Keyboard::Key theKey){
+void FindBear(sf::Keyboard::Key theKey, Display& theHUD, Bear theBear[4]){
   if(sf::Keyboard::Q == theKey){
     BabbyBear bear;
-    return bear;
+    theBear[0] = bear;
+    theHUD.AddEnemyBears(&theBear[0]);
   }
   else if(sf::Keyboard::W == theKey){
     BlackBear bear;
-    return bear;
+    theBear[0] = bear;
+    theHUD.AddEnemyBears(&theBear[0]);
   }
   else if(sf::Keyboard::E == theKey){
     BrownBear bear;
-    return bear;
+    theBear[0] = bear;
+    theHUD.AddEnemyBears(&theBear[0]);
+  }
+  else if(sf::Keyboard::R == theKey){
+    PolarBear bear;
+    theBear[0] = bear;
+    theHUD.AddEnemyBears(&theBear[0]);
   }
   else{
-    PolarBear bear;
-    return bear;
+    for(int i = 0; i < 4; i++){
+      BabbyBear bear;
+      theBear[i] = bear;
+    }
+    theHUD.AddEnemyBears(&theBear[0], &theBear[1], &theBear[2], &theBear[3]);
   }
 }
 //end TEMP

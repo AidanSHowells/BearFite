@@ -15,6 +15,7 @@ class Player{
     //void Quaff();
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
+    bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     TurnOf TakeAction(Action theAction, Bear& theBear);//See below for syntax
     void Heal(){health = maxHealth;}//TEMP
     void Replenish(){numDranks = 5;}//TEMP

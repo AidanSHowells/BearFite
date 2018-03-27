@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"
+#include <algorithm>//for std::max and std::min
+
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
