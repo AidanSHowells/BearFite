@@ -12,6 +12,7 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks();
+    int GetAbil(int i){return abil[i];}//FIXME:Should probably validate input
     //void Quaff();
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player

@@ -477,7 +477,6 @@ size(theSize)
     ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
     ability[i+1].setPosition(position.x + 100*(i/6), position.y + 87+(i%6)*10);
-    ability[i+1].setString("     10/10");//FIXME
   }
   ability[1].setString("STR:");
   ability[3].setString("DEX:");
@@ -538,6 +537,7 @@ size(theSize)
 }
 
 void PlayerStats::Update(){
+  //Health
   sf::String playerHealth = std::to_string(player -> GetHealth());
   playerHealth += "/";
   playerHealth += std::to_string(player -> GetMaxHealth());
@@ -548,11 +548,21 @@ void PlayerStats::Update(){
   }
   health[1].setString(spacing + playerHealth);
 
+  //Dranks
   spacing = "";
   for(int i = 0; i < 22 - numDigits(player -> GetNumDranks() ); i++){
     spacing += " ";
   }
   health[3].setString(spacing + std::to_string(player -> GetNumDranks()));
+
+  //Ability scores
+  for(int i = 1; i <= 6; i++){
+    spacing = "";
+    for(int j = 0; j < 10 - numDigits(player -> GetAbil(i-1) ); j++){
+      spacing += " ";
+    }
+    ability[2 * i].setString(spacing + std::to_string(player -> GetAbil(i-1)));
+  }
 }
 
 void PlayerStats::draw(){
