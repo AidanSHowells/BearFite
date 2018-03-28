@@ -89,6 +89,7 @@ class MessageBox{
     sf::Text line[numLines];
     //sf::Text* line = new sf::Text[numLines];
     sf::RectangleShape background;
+    void SetTopString(const sf::String& inputString);
 };
 
 /*MessageBox::Update can take a single sf::String, add a '>' to the front, and

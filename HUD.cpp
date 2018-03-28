@@ -17,17 +17,25 @@
 //Color definitions. I use upper case to be consistant with SFML
 sf::Color Gray = sf::Color(192,192,192);
 
-
+//Helper Functions:
 int numDigits(int number){
   if(number == 0){return 1;}
 
   int digits = 0;
   if (number < 0){digits = 1;}//So the '-' counts as a digit
-  while (number) {
+  while(number){
     number /= 10;//Integer division ftw
     digits++;
   }
   return digits;
+}
+
+sf::String AddSpacing(const sf::String& inputString, int totalLength){
+  sf::String spacing = "";
+  for(int i = 0; i < totalLength - inputString.getSize(); i++){
+    spacing += sf::String(" ");
+  }
+  return(spacing + inputString);
 }
 
 
@@ -72,23 +80,11 @@ MessageBox::MessageBox(
 //MessageBox::~MessageBox(){delete[] line;}
 
 void MessageBox::Update(sf::String inputString){
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
-  //Make the top line inputString
-  line[1].setString(sf::String(">") += inputString);
+  SetTopString(sf::String(">") + inputString);
 }
 
 void MessageBox::Update(sf::String inputString1, sf::String inputString2){
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
-  //Make the top line inputString2
-  line[1].setString(sf::String(" ") += inputString2);
-
-  //Now move everything down one again and make the top line inputString1
+  SetTopString(sf::String(" ") + inputString2);
   Update(inputString1);
 }
 
@@ -96,14 +92,7 @@ void MessageBox::Update(sf::String inputString1,
                         sf::String inputString2,
                         sf::String inputString3)
 {
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
-  //Make the top line inputString3
-  line[1].setString(sf::String(" ") += inputString3);
-
-  //Now put in the first two strings
+  SetTopString(sf::String(" ") + inputString3);
   Update(inputString1, inputString2);
 }
 
@@ -112,46 +101,18 @@ void MessageBox::Update(sf::String inputString1,
                         sf::String inputString3,
                         sf::String inputString4)
 {
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
-  //Make the top line inputString4
-  line[1].setString(sf::String(" ") += inputString4);
-
-  //Now put in the first three strings
+  SetTopString(sf::String(" ") + inputString4);
   Update(inputString1, inputString2, inputString3);
 }
 
 void MessageBox::Update(sf::String inputString, int inputInt){
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
-  //Make the top line inputInt
-  sf::String spacing = "";
-  for(int i = 0; i < 22 - numDigits(inputInt); i++){
-    spacing += sf::String(" ");
-  }
-  line[1].setString(spacing += sf::String(std::to_string(inputInt)));
-
-  //Now move everything down one again and make the top line inputString
+  SetTopString( AddSpacing(std::to_string(inputInt), 22) );
   Update(inputString);
 }
 
 void MessageBox::Update(sf::String inputString, Bear inputBear){
-  //Move everything down one
-  for(int i = numLines - 1; i > 1; i--){
-    line[i].setString(line[i-1].getString());
-  }
   sf::String outputString = inputBear.GetName() + "bear";
-  sf::String spacing = "";
-  for(int i = 0; i < 22 - outputString.getSize(); i++){
-    spacing += sf::String(" ");
-  }
-  line[1].setString(spacing + outputString);
-
-  //Now move everything down one again and make the top line inputString
+  SetTopString( AddSpacing(outputString, 22) );
   Update(inputString);
 }
 
@@ -163,6 +124,14 @@ void MessageBox::draw(){
   }
 }
 
+void MessageBox::SetTopString(const sf::String& inputString){
+  //Move everything down one
+  for(int i = numLines - 1; i > 1; i--){
+    line[i].setString(line[i-1].getString());
+  }
+  //Make the top line inputString
+  line[1].setString(inputString);
+}
 
 OptionsBox::OptionsBox(
   sf::RenderWindow& theWindow,
@@ -380,12 +349,7 @@ hasTitleBar(titleBar)
 void BearStats::Update(){
   if(nullptr != bear){
     bearInfo[1].setString(bear -> GetName());
-
-    sf::String spacing = "";//This is used to make the bear's health right-aligned
-    for(int i = 0; i < 7 - numDigits(bear -> GetHealth()); i++){
-      spacing += sf::String(" ");
-    }
-    bearInfo[3].setString(spacing += std::to_string(bear -> GetHealth()));
+    bearInfo[3].setString( AddSpacing(std::to_string(bear -> GetHealth()), 7) );
   }
 }
 
@@ -541,27 +505,14 @@ void PlayerStats::Update(){
   sf::String playerHealth = std::to_string(player -> GetHealth());
   playerHealth += "/";
   playerHealth += std::to_string(player -> GetMaxHealth());
-
-  sf::String spacing = "";//This is used to make things right-aligned
-  for(int i = 0; i < 22 - playerHealth.getSize(); i++){
-    spacing += " ";
-  }
-  health[1].setString(spacing + playerHealth);
+  health[1].setString(AddSpacing(playerHealth, 22) );
 
   //Dranks
-  spacing = "";
-  for(int i = 0; i < 22 - numDigits(player -> GetNumDranks() ); i++){
-    spacing += " ";
-  }
-  health[3].setString(spacing + std::to_string(player -> GetNumDranks()));
+  health[3].setString(AddSpacing(std::to_string(player -> GetNumDranks()), 22));
 
   //Ability scores
   for(int i = 1; i <= 6; i++){
-    spacing = "";
-    for(int j = 0; j < 10 - numDigits(player -> GetAbil(i-1) ); j++){
-      spacing += " ";
-    }
-    ability[2 * i].setString(spacing + std::to_string(player -> GetAbil(i-1)));
+    ability[2*i].setString(AddSpacing(std::to_string(player->GetAbil(i-1)),10));
   }
 }
 
