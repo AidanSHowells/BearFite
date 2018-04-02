@@ -766,7 +766,7 @@ int main(){
         }//endif specific key
         else if(event.key.code == sf::Keyboard::D){
           player.Replenish();
-          messages.Update("Your Dranks:", 5);
+          messages.Update("Your Dranks:", player.GetNumDranks() );
         }
         else if(event.key.code == sf::Keyboard::H){
           player.Heal();
