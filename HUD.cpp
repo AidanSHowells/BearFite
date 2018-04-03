@@ -18,18 +18,6 @@
 sf::Color Gray = sf::Color(192,192,192);
 
 //Helper Functions:
-int numDigits(int number){
-  if(number == 0){return 1;}
-
-  int digits = 0;
-  if (number < 0){digits = 1;}//So the '-' counts as a digit
-  while(number){
-    number /= 10;//Integer division ftw
-    digits++;
-  }
-  return digits;
-}
-
 sf::String AddSpacing(const sf::String& inputString, int totalLength){
   sf::String spacing = "";
   for(int i = 0; i < totalLength - inputString.getSize(); i++){
@@ -74,13 +62,20 @@ MessageBox::MessageBox(
     line[i].setFillColor(sf::Color::Black);
     line[i].setPosition(position.x, position.y + 20 * i);
   }
+  for(int i = 0; i < numDivLines; i++){
+    divLine[i].setSize(sf::Vector2f(size.x, 1));
+    divLine[i].setFillColor(sf::Color::Black);
+    divLine[i].setPosition(position.x, position.y + 40 + 20 * i);
+    displayDivLine[i] = false;
+  }
 }
 
 //Destructor removed since line[] is no longer dynamically allocated
 //MessageBox::~MessageBox(){delete[] line;}
 
-void MessageBox::Update(sf::String inputString){
-  SetTopString(sf::String(">") + inputString);
+void MessageBox::Update(sf::String inputString, bool makeLine){
+  //Note: makeLine defaults to false
+  SetTopString(markChar + inputString, makeLine);
 }
 
 void MessageBox::Update(sf::String inputString1, sf::String inputString2){
@@ -105,8 +100,9 @@ void MessageBox::Update(sf::String inputString1,
   Update(inputString1, inputString2, inputString3);
 }
 
-void MessageBox::Update(sf::String inputString, int inputInt){
-  SetTopString( AddSpacing(std::to_string(inputInt), 22) );
+void MessageBox::Update(sf::String inputString, int inputInt, bool makeLine){
+  //Note that makeLine defaults to false
+  SetTopString( AddSpacing(std::to_string(inputInt), 22) , makeLine);
   Update(inputString);
 }
 
@@ -122,15 +118,36 @@ void MessageBox::draw(){
   for(int i = 0; i < numLines; i++){
     window -> draw(line[i]);
   }
+  for(int i = 0; i < numDivLines; i++){
+    if(displayDivLine[i]){
+      window -> draw(divLine[i]);
+    }
+  }
 }
 
-void MessageBox::SetTopString(const sf::String& inputString){
+void MessageBox::SetTopString(const sf::String& inputString, bool makeLine){
+  if("" != line[numLines - 1].getString()){
+    int lastMarkCharIndex = 1;
+    for(int i = 1; i < numLines; i++){
+      if(markChar == line[i].getString().substring(0,1) ){
+        lastMarkCharIndex = i;
+      }
+    }
+    for(int i = numLines - 1; i >= lastMarkCharIndex; i--){
+      line[i].setString("");
+    }
+  }
+
   //Move everything down one
   for(int i = numLines - 1; i > 1; i--){
     line[i].setString(line[i-1].getString());
   }
+  for(int i = numDivLines - 1; i > 0; i--){
+    displayDivLine[i] = displayDivLine[i-1];
+  }
   //Make the top line inputString
   line[1].setString(inputString);
+  displayDivLine[0] = makeLine;//Note that makeLine defaults to false
 }
 
 OptionsBox::OptionsBox(
@@ -704,6 +721,7 @@ int main(){
                   "T = Babby Party");
 
   Player player;
+  PlayerStats status(window,courierNewBd,courierNew,player);
 
   while (window.isOpen()){
 
@@ -739,6 +757,8 @@ int main(){
             if(event.key.code == sf::Keyboard::R){lossesToPolar++;}
             if(event.key.code == sf::Keyboard::T){lossesToParty++;}
           }
+          player.SetMessageBox(messages);
+
           messages.Update("Your Final Health:", player.GetHealth());
           messages.Update("Bear's Final Health:", bearHealth);
           messages.Update("Last Bear Was:", bearList[0]);
@@ -770,13 +790,14 @@ int main(){
         }
         else if(event.key.code == sf::Keyboard::H){
           player.Heal();
-          messages.Update("Your Health:", player.GetHealth());
         }
       }//endif keypress
     }//end while loop
 
     window.clear();
     messages.draw();
+    status.Update();
+    status.draw();
     window.display();
   }
 }

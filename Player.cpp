@@ -56,10 +56,10 @@ TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   if(Roll(1,60) + LegAttackBonus() >= bear.AC()){
     dmg = Roll(1,8) + LegDamageBonus();
-    Messages -> Update("You got bear for:", dmg);
+    Messages -> Update("You got bear for:", dmg, true);
     bear.Hurt(dmg);
   }
-  else{Messages -> Update("Carp, you miss.");}
+  else{Messages -> Update("Carp, you miss.", true);}
 
   return TurnOf::bear;//Not the player's turn anymore
 }
@@ -74,7 +74,7 @@ TurnOf Player::Quaff(){
     return TurnOf::player;
   }
   else{
-    Messages -> Update("Down the hatch");
+    Messages -> Update("Down the hatch", true);
     health = std::min(maxHealth, health + 15);//No soft max yet
     numDranks--;
     return TurnOf::bear;

@@ -66,7 +66,7 @@ class MessageBox{
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 460) );
     //~MessageBox();//Removed since line[] is no longer dynamically allocated
-    void Update(sf::String inputString);//Details of Update below
+    void Update(sf::String inputString, bool makeLine = false);//Details of Update below
     void Update(sf::String inputString1, sf::String inputString2);
     void Update(sf::String inputString1,
                 sf::String inputString2,
@@ -75,7 +75,7 @@ class MessageBox{
                 sf::String inputString2,
                 sf::String inputString3,
                 sf::String inputString4);
-    void Update(sf::String inputString, int inputInt);
+    void Update(sf::String inputString, int inputInt, bool makeLine = false);
     void Update(sf::String inputString, Bear inputBear);
     //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
     void draw();//"Draw" would be consistant with our funcion naming convention,
@@ -86,10 +86,14 @@ class MessageBox{
     const sf::Vector2f position;
     const sf::Vector2f size;
     static const int numLines = 23;
+    static const int numDivLines = numLines - 2;
     sf::Text line[numLines];
+    sf::RectangleShape divLine[numDivLines];
+    bool displayDivLine[numDivLines];
     //sf::Text* line = new sf::Text[numLines];
     sf::RectangleShape background;
-    void SetTopString(const sf::String& inputString);
+    void SetTopString(const sf::String& inputString, bool makeLine = false);
+    sf::String markChar = ">";
 };
 
 /*MessageBox::Update can take a single sf::String, add a '>' to the front, and
