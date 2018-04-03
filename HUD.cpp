@@ -1,6 +1,6 @@
 #include "HUD.h"
 #include <string>//For std::to_string
-#include <iostream>//So we can print error messages
+#include <cassert>//For error handling
 #include "Player.h"
 #include "Bear.h"
 
@@ -17,6 +17,7 @@
 
 //Color definitions. I use upper case to be consistant with SFML
 sf::Color Gray = sf::Color(192,192,192);
+sf::Color ClearYellow = sf::Color(255,255,0,153);
 
 //Helper Functions:
 sf::String AddSpacing(const sf::String& inputString, int totalLength){
@@ -288,14 +289,11 @@ Action OptionsBox::GetAction(sf::Event theEvent){
       return Action::nothing;
     }
   }
-  else{
-    //FIXME: There should probably be an error message here
-  }
 }
 
 void OptionsBox::Highlight(){
   sf::RectangleShape highlight;
-  highlight.setFillColor(sf::Color(255,255,0,153));
+  highlight.setFillColor(ClearYellow);
 
   for(int i = 0; i < numTextBox; i++){
     if(textBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
@@ -610,22 +608,18 @@ void Display::AddEnemyBears(Bear* bear0, Bear* bear1, Bear* bear2, Bear* bear3){
       }
     }
   }
-  if(error){
-    std::cerr << "Error in function AddEnemyBears" << std::endl;
-    //FIXME: Halt and Catch Fire
-  }
-  else{
-    bool done = false;
-    for(int i = 3; i >= 0; i--){
-      if(!done && nullptr != newBear[i]){
-        for(int j = i; j >= 0; j--){
-          bearStats[j].NewBearPtr(newBear[j]);
-          newBear[j] -> SetMessageBox(messages);
-        }
-        done = true;
-      }//end if
-    }//end for
-  }
+  assert(!error);
+
+  bool done = false;
+  for(int i = 3; i >= 0; i--){
+    if(!done && nullptr != newBear[i]){
+      for(int j = i; j >= 0; j--){
+        bearStats[j].NewBearPtr(newBear[j]);
+        newBear[j] -> SetMessageBox(messages);
+      }
+      done = true;
+    }//end if
+  }//end for
 }
 
 bool Display::RemoveDeadCombatants(){
@@ -703,7 +697,7 @@ void Display::Highlight(){
   options.Highlight();
 
   sf::RectangleShape bearHighlight;
-  bearHighlight.setFillColor(sf::Color(255,255,0,153));
+  bearHighlight.setFillColor(ClearYellow);
 
   if(bearStats[1].GetBearPtr() != nullptr){
     for(int i = 0; i < 4; i++){
