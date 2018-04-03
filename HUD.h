@@ -147,6 +147,8 @@ class BearStats{
     void Update();
     void NewBearPtr(Bear* theNewBearPtr);
     Bear* GetBearPtr();
+    sf::Vector2f GetNameBoxPosition();
+    sf::Vector2f GetNameBoxSize();
     void draw();//See comment in MessageBox
   private:
     sf::RenderWindow* window;
@@ -156,7 +158,6 @@ class BearStats{
 
     static const int numBackground = 3;
     static const int numBearInfo = 6;
-
     sf::RectangleShape background[numBackground];
     sf::Text bearInfo[numBearInfo];
 
@@ -216,13 +217,14 @@ class Display{
     bool RemoveDeadCombatants();//Returns true if fight is over
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);
-    //void Highlight();//This should eventually be in charge of all highlighting
     void draw();
 
   private:
     sf::RenderWindow* window;
     Player* player;
     Bear* bear;//A pointer to the bear currently being targeted
+    void Highlight();
+    int TargetBearIndex();
     bool isPickingSpell = false;//The behavior of Hightlight changes based on
                                 //whether the user is picking spells or not
 };

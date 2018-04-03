@@ -1,5 +1,6 @@
 #include "HUD.h"
 #include <string>//For std::to_string
+#include <iostream>//So we can print error messages
 #include "Player.h"
 #include "Bear.h"
 
@@ -378,6 +379,16 @@ Bear* BearStats::GetBearPtr(){
   return bear;
 }
 
+sf::Vector2f BearStats::GetNameBoxPosition(){
+  sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
+  return sf::Vector2f(nameBox.left, nameBox.top);
+}
+
+sf::Vector2f BearStats::GetNameBoxSize(){
+  sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
+  return sf::Vector2f(nameBox.width, nameBox.height);
+}
+
 void BearStats::draw(){
   if(nullptr != bear){
     //Recall that a->b is equivalent to (*a).b
@@ -600,6 +611,7 @@ void Display::AddEnemyBears(Bear* bear0, Bear* bear1, Bear* bear2, Bear* bear3){
     }
   }
   if(error){
+    std::cerr << "Error in function AddEnemyBears" << std::endl;
     //FIXME: Halt and Catch Fire
   }
   else{
@@ -640,10 +652,22 @@ TurnOf Display::TakeAction(sf::Event theEvent)
   }
   else{
     if(theEvent.key.code == sf::Keyboard::Up){
-      //FIXME
+      const int targetBearIndex = TargetBearIndex();
+      if(0 == targetBearIndex){
+        bear = bearStats[GetNumBears() - 1].GetBearPtr();
+      }
+      else{
+        bear = bearStats[targetBearIndex - 1].GetBearPtr();
+      }
     }
     else if(theEvent.key.code == sf::Keyboard::Down){
-      //FIXME
+      const int targetBearIndex = TargetBearIndex();
+      if(GetNumBears() - 1 == targetBearIndex){
+        bear = bearStats[0].GetBearPtr();
+      }
+      else{
+        bear = bearStats[targetBearIndex + 1].GetBearPtr();
+      }
     }
     else{
       Action theAction = options.GetAction(theEvent);
@@ -672,7 +696,35 @@ void Display::draw(){
     bearStats[i].draw();
   }
 
+  Highlight();
+}
+
+void Display::Highlight(){
   options.Highlight();
+
+  sf::RectangleShape bearHighlight;
+  bearHighlight.setFillColor(sf::Color(255,255,0,153));
+
+  if(bearStats[1].GetBearPtr() != nullptr){
+    for(int i = 0; i < 4; i++){
+      if(bearStats[i].GetBearPtr() == bear){
+        bearHighlight.setSize(bearStats[i].GetNameBoxSize());
+        bearHighlight.setPosition(bearStats[i].GetNameBoxPosition());
+        window -> draw(bearHighlight);
+      }
+    }
+  }
+
+}
+
+int Display::TargetBearIndex(){
+  int targetBearIndex = 0;
+  for(int i = 0; i < 4; i++){
+    if(bearStats[i].GetBearPtr() == bear){
+      targetBearIndex = i;
+    }
+  }
+  return targetBearIndex;
 }
 
 
