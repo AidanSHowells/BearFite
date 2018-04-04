@@ -2,11 +2,12 @@
 #define HUD_H
 
 #include <SFML/Graphics.hpp>
+#include "Messages.h"
+#include "Bear.h"
 
-class Bear;
 class Player;
 
-/*The main class here (defined last for dependency reasons) is class Display.
+/*The main class here (defined last for dependency reasons) is class HUD.
  *An object of this class contains one object corresponding to each piece of the
  *HUD, and is responsible for managing these objects (plus any HUD
  *functionality involving multiple of the objects) so that the the programmer
@@ -14,14 +15,6 @@ class Player;
  *draws all member HUD objects to the window. Member function "Highlight"
  *helps indicate to the user what options are available, and hightlights any
  *clickable hitboxes that the user hovers over.
- */
-
-/*The MessageBox class is for boxes displaying messages to the player. When
- *constructed, specify the window that the font displays in, the font the title
- *uses, the font everything else uses, and the title itself. Optionally, specify
- *the position and size of the box. Member functions are "Update", which takes a
- *string and makes it the first message displayed (more details below), and
- *"draw", which draws the message box to the window.
  */
 
 /*The OptionsBox class is for listing the options available to the player. When
@@ -49,59 +42,6 @@ class Player;
  *function "draw" draws the object to the window. Member function "Update"
  *updates the displayed stats of the bear. Note that as currently constructed
  *(with default size) the bear's health can be at most 9,999,999.
- */
-
-enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
-
-enum class TurnOf {player, bear};
-
-
-//Note that if the message box has a width of 200, one can fit 22 characters
-class MessageBox{
-  public:
-    MessageBox(sf::RenderWindow& theWindow,
-               sf::Font& titleFont,
-               sf::Font& mainFont,
-               sf::String theTitle,
-               sf::Vector2f thePosition = sf::Vector2f(0,0),
-               sf::Vector2f theSize = sf::Vector2f(200, 460) );
-    //~MessageBox();//Removed since line[] is no longer dynamically allocated
-    void Update(sf::String inputString, bool makeLine = false);//Details of Update below
-    void Update(sf::String inputString1, sf::String inputString2);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3,
-                sf::String inputString4);
-    void Update(sf::String inputString, int inputInt, bool makeLine = false);
-    void Update(sf::String inputString, Bear inputBear);
-    //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
-    void draw();//"Draw" would be consistant with our funcion naming convention,
-                //but "draw" is consistant with SFML
-
-  private:
-    sf::RenderWindow* window;
-    const sf::Vector2f position;
-    const sf::Vector2f size;
-    static const int numLines = 23;
-    static const int numDivLines = numLines - 2;
-    sf::Text line[numLines];
-    sf::RectangleShape divLine[numDivLines];
-    bool displayDivLine[numDivLines];
-    //sf::Text* line = new sf::Text[numLines];
-    sf::RectangleShape background;
-    void SetTopString(const sf::String& inputString, bool makeLine = false);
-    sf::String markChar = ">";
-};
-
-/*MessageBox::Update can take a single sf::String, add a '>' to the front, and
- *make that sf::String the first thing displayed in the message box. Given extra
- *arguments, it adds those to the dispay as well, each argument below the
- *arguments listed before it. If a later argument is a sf::String, it gets a
- *space prepended. If it is an int, it is right aligned, and if it is a object
- *of class Bear, the bear's name is displayed (right aligned).
  */
 
 
@@ -140,19 +80,21 @@ class BearStats{
     BearStats(sf::RenderWindow& theWindow,
               sf::Font& titleFont,
               sf::Font& mainFont,
-              Bear* theBear,
+              Bear theBear,
               bool titleBar = true,
               sf::Vector2f thePosition = sf::Vector2f(205, 0),
               sf::Vector2f theSize = sf::Vector2f(390, 23) );//48 if hasTitleBar
     void Update();
-    void NewBearPtr(Bear* theNewBearPtr);
+    void SetBear(const Bear& theNewBear);
     Bear* GetBearPtr();
+    bool GetShouldAppear();
+    void SetShouldAppear(bool shouldBearAppear);
     sf::Vector2f GetNameBoxPosition();
     sf::Vector2f GetNameBoxSize();
     void draw();//See comment in MessageBox
   private:
     sf::RenderWindow* window;
-    Bear* bear = nullptr;
+    Bear bear;
     const sf::Vector2f position;
     const sf::Vector2f size;
 
@@ -162,6 +104,7 @@ class BearStats{
     sf::Text bearInfo[numBearInfo];
 
     bool hasTitleBar;
+    bool shouldAppear = false;
 };
 
 
@@ -195,13 +138,13 @@ class PlayerStats{
 };
 
 
-class Display{
+class HUD{
   public:
-    Display(sf::RenderWindow& theWindow,
+    HUD(sf::RenderWindow& theWindow,
             sf::Font& titleFont,
             sf::Font& mainFont,
             Player& thePlayer,
-            Bear& theBear);
+            const Bear& theBear);
     MessageBox messages;
     OptionsBox options;
     BearStats bearStats[5];
@@ -210,10 +153,7 @@ class Display{
     Player* GetPlayerPtr(){return player;}
     Bear* GetBearPtr(){return bear;}
     int GetNumBears();//The number of bears that exist
-    void AddEnemyBears(Bear* bear0,
-                       Bear* bear1 = nullptr,
-                       Bear* bear2 = nullptr,
-                       Bear* bear3 = nullptr);
+    void AddEnemyBears(Bear bear[], int numBears);
     bool RemoveDeadCombatants();//Returns true if fight is over
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);

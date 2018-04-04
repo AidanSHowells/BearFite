@@ -3,7 +3,7 @@
 #include "Bear.h"
 
 
-bool BearBattle(Display& theHUD, int& tempInt){
+bool BearBattle(HUD& theHUD, Bear& fakeBear){
   //Keep track of turns
   TurnOf turn = TurnOf::player;
 
@@ -19,7 +19,6 @@ bool BearBattle(Display& theHUD, int& tempInt){
 
     if(TurnOf::bear == turn){
       sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
-      //theHUD.GetBearPtr() -> Bash(*theHUD.GetPlayerPtr());//Old
       for(int i = 0; i < theHUD.GetNumBears(); i++){
         theHUD.bearStats[i].GetBearPtr() -> Bash(*theHUD.GetPlayerPtr());
       }
@@ -38,7 +37,7 @@ bool BearBattle(Display& theHUD, int& tempInt){
         turn = theHUD.TakeAction(event);
       }
     }
-    tempInt = theHUD.GetBearPtr() -> GetHealth();//TEMP
+    fakeBear = *(theHUD.GetBearPtr() );//TEMP
     if(theHUD.RemoveDeadCombatants()){return true;}
 
     //Draw the stuff to the screen

@@ -16,6 +16,7 @@ class BabbyBear : public Bear{
       baseAttackBonus = level;
       baseAC = 35 + level;
       armor = 0;
+      canBeFought = true;
     }
 };
 
@@ -30,6 +31,7 @@ class BlackBear : public Bear{
       baseAttackBonus = level;
       baseAC = 30 + level;
       armor = 0;
+      canBeFought = true;
     }
 };
 
@@ -44,6 +46,7 @@ class BrownBear : public Bear{
       baseAttackBonus = level;
       baseAC = 30 + level;
       armor = 0;
+      canBeFought = true;
     }
 };
 
@@ -58,39 +61,42 @@ class PolarBear : public Bear{
       baseAttackBonus = -15 + level;
       baseAC = 25 + level;
       armor = 0;
+      canBeFought = true;
     }
 };
 
 
 
-//TEMP: Belongs in its own file
-void FindBear(sf::Keyboard::Key theKey, Display& theHUD, Bear theBear[4]){
+//TEMP: Belongs in FindBear.cpp
+void FindBear(sf::Keyboard::Key theKey, HUD& theHUD){
+  Bear theBear[4];
   if(sf::Keyboard::Q == theKey){
     BabbyBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(&theBear[0]);
+    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::W == theKey){
     BlackBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(&theBear[0]);
+    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::E == theKey){
     BrownBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(&theBear[0]);
+    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::R == theKey){
     PolarBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(&theBear[0]);
+    theHUD.AddEnemyBears(theBear, 1);
   }
   else{
     for(int i = 0; i < 4; i++){
       BabbyBear bear;
       theBear[i] = bear;
     }
-    theHUD.AddEnemyBears(&theBear[0], &theBear[1], &theBear[2], &theBear[3]);
+    //theHUD.AddEnemyBears(&theBear[0], &theBear[1], &theBear[2], &theBear[3]);
+    theHUD.AddEnemyBears(theBear, 4);
   }
 }
 //end TEMP

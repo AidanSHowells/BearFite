@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "HUD.h"
+#include "Messages.h"
 
 class Bear;
 

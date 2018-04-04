@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"
+#include "HUD.h"
 #include <algorithm>//for std::max and std::min
 
 void Bear::SetMessageBox(MessageBox& theMessages){
@@ -17,6 +18,8 @@ int Bear::AC(){return baseAC + armor + abil[1] - 10;}
 
 sf::String Bear::GetName(){return name;}
 
+sf::String Bear::GetModifier(){return modifier;}
+
 int Bear::GetHealth(){return health;}
 
 void Bear::Hurt(int dmg){health -= dmg;}
@@ -32,10 +35,6 @@ void Bear::Bash(Player& thePlayer){
   else{
     Messages -> Update("Bear Spare You");
   }
-}
-
-void Bear::ShowHealth(){
-  Messages -> Update("Bear is health:", health);
 }
 
 void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR){

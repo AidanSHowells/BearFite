@@ -28,23 +28,26 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
   }
   else if(theAction == Action::eye){
     //return EyePunch(theBear);
-    Messages -> Update("Eye punching", "is unsupported.");//TEMP
+    Messages -> Update(sf::String("Eye punching"),
+                       sf::String("is unsupported."));//TEMP
     return TurnOf::player;//TEMP
   }
   else if(theAction == Action::john_hopkins){
-    Messages -> Update("John Hopkins punching", "is unsupported.");//TEMP
+    Messages -> Update(sf::String("John Hopkins punching"),
+                       sf::String("is unsupported."));//TEMP
     return TurnOf::player;//TEMP
   }
   else if(theAction == Action::quaff){
     return Quaff();
   }
   else if(theAction == Action::cast){
-    Messages -> Update("Whoops!", "Spellcasting Error");
+    Messages -> Update(sf::String("Whoops!"), sf::String("Spellcasting Error"));
     return TurnOf::player;
   }
   else if(theAction == Action::flee){
     //return Flee(theBear);
-    Messages -> Update("Fleeing", "is unsupported.");//TEMP
+    Messages -> Update(sf::String("Fleeing"),
+                       sf::String("is unsupported."));//TEMP
     return TurnOf::player;//TEMP
   }
   else{
