@@ -62,12 +62,12 @@ MessageBox::MessageBox(
     line[i].setString("");
     line[i].setCharacterSize(15);
     line[i].setFillColor(sf::Color::Black);
-    line[i].setPosition(position.x, position.y + 20 * i);
+    line[i].setPosition(position.x, position.y + float(20 * i));
   }
   for(int i = 0; i < numDivLines; i++){
     divLine[i].setSize(sf::Vector2f(size.x, 1));
     divLine[i].setFillColor(sf::Color::Black);
-    divLine[i].setPosition(position.x, position.y + 40 + 20 * i);
+    divLine[i].setPosition(position.x, position.y + float(40 + 20 * i));
     displayDivLine[i] = false;
   }
 }
@@ -187,7 +187,7 @@ OptionsBox::OptionsBox(
     punch[i].setFont(mainFont);
     punch[i].setCharacterSize(25);
     punch[i].setFillColor(sf::Color::Black);
-    punch[i].setPosition(position.x, position.y + 30 * i);
+    punch[i].setPosition(position.x, position.y + float(30 * i));
   }
   punch[1].setString("1:Leg");
   punch[2].setString("2:Eye");
@@ -205,7 +205,7 @@ OptionsBox::OptionsBox(
     notPunch[i].setFont(mainFont);
     notPunch[i].setCharacterSize(25);
     notPunch[i].setFillColor(sf::Color::Black);
-    notPunch[i].setPosition(divPosition + 10, position.y + 30 * i);
+    notPunch[i].setPosition(divPosition + 10, position.y + float(30 * i));
   }
   notPunch[1].setString("4:Quaff Drank");
   notPunch[2].setString("5:Cast Spell");
@@ -265,7 +265,8 @@ Action OptionsBox::GetAction(sf::Event theEvent){
     }
   }
   else if(theEvent.type == sf::Event::MouseButtonPressed){
-    sf::Vector2f clickLocation(theEvent.mouseButton.x,theEvent.mouseButton.y);
+    sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
+                               float(theEvent.mouseButton.y) );
 
     if (textBox[0].contains(clickLocation)){
       return Action::leg;
@@ -318,7 +319,7 @@ BearStats::BearStats(
 window(&theWindow),
 bear(theBear),
 position(thePosition),
-size(theSize + sf::Vector2f(0, 25 * int(titleBar)) ),
+size(theSize + sf::Vector2f(0, float(25 * int(titleBar)) ) ),
 hasTitleBar(titleBar),
 shouldAppear(theBear.CanBeFought())
 {
@@ -341,7 +342,7 @@ shouldAppear(theBear.CanBeFought())
     bearInfo[i].setCharacterSize(20);
     bearInfo[i].setFillColor(sf::Color::Black);
     bearInfo[i].setPosition(bearInfo[i-1].getPosition().x,
-                            position.y - 3 + 23 * int(hasTitleBar));
+                            position.y - float(3 - 23 * int(hasTitleBar)) );
   }
   //no need to set dynamic text here, since Update is called by HUD::draw
 
@@ -454,7 +455,7 @@ size(theSize)
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
-    health[i].setPosition(position.x, position.y + 20 + 20 * (i/2));
+    health[i].setPosition(position.x, position.y + float(20 + 20 * (i/2)));
   }
 
   //Make the ability score header
@@ -469,12 +470,14 @@ size(theSize)
     ability[i].setFont(mainFont);
     ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
-    ability[i].setPosition(position.x + 100*(i/6), position.y + 87 + (i%6)*10);
+    ability[i].setPosition(position.x + float(100 * ( i / 6) ),
+                           position.y + float(87 + (i % 6) * 10) );
 
     ability[i+1].setFont(mainFont);
     ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
-    ability[i+1].setPosition(position.x + 100*(i/6), position.y + 87+(i%6)*10);
+    ability[i+1].setPosition(position.x + float(100 * (i / 6) ),
+                             position.y + float(87 + (i % 6) * 10) );
   }
   ability[1].setString("STR:");
   ability[3].setString("DEX:");
@@ -495,12 +498,12 @@ size(theSize)
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
-    spell[i].setPosition(position.x, position.y + 163 + i * 10);
+    spell[i].setPosition(position.x, position.y + float(163 + i * 10) );
 
     spell[i+1].setFont(mainFont);
     spell[i+1].setCharacterSize(15);
     spell[i+1].setFillColor(sf::Color::Black);
-    spell[i+1].setPosition(position.x, position.y + 163 + i * 10);
+    spell[i+1].setPosition(position.x, position.y + float(163 + i * 10) );
     spell[i+1].setString("            5");//FIXME
   }
   //FIXME: This whole list should eventually be dynamic
@@ -530,7 +533,7 @@ size(theSize)
   for(int i = 0; i < numDivLine; i++){
     divLine[i].setSize(sf::Vector2f(200,1));
     divLine[i].setFillColor(sf::Color::Black);
-    divLine[i].setPosition(position.x, position.y + 162 + 10 + i * 60);
+    divLine[i].setPosition(position.x, position.y + float(162 + 10 + i * 60) );
   }
 }
 
