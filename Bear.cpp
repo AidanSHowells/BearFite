@@ -8,6 +8,8 @@ void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
 }
 
+int Bear::HitDice(){return Roll(level, hitDieSize);}
+
 int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
 
 int Bear::AttackBonus(){return abil[0] - 10 + abil[1] - 10;}
