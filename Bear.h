@@ -10,7 +10,7 @@ class HUD;
 class Bear{
   public:
     void SetMessageBox(MessageBox& theMessages);
-    int AC();
+    int AC(Action);
     sf::String GetName();
     sf::String GetModifier();
     void Bash(Player& thePlayer);
@@ -27,6 +27,7 @@ class Bear{
     int hitDieSize = 6;
     int baseAttackBonus = 0;
     int baseAC = 30;
+    int eyeACBonus = 0;
     int armor = 0;
     int level = 0;
     int HitDice();

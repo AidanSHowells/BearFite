@@ -12,11 +12,18 @@ int Bear::HitDice(){return Roll(level, hitDieSize);}
 
 int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
 
-int Bear::AttackBonus(){return abil[0] - 10 + abil[1] - 10;}
+int Bear::AttackBonus(){return abil[0] - 10 + 2*(abil[1] - 10);}
 
 int Bear::DamageBonus(){return (abil[0] - 10)/2;}
 
-int Bear::AC(){return baseAC + armor + abil[1] - 10;}
+int Bear::AC(Action attackType){
+  if(attackType == Action::leg){
+    return baseAC + armor + abil[1] - 10;
+  }
+  if(attackType == Action::eye){
+    return baseAC + armor + abil[1] - 10 + eyeACBonus;
+  }
+}
 
 sf::String Bear::GetName(){return name;}
 

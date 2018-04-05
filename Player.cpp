@@ -18,6 +18,10 @@ int Player::LegAttackBonus(){return abil[0] - 10;}
 
 int Player::LegDamageBonus(){return (abil[0] - 10)/2;}
 
+int Player::EyeAttackBonus(){return abil[0] - 10 + abil[1] - 10;}
+
+int Player::EyeDamageBonus(){return 2*(abil[0] - 10) + 5;}
+
 int Player::AC(){return baseAC + armor + abil[1] - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
@@ -27,10 +31,11 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
     return LegPunch(theBear);
   }
   else if(theAction == Action::eye){
+    return EyePunch(theBear);
     //return EyePunch(theBear);
-    Messages -> Update(sf::String("Eye punching"),
-                       sf::String("is unsupported."));//TEMP
-    return TurnOf::player;//TEMP
+    //Messages -> Update(sf::String("Eye punching"),
+    //                   sf::String("is unsupported."));//TEMP
+    //return TurnOf::player;//TEMP
   }
   else if(theAction == Action::john_hopkins){
     Messages -> Update(sf::String("John Hopkins punching"),
@@ -57,8 +62,20 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(Roll(1,60) + LegAttackBonus() >= bear.AC()){
+  if(Roll(1,60) + LegAttackBonus() >= bear.AC(Action::leg)){
     dmg = Roll(1,8) + LegDamageBonus();
+    Messages -> Update("You got bear for:", dmg, true);
+    bear.Hurt(dmg);
+  }
+  else{Messages -> Update("Carp, you miss.", true);}
+
+  return TurnOf::bear;//Not the player's turn anymore
+}
+
+TurnOf Player::EyePunch(Bear& bear){
+  int dmg = 0; //Keeps track of the damage of this attack
+  if(Roll(1,60) + EyeAttackBonus() >= bear.AC(Action::eye)){
+    dmg = Roll(2,12) + EyeDamageBonus();
     Messages -> Update("You got bear for:", dmg, true);
     bear.Hurt(dmg);
   }

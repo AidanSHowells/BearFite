@@ -10,12 +10,13 @@ class BabbyBear : public Bear{
   public:
     BabbyBear(){
       name = sf::String("Babby ");
-      SetAbil(6, 12, 7, 1, 3, 6);
+      SetAbil(4, 12, 7, 1, 3, 6);
       level = std::max(0, Roll(1,6) - 4); //babby occasionally has a level
       hitDieSize = 6;
       health = 20 + HitDice() + HealthBonus();
       baseAttackBonus = level;
       baseAC = 35 + level;
+      eyeACBonus = 20;
       armor = 0;
       canBeFought = true;
     }
@@ -26,12 +27,13 @@ class BlackBear : public Bear{
   public:
     BlackBear(){
       name = sf::String("Black ");
-      SetAbil(10, 17, 12, 7, 5, 8);
+      SetAbil(8, 17, 12, 7, 5, 8);
       level = std::max(1, Roll(1,6) - 3);
       hitDieSize = 6;
       health = 20 + HitDice() + HealthBonus();
       baseAttackBonus = level;
       baseAC = 30 + level;
+      eyeACBonus = 20;
       armor = 0;
       canBeFought = true;
     }
@@ -42,12 +44,13 @@ class BrownBear : public Bear{
   public:
     BrownBear(){
       name = sf::String("Brown ");
-      SetAbil(16, 7, 16, 5, 5, 10);
+      SetAbil(14, 7, 16, 5, 5, 10);
       level = std::max(1, Roll(1,6) - 3);
       hitDieSize = 6;
       health = 20 + HitDice() + HealthBonus();
       baseAttackBonus = level;
       baseAC = 30 + level;
+      eyeACBonus = 20;
       armor = 0;
       canBeFought = true;
     }
@@ -58,12 +61,13 @@ class PolarBear : public Bear{
   public:
     PolarBear(){
       name = sf::String("Polar ");
-      SetAbil(16, 2, 21, 3, 3, 4);
+      SetAbil(14, 2, 21, 3, 3, 4);
       level = std::max(1, Roll(1,6) - 3);
-      hitDieSize = 8;
+      hitDieSize = 10;
       health = 30 + HitDice() + HealthBonus();
       baseAttackBonus = -15 + level;
       baseAC = 25 + level;
+      eyeACBonus = 20;
       armor = 0;
       canBeFought = true;
     }

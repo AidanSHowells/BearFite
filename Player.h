@@ -32,7 +32,10 @@ class Player{
     int armor = 0; //This will be determined by equipped items and magic
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
+    int EyeAttackBonus();
+    int EyeDamageBonus();
     TurnOf LegPunch(Bear& bear);
+    TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();
 };
 
