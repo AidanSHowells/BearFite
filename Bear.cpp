@@ -8,8 +8,6 @@ void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
 }
 
-int Bear::HitDice(){return Roll(level, hitDieSize);}
-
 int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
 
 int Bear::AttackBonus(){return abil[0] - 10 + 2*(abil[1] - 10);}
@@ -29,7 +27,28 @@ sf::String Bear::GetName(){return name;}
 
 sf::String Bear::GetModifier(){return modifier;}
 
-int Bear::GetHealth(){return health;}
+void Bear::SetHealth(){
+  health = MaxHealth();
+}
+
+int Bear::GetHealth(){
+  health = std::min(health, MaxHealth());
+
+  return health;
+}
+
+int Bear::MaxHealth(){
+  //Roll any missing hit dice
+  for(int i = hitDice.size(); i < level; i++){
+    hitDice.push_back(Roll(1,hitDieSize));
+  }
+
+  int maxHealth = baseHealth + HealthBonus();
+  for(int i = 0; i < level; i++){
+    maxHealth += hitDice.at(i);
+  }
+  return maxHealth;
+}
 
 void Bear::Hurt(int dmg){health -= dmg;}
 

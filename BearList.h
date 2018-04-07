@@ -13,7 +13,8 @@ class BabbyBear : public Bear{
       SetAbil(4, 12, 7, 1, 3, 6);
       level = std::max(0, Roll(1,6) - 4); //babby occasionally has a level
       hitDieSize = 6;
-      health = 20 + HitDice() + HealthBonus();
+      baseHealth = 20;
+      SetHealth();
       baseAttackBonus = level;
       baseAC = 35 + level;
       eyeACBonus = 20;
@@ -30,7 +31,8 @@ class BlackBear : public Bear{
       SetAbil(8, 17, 12, 7, 5, 8);
       level = std::max(1, Roll(1,6) - 3);
       hitDieSize = 6;
-      health = 20 + HitDice() + HealthBonus();
+      baseHealth = 20;
+      SetHealth();
       baseAttackBonus = level;
       baseAC = 30 + level;
       eyeACBonus = 20;
@@ -47,7 +49,8 @@ class BrownBear : public Bear{
       SetAbil(14, 7, 16, 5, 5, 10);
       level = std::max(1, Roll(1,6) - 3);
       hitDieSize = 6;
-      health = 20 + HitDice() + HealthBonus();
+      baseHealth = 20;
+      SetHealth();
       baseAttackBonus = level;
       baseAC = 30 + level;
       eyeACBonus = 20;
@@ -64,7 +67,8 @@ class PolarBear : public Bear{
       SetAbil(14, 2, 21, 3, 3, 4);
       level = std::max(1, Roll(1,6) - 3);
       hitDieSize = 10;
-      health = 30 + HitDice() + HealthBonus();
+      baseHealth = 30;
+      SetHealth();
       baseAttackBonus = -15 + level;
       baseAC = 25 + level;
       eyeACBonus = 20;
