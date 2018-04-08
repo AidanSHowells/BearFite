@@ -42,6 +42,11 @@ Possible modifiers that bears can have:
 * Lesser form of Gregarious (more allied bears)
 * Lesser form of Numerous (allied bears are identical, instead of lower level)
 
+### Hungry
+* -5 to CON
+* Fish spell results in love
+* Bear always argry
+
 ### Mother
 * Appears with allied babby bear(s) in tow
 
