@@ -80,8 +80,23 @@ class PolarBear : public Bear{
 
 
 //TEMP: Belongs in FindBear.cpp
-void FindBear(sf::Keyboard::Key theKey, HUD& theHUD){
+void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
   Bear theBear[4];
+  if(sf::Keyboard::Z == theKey){
+    const int tempInt = Roll(1,4);
+    if(tempInt == 1){
+      theKey = sf::Keyboard::Q;
+    }
+    if(tempInt == 2){
+      theKey = sf::Keyboard::W;
+    }
+    if(tempInt == 3){
+      theKey = sf::Keyboard::E;
+    }
+    if(tempInt == 4){
+      theKey = sf::Keyboard::R;
+    }
+  }
   if(sf::Keyboard::Q == theKey){
     BabbyBear bear;
     theBear[0] = bear;
@@ -102,13 +117,17 @@ void FindBear(sf::Keyboard::Key theKey, HUD& theHUD){
     theBear[0] = bear;
     theHUD.AddEnemyBears(theBear, 1);
   }
-  else{
+  else if(sf::Keyboard::A == theKey){
     for(int i = 0; i < 4; i++){
       BabbyBear bear;
       theBear[i] = bear;
     }
     //theHUD.AddEnemyBears(&theBear[0], &theBear[1], &theBear[2], &theBear[3]);
     theHUD.AddEnemyBears(theBear, 4);
+  }
+  else{
+    theHUD.messages.Update(sf::String("Whoops! That key is"),
+                           sf::String("not supported."));
   }
 }
 //end TEMP

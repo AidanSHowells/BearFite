@@ -761,9 +761,9 @@ int main(){
   int lossesToParty = 0;
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-  messages.Update("Q = Babby, W = Black",
-                  "E = Brown, R = Polar",
-                  "T = Babby Party");
+  messages.Update("Q - R: Regular Bears",
+                  "A: Babby Party",
+                  "Z: Random Bear");
 
   Player player;
   PlayerStats status(window,courierNewBd,courierNew,player);
@@ -780,27 +780,29 @@ int main(){
            event.key.code == sf::Keyboard::W ||
            event.key.code == sf::Keyboard::E ||
            event.key.code == sf::Keyboard::R ||
-           event.key.code == sf::Keyboard::T)
+           event.key.code == sf::Keyboard::A ||
+           event.key.code == sf::Keyboard::Z)
         {
+          sf::Keyboard::Key key = event.key.code;
           int bearHealth = 420;
           Bear fakeBear;
           HUD battleHUD(window,courierNewBd,courierNew,player,fakeBear);
-          FindBear(event.key.code, battleHUD);
+          FindBear(key, battleHUD);
 
 
           if(BearBattle(battleHUD, fakeBear)){
-            if(event.key.code == sf::Keyboard::Q){winsvBabby++;}
-            if(event.key.code == sf::Keyboard::W){winsvBlack++;}
-            if(event.key.code == sf::Keyboard::E){winsvBrown++;}
-            if(event.key.code == sf::Keyboard::R){winsvPolar++;}
-            if(event.key.code == sf::Keyboard::T){winsvParty++;}
+            if(key == sf::Keyboard::Q){winsvBabby++;}
+            if(key == sf::Keyboard::W){winsvBlack++;}
+            if(key == sf::Keyboard::E){winsvBrown++;}
+            if(key == sf::Keyboard::R){winsvPolar++;}
+            if(key == sf::Keyboard::A){winsvParty++;}
           }
           else{
-            if(event.key.code == sf::Keyboard::Q){lossesToBabby++;}
-            if(event.key.code == sf::Keyboard::W){lossesToBlack++;}
-            if(event.key.code == sf::Keyboard::E){lossesToBrown++;}
-            if(event.key.code == sf::Keyboard::R){lossesToPolar++;}
-            if(event.key.code == sf::Keyboard::T){lossesToParty++;}
+            if(key == sf::Keyboard::Q){lossesToBabby++;}
+            if(key == sf::Keyboard::W){lossesToBlack++;}
+            if(key == sf::Keyboard::E){lossesToBrown++;}
+            if(key == sf::Keyboard::R){lossesToPolar++;}
+            if(key == sf::Keyboard::A){lossesToParty++;}
           }
           player.SetMessageBox(messages);
 
@@ -824,10 +826,10 @@ int main(){
           std::to_string(winsvParty) + "/" +
           std::to_string(winsvParty + lossesToParty));
 
-          messages.Update("Q = Babby, W = Black",
-                          "E = Brown, R = Polar",
-                          "T = Babby Party",
-                          "D = Dranks, H = Heal");
+          messages.Update("Q - R: Regular Bears",
+                          "A: Babby Party",
+                          "Z: Random Bear",
+                          "D: Dranks, H: Heal");
         }//endif specific key
         else if(event.key.code == sf::Keyboard::D){
           player.Replenish();
