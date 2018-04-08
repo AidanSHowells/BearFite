@@ -44,6 +44,8 @@ class Bear{
     int eyeACBonus = 0;
     int armor = 0;
     int level = 0;
+    int critThreat = 0; //how likely the bear is to crit
+    int critMult = 1; //how painful the bear criticals are
     int AttackBonus();
     int DamageBonus();
     bool canBeFought = false;

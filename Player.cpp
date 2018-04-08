@@ -62,10 +62,18 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(Roll(1,60) + LegAttackBonus() >= bear.AC(Action::leg)){
-    dmg = Roll(1,8) + LegDamageBonus();
-    Messages -> Update("You got bear for:", dmg, true);
-    bear.Hurt(dmg);
+  int roll = Roll(1,60); //keeps track of roll for handling criticals
+
+  if(roll + LegAttackBonus() >= bear.AC(Action::leg) || roll == 60){
+    if(roll > 60 - legCritThreat){
+      dmg = Roll(2,8) + 2 * LegDamageBonus();
+      Messages -> Update("You CRIT bear for:", dmg, true);
+    }
+    else{
+      dmg = Roll(1,8) + LegDamageBonus();
+      Messages -> Update("You got bear for:", dmg, true);
+    }
+    bear.Hurt(std::max(1,dmg));
   }
   else{Messages -> Update("Carp, you miss.", true);}
 
@@ -74,10 +82,17 @@ TurnOf Player::LegPunch(Bear& bear){
 
 TurnOf Player::EyePunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  if(Roll(1,60) + EyeAttackBonus() >= bear.AC(Action::eye)){
-    dmg = Roll(2,12) + EyeDamageBonus();
-    Messages -> Update("You got bear for:", dmg, true);
-    bear.Hurt(dmg);
+  int roll = Roll(1,60); //keeps track fo roll for handling criticals
+  if(roll + EyeAttackBonus() >= bear.AC(Action::eye) || roll == 60){
+    if(roll > 60 - eyeCritThreat){
+      dmg = Roll(4,12) + 2 * EyeDamageBonus();
+      Messages -> Update("You CRIT bear for:", std::max(1,dmg), true);
+    }
+    else{
+      dmg = Roll(2,12) + EyeDamageBonus();
+      Messages -> Update("You got bear for:", std::max(1,dmg), true);
+    }
+    bear.Hurt(std::max(1,dmg));
   }
   else{Messages -> Update("Carp, you miss.", true);}
 

@@ -19,6 +19,8 @@ class BabbyBear : public Bear{
       baseAC = 35 + level;
       eyeACBonus = 20;
       armor = 0;
+      critThreat = 0;
+      critMult = 2;
       canBeFought = true;
     }
 };
@@ -37,6 +39,8 @@ class BlackBear : public Bear{
       baseAC = 30 + level;
       eyeACBonus = 20;
       armor = 0;
+      critThreat = 3 + level/5;
+      critMult = 2;
       canBeFought = true;
     }
 };
@@ -55,6 +59,8 @@ class BrownBear : public Bear{
       baseAC = 30 + level;
       eyeACBonus = 20;
       armor = 0;
+      critThreat = 2;
+      critMult = 3;
       canBeFought = true;
     }
 };
@@ -73,6 +79,8 @@ class PolarBear : public Bear{
       baseAC = 25 + level;
       eyeACBonus = 20;
       armor = 0;
+      critThreat = 0;
+      critMult = 5;
       canBeFought = true;
     }
 };
