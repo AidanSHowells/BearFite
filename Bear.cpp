@@ -8,8 +8,6 @@ void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
 }
 
-int Bear::HealthBonus(){return (abil[2] - 10) * 2;}
-
 int Bear::AttackBonus(){return abil[0] - 10 + 2*(abil[1] - 10);}
 
 int Bear::DamageBonus(){return (abil[0] - 10)/2;}
@@ -27,27 +25,16 @@ sf::String Bear::GetName(){return name;}
 
 sf::String Bear::GetModifier(){return modifier;}
 
+
 void Bear::SetHealth(){
-  health = MaxHealth();
+  health = body.UpdateHealth(body.baseHealth, level, abil[2]);
 }
+
 
 int Bear::GetHealth(){
-  health = std::min(health, MaxHealth());
+  health = body.UpdateHealth(health, level, abil[2]);
 
   return health;
-}
-
-int Bear::MaxHealth(){
-  //Roll any missing hit dice
-  for(int i = hitDice.size(); i < level; i++){
-    hitDice.push_back(Roll(1,hitDieSize));
-  }
-
-  int maxHealth = baseHealth + HealthBonus();
-  for(int i = 0; i < level; i++){
-    maxHealth += hitDice.at(i);
-  }
-  return maxHealth;
 }
 
 void Bear::Hurt(int dmg){health -= dmg;}
@@ -72,4 +59,28 @@ void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR){
   abil[3] = INT;
   abil[4] = WIS;
   abil[5] = CHR;
+}
+
+int Body::UpdateHealth(int newHealth, int newLevel, int newCON){
+  health = newHealth;
+
+  if(level < newLevel){
+    //Roll any missing hit dice
+    for(int i = hitDice.size(); i < newLevel; i++){
+      hitDice.push_back(Roll(1,hitDieSize));
+    }
+    for(int i = level; i < newLevel; i++){
+      health += hitDice.at(i);
+    }
+  }
+  if(level > newLevel){
+    for(int i = newLevel; i < level; i++){
+      health -= hitDice.at(i);
+    }
+  }
+  health = health - HealthBonus(CON) + HealthBonus(newCON);
+
+  level = newLevel;
+  CON = newCON;
+  return health;
 }

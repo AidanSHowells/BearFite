@@ -4,8 +4,19 @@
 #include "Messages.h"
 
 class Player;
-class HUD;
 
+class Body{
+  public:
+    int baseHealth = 420;
+    int hitDieSize = 0;
+    int UpdateHealth(int newHealth, int newLevel, int newCON);
+  private:
+    int health;
+    int level = 0;
+    int CON = 10;
+    std::vector<int> hitDice;
+    int HealthBonus(int constitution){return (constitution - 10) * 2;}
+};
 
 class Bear{
   public:
@@ -24,12 +35,8 @@ class Bear{
     sf::String modifier = sf::String("Horse Defense");
     int abil[6] = {10, 10, 10, 10, 10, 10};
 
-    int baseHealth = 420;
-    std::vector<int> hitDice;
-    int SumDice();
-    int health = 420;
-    int hitDieSize = 6;
-    int MaxHealth();
+    int health;
+    Body body;
     void SetHealth();
 
     int baseAttackBonus = 0;
@@ -37,7 +44,6 @@ class Bear{
     int eyeACBonus = 0;
     int armor = 0;
     int level = 0;
-    int HealthBonus();
     int AttackBonus();
     int DamageBonus();
     bool canBeFought = false;
