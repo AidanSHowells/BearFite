@@ -2,6 +2,7 @@
 #define BEAR_H
 
 #include "Messages.h"
+#include "ModifierList.h"
 
 class Player;
 
@@ -29,10 +30,12 @@ class Bear{
     int GetHealth();
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     bool CanBeFought(){return canBeFought;}
+    std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
   protected:
     MessageBox* Messages; //So damage statements know where to print
     sf::String name = sf::String("Klepto");
-    sf::String modifier = sf::String("Horse Defense");
+    Modifier modifier;
+    Modifier modifier2;
     int abil[6] = {10, 10, 10, 10, 10, 10};
 
     int health;

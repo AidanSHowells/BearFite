@@ -90,7 +90,8 @@ class PolarBear : public Bear{
 //TEMP: Belongs in FindBear.cpp
 void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
   Bear theBear[4];
-  if(sf::Keyboard::Z == theKey){
+  bool isRandom = (sf::Keyboard::Z == theKey);
+  if(isRandom){
     const int tempInt = Roll(1,4);
     if(tempInt == 1){
       theKey = sf::Keyboard::Q;
@@ -108,36 +109,125 @@ void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
   if(sf::Keyboard::Q == theKey){
     BabbyBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::W == theKey){
     BlackBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::E == theKey){
     BrownBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::R == theKey){
     PolarBear bear;
     theBear[0] = bear;
-    theHUD.AddEnemyBears(theBear, 1);
   }
   else if(sf::Keyboard::A == theKey){
     for(int i = 0; i < 4; i++){
       BabbyBear bear;
       theBear[i] = bear;
     }
-    //theHUD.AddEnemyBears(&theBear[0], &theBear[1], &theBear[2], &theBear[3]);
     theHUD.AddEnemyBears(theBear, 4);
+    return;//This is gross, but this whole part of the function is temporary
   }
   else{
     theHUD.messages.Update(sf::String("Whoops! That key is"),
                            sf::String("not supported."));
   }
+  if(isRandom){
+    int randInt = Roll(1, int(ModifierIs::SIZE)) - 1;
+    if(1 == Roll(1,3)){
+      randInt = 0;
+    }
+    Modifier mod = GetModifier(ModifierIs(randInt));
+
+    //Functions can't return C-style arrays, so we have to get "creative":
+    std::array<Bear, 4> bears = theBear[0].ApplyModifier(mod);
+    for(int i = 0; i < 4; i++){
+      theBear[i] = bears.at(i);
+    }
+
+    int numBears = 1 + mod.numTwins;//For the moment
+    //int numBears = 1 + mod.numCompanians + mod.numTwins;//Eventually
+    theHUD.AddEnemyBears(theBear, numBears);
+  }
+  else{
+    theHUD.AddEnemyBears(theBear, 1);
+  }
 }
-//end TEMP
+//Eventual Algorithm:
+//Make vector of bears whose base level is small enough
+//Choose a bear from the vector at random
+//Some (25% ?) chance of no modifier. Else:
+  //Make vector of modifiers whose effective level is small enough (none, etc.)
+  //Choose a modifier from the vector at random
+
+
+//end TEMP (Belongs in FindBear.cpp)
+
+
+//TEMP: Belongs in ModifierList.cpp
+#include <iostream> //for std::cerr
+
+Modifier GetModifier(ModifierIs identifier){
+  Modifier theModifier;
+  if(ModifierIs::none == identifier){
+    //Do nothing
+  }
+  else if(ModifierIs::beefy == identifier){
+    Beefy tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::exact == identifier){
+    Exact tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::sturdy == identifier){
+    Sturdy tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::genious == identifier){
+    Genious tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::socrates == identifier){
+    Socrates tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::handsome == identifier){
+    Handsome tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::numerous == identifier){
+    Numerous tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::experienced == identifier){
+    Experienced tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::keen == identifier){
+    Keen tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::crictal == identifier){
+    Crictal tempMod;
+    theModifier = tempMod;
+  }
+  else if(ModifierIs::SIZE == identifier){
+    std::cerr << "Warning!";
+    std::cerr << "Attempted use of ModifierIs::SIZE in GetModifier() function.";
+    std::cerr << std::endl;
+  }
+  else{
+    std::cerr << "Warning!";
+    std::cerr << "Attempted use of modifier unknown to GetModifier() function.";
+    std::cerr << std::endl;
+  }
+  return theModifier;
+}
+
+
+//end TEMP (Belongs in ModifierList.cpp)
 
 #endif

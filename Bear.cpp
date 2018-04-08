@@ -23,7 +23,7 @@ int Bear::AC(Action attackType){
 
 sf::String Bear::GetName(){return name;}
 
-sf::String Bear::GetModifier(){return modifier;}
+sf::String Bear::GetModifier(){return modifier.name;}
 
 
 void Bear::SetHealth(){
@@ -35,6 +35,38 @@ int Bear::GetHealth(){
   health = body.UpdateHealth(health, level, abil[2]);
 
   return health;
+}
+
+std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
+  if(isDerived){
+    modifier2 = mod;
+  }
+  else{
+    modifier = mod;
+  }
+  for(int i = 0; i < 6; i++){
+    abil[i] = std::max(abil[i] + mod.abilAdd[i], 1);//Don't kill the bear
+  }
+  level += mod.levelAdd;
+
+  critThreat *= mod.critThreatMult;
+  critThreat += mod.critThreatAdd;
+  critMult *= mod.critMultMult;
+  critMult += mod.critMultAdd;
+
+
+  //NOTE: Twins and companians stuff should come last
+  //Make an array whose first bear is this bear:
+  std::array<Bear, 4> theBears = {*this};
+  //Add any twins to the array:
+  for(int i = 1; i < mod.numTwins; i++){
+    theBears.at(i) = theBears.at(0);
+  }
+
+  if(!isDerived && mod.derivedModifier != nullptr){
+    return ApplyModifier(*(mod.derivedModifier), true);
+  }
+  return theBears;//Return that array
 }
 
 void Bear::Hurt(int dmg){health -= dmg;}
