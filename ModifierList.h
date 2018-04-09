@@ -81,7 +81,7 @@ struct Handsome : Modifier{
 struct Numerous : Modifier{
   Numerous(){
     name = sf::String("Numerous");
-    numTwins = 3;
+    numTwins = 2;
   }
 };
 

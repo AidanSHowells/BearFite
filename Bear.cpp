@@ -59,7 +59,7 @@ std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
   //Make an array whose first bear is this bear:
   std::array<Bear, 4> theBears = {*this};
   //Add any twins to the array:
-  for(int i = 1; i < mod.numTwins; i++){
+  for(int i = 1; i <= mod.numTwins; i++){
     theBears.at(i) = theBears.at(0);
   }
 
