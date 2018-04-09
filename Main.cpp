@@ -12,7 +12,7 @@
  */
 
 int main(){
-  //Declaire variables
+  //Declare variables
   bool onSplashPage = true;
 
   // create the window
