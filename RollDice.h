@@ -1,7 +1,11 @@
 #ifndef ROLLDICE_H
 #define ROLLDICE_H
 
-int Roll(int diceNumber, int diceType);
+enum class RollMod{none, wild, consistant};
+
+int Roll(const int diceNumber,
+         const int diceType,
+         const RollMod modifier = RollMod::none);
 
 #endif
 
