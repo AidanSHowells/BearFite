@@ -1,6 +1,7 @@
 #ifndef BEAR_H
 #define BEAR_H
 
+#include <array>//For std::array
 #include "Messages.h"
 #include "ModifierList.h"
 

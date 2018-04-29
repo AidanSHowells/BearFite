@@ -2,6 +2,7 @@
 #define HUD_H
 
 #include <SFML/Graphics.hpp>
+#include <array>//For std::array
 #include "Messages.h"
 #include "Bear.h"
 
@@ -50,6 +51,9 @@ class OptionsBox{
     OptionsBox(sf::RenderWindow& theWindow,
                sf::Font& titleFont,
                sf::Font& mainFont,
+               const std::array <sf::String, 8>& optionString
+                 = {"PUNCH:Where Punch Bear?","1:Leg","2:Eye","3:John Hopkins",
+                    "ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
                sf::Vector2f thePosition = sf::Vector2f(0,465),
                sf::Vector2f theSize = sf::Vector2f(595, 135),
                float dividerPosition = 350.0f );

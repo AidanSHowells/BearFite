@@ -156,9 +156,10 @@ OptionsBox::OptionsBox(
   sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
-  sf::Vector2f thePosition, //Default is sf::Vector2f(0,465)
-  sf::Vector2f theSize,     //Default is sf::Vector2f(595, 135)
-  float dividerPosition     //Default is 350.0f
+  const std::array <sf::String, 8>& optionString, //Defaults to the battle text
+  sf::Vector2f thePosition,                       //sf::Vector2f(0,465)
+  sf::Vector2f theSize,                           //sf::Vector2f(595, 135)
+  float dividerPosition                           //350.0f
 ):
   window(&theWindow),
   position(thePosition),
@@ -175,42 +176,33 @@ OptionsBox::OptionsBox(
   divLine.setFillColor(sf::Color::Black);
   divLine.setPosition(divPosition, position.y);
 
-  //Make the first title
-  optionsText[0].setFont(titleFont);
-  optionsText[0].setString("PUNCH:Where Punch Bear?");
-  optionsText[0].setCharacterSize(25);
-  optionsText[0].setFillColor(sf::Color::Black);
-  optionsText[0].setPosition(position.x, position.y);
-
-  //Make the first set of options
-  for(int i = 1; i < sizeOfEachList; i++){
-    optionsText[i].setFont(mainFont);
+  //Make the options
+  for(int i = 0; i < numOptionsText; i++){
     optionsText[i].setCharacterSize(25);
     optionsText[i].setFillColor(sf::Color::Black);
-    optionsText[i].setPosition(position.x, position.y + float(30 * i));
-  }
-  optionsText[1].setString("1:Leg");
-  optionsText[2].setString("2:Eye");
-  optionsText[3].setString("3:John Hopkins");
+    optionsText[i].setString(optionString.at(i));
 
-  //Make the second title
-  optionsText[sizeOfEachList].setFont(titleFont);
-  optionsText[sizeOfEachList].setString("ELSE:What Do?");
-  optionsText[sizeOfEachList].setCharacterSize(25);
-  optionsText[sizeOfEachList].setFillColor(sf::Color::Black);
-  optionsText[sizeOfEachList].setPosition(divPosition + 10, position.y);
+    //Headings get titleFont, everything else gets mainFont
+    if(0 == i % sizeOfEachList){
+      optionsText[i].setFont(titleFont);
+    }
+    else{
+      optionsText[i].setFont(mainFont);
+    }
 
-  //Make the second set of options
-  for(int i = sizeOfEachList + 1; i < numOptionsText; i++){
-    optionsText[i].setFont(mainFont);
-    optionsText[i].setCharacterSize(25);
-    optionsText[i].setFillColor(sf::Color::Black);
-    optionsText[i].setPosition(divPosition + 10,
-                               position.y + float(30 * (i - sizeOfEachList)));
+    //Positioning depends on which list you're in
+    float xPos;
+    float yPos;
+    if(i < sizeOfEachList){
+      xPos = position.x;
+      yPos = position.y + float(30 * i);
+    }
+    else{
+      xPos = divPosition + 10;
+      yPos = position.y + float(30 * (i - sizeOfEachList));
+    }
+    optionsText[i].setPosition(xPos, yPos);
   }
-  optionsText[5].setString("4:Quaff Drank");
-  optionsText[6].setString("5:Cast Spell");
-  optionsText[7].setString("6:Flee");
 
   //Make the first set of hightlight boxes
   for(int i = 0; i < sizeOfEachList - 1; i++){
