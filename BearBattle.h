@@ -10,6 +10,6 @@
 
 //Parameter fakeBear is currently here only so that BattleTest.cpp can display
 //information about the bear that you just killed.
-bool BearBattle(HUD& theHUD, Bear& fakeBear);
+bool BearBattle(BattleHUD& theHUD, Bear& fakeBear);
 
 #endif

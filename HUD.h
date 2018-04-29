@@ -146,14 +146,32 @@ class HUD{
     HUD(sf::RenderWindow& theWindow,
             sf::Font& titleFont,
             sf::Font& mainFont,
-            Player& thePlayer,
-            const Bear& theBear);
+            Player& thePlayer);
     MessageBox messages;
     OptionsBox options;
-    BearStats bearStats[5];
     PlayerStats playerStats;
     sf::RenderWindow* GetWindowPtr(){return window;}
     Player* GetPlayerPtr(){return player;}
+    //void ProcessInput();
+    void draw();
+
+  protected:
+    sf::RenderWindow* window;
+    Player* player;
+
+  private:
+    void Highlight();
+};
+
+
+class BattleHUD : public HUD{
+  public:
+    BattleHUD(sf::RenderWindow& theWindow,
+              sf::Font& titleFont,
+              sf::Font& mainFont,
+              Player& thePlayer,
+              const Bear& theBear);
+    BearStats bearStats[5];
     Bear* GetBearPtr(){return bear;}
     int GetNumBears();//The number of bears that exist
     void AddEnemyBears(Bear bear[], int numBears);
@@ -163,8 +181,6 @@ class HUD{
     void draw();
 
   private:
-    sf::RenderWindow* window;
-    Player* player;
     Bear* bear;//A pointer to the bear currently being targeted
     void Highlight();
     int TargetBearIndex();

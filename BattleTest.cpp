@@ -62,7 +62,7 @@ int main(){
           sf::Keyboard::Key key = event.key.code;
           int bearHealth = 420;
           Bear fakeBear;
-          HUD battleHUD(window,courierNewBd,courierNew,player,fakeBear);
+          BattleHUD battleHUD(window,courierNewBd,courierNew,player,fakeBear);
           FindBear(key, battleHUD);
 
 

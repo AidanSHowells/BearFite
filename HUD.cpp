@@ -335,7 +335,7 @@ shouldAppear(theBear.CanBeFought())
     bearInfo[i].setPosition(bearInfo[i-1].getPosition().x,
                             position.y - float(3 - 23 * int(hasTitleBar)) );
   }
-  //no need to set dynamic text here, since Update is called by HUD::draw
+  //no need to set dynamic text here, since Update is called by BattleHUD::draw
 
   //Make the background rectangles
   background[0].setPosition(bearInfo[0].getPosition().x, position.y);
@@ -566,26 +566,35 @@ void PlayerStats::draw(){
 HUD::HUD(sf::RenderWindow& theWindow,
         sf::Font& titleFont,
         sf::Font& mainFont,
-        Player& thePlayer,
-        const Bear& theBear
+        Player& thePlayer
 ):
 messages(theWindow,titleFont,mainFont,"Messages:"),
 options(theWindow,titleFont,mainFont),
-bearStats{BearStats(theWindow,titleFont,mainFont,theBear,true),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,50)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,75)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,100)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),true)},
 playerStats(theWindow,titleFont,mainFont,thePlayer),
 window(&theWindow),
 player(&thePlayer)
 {
-  bear = bearStats[0].GetBearPtr();
-  bear -> SetMessageBox(messages);
   player -> SetMessageBox(messages);
 }
 
-int HUD::GetNumBears(){
+BattleHUD::BattleHUD(sf::RenderWindow& theWindow,
+        sf::Font& titleFont,
+        sf::Font& mainFont,
+        Player& thePlayer,
+        const Bear& theBear
+):
+HUD(theWindow, titleFont, mainFont, thePlayer),
+bearStats{BearStats(theWindow,titleFont,mainFont,theBear,true),
+  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,50)),
+  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,75)),
+  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,100)),
+  BearStats(theWindow,titleFont,mainFont,Bear(),true)}
+{
+  bear = bearStats[0].GetBearPtr();
+  bear -> SetMessageBox(messages);
+}
+
+int BattleHUD::GetNumBears(){
   int numBears = 4;
   for(int i = 3; i >= 0; i--){
     if(!bearStats[i].GetShouldAppear()){
@@ -596,7 +605,7 @@ int HUD::GetNumBears(){
 }
 
 
-void HUD::AddEnemyBears(Bear bear[], int numBears){
+void BattleHUD::AddEnemyBears(Bear bear[], int numBears){
   for(int i = 0; i < numBears; i++){
     bearStats[i].SetBear(bear[i]);
     bearStats[i].GetBearPtr() -> SetMessageBox(messages);
@@ -605,7 +614,7 @@ void HUD::AddEnemyBears(Bear bear[], int numBears){
 }
 
 
-bool HUD::RemoveDeadCombatants(){
+bool BattleHUD::RemoveDeadCombatants(){
   if(player -> IsDead()){
     return true;
   }
@@ -628,7 +637,7 @@ bool HUD::RemoveDeadCombatants(){
   return(!bearStats[0].GetShouldAppear());
 }
 
-TurnOf HUD::TakeAction(sf::Event theEvent)
+TurnOf BattleHUD::TakeAction(sf::Event theEvent)
 {
   if(isPickingSpell){
     //playerStats.GetSpell(theEvent);
@@ -667,7 +676,7 @@ TurnOf HUD::TakeAction(sf::Event theEvent)
   return TurnOf::player;
 }
 
-void HUD::draw(){
+void BattleHUD::draw(){
   messages.draw();
 
   options.draw();
@@ -683,7 +692,7 @@ void HUD::draw(){
   Highlight();
 }
 
-void HUD::Highlight(){
+void BattleHUD::Highlight(){
   options.Highlight();
 
   sf::RectangleShape bearHighlight;
@@ -701,7 +710,7 @@ void HUD::Highlight(){
 
 }
 
-int HUD::TargetBearIndex(){
+int BattleHUD::TargetBearIndex(){
   int targetBearIndex = 0;
   for(int i = 0; i < 4; i++){
     if(bearStats[i].GetBearPtr() == bear){

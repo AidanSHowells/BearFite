@@ -90,7 +90,7 @@ class PolarBear : public Bear{
 //TEMP: Belongs in FindBear.cpp
 #include "HUD.h"
 
-void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
+void FindBear(sf::Keyboard::Key& theKey, BattleHUD& theHUD){
   Bear theBear[4];
   bool isRandom = (sf::Keyboard::Z == theKey);
   if(isRandom){

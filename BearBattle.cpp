@@ -3,7 +3,7 @@
 #include "Bear.h"
 
 
-bool BearBattle(HUD& theHUD, Bear& fakeBear){
+bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
   //Keep track of turns
   TurnOf turn = TurnOf::player;
 
