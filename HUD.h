@@ -64,13 +64,12 @@ class OptionsBox{
     sf::RectangleShape background;
     sf::RectangleShape divLine;
 
-    static const int numPunch = 4;
-    static const int numNotPunch = 4;
-    static const int numTextBox = numPunch + numNotPunch - 2;//-2 for the headers
+    static const int sizeOfEachList = 4;
+    static const int numOptionsText = 2 * sizeOfEachList;
+    static const int numHighlightBox = numOptionsText - 2;//-2 for the headers
 
-    sf::Text punch[numPunch];
-    sf::Text notPunch[numNotPunch];
-    sf::FloatRect textBox[numTextBox];
+    sf::Text optionsText[numOptionsText];
+    sf::FloatRect highlightBox[numHighlightBox];
 };
 
 

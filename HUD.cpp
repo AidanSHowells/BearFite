@@ -176,49 +176,50 @@ OptionsBox::OptionsBox(
   divLine.setPosition(divPosition, position.y);
 
   //Make the first title
-  punch[0].setFont(titleFont);
-  punch[0].setString("PUNCH:Where Punch Bear?");
-  punch[0].setCharacterSize(25);
-  punch[0].setFillColor(sf::Color::Black);
-  punch[0].setPosition(position.x, position.y);
+  optionsText[0].setFont(titleFont);
+  optionsText[0].setString("PUNCH:Where Punch Bear?");
+  optionsText[0].setCharacterSize(25);
+  optionsText[0].setFillColor(sf::Color::Black);
+  optionsText[0].setPosition(position.x, position.y);
 
   //Make the first set of options
-  for(int i = 1; i < numPunch; i++){
-    punch[i].setFont(mainFont);
-    punch[i].setCharacterSize(25);
-    punch[i].setFillColor(sf::Color::Black);
-    punch[i].setPosition(position.x, position.y + float(30 * i));
+  for(int i = 1; i < sizeOfEachList; i++){
+    optionsText[i].setFont(mainFont);
+    optionsText[i].setCharacterSize(25);
+    optionsText[i].setFillColor(sf::Color::Black);
+    optionsText[i].setPosition(position.x, position.y + float(30 * i));
   }
-  punch[1].setString("1:Leg");
-  punch[2].setString("2:Eye");
-  punch[3].setString("3:John Hopkins");
+  optionsText[1].setString("1:Leg");
+  optionsText[2].setString("2:Eye");
+  optionsText[3].setString("3:John Hopkins");
 
   //Make the second title
-  notPunch[0].setFont(titleFont);
-  notPunch[0].setString("ELSE:What Do?");
-  notPunch[0].setCharacterSize(25);
-  notPunch[0].setFillColor(sf::Color::Black);
-  notPunch[0].setPosition(divPosition + 10, position.y);
+  optionsText[sizeOfEachList].setFont(titleFont);
+  optionsText[sizeOfEachList].setString("ELSE:What Do?");
+  optionsText[sizeOfEachList].setCharacterSize(25);
+  optionsText[sizeOfEachList].setFillColor(sf::Color::Black);
+  optionsText[sizeOfEachList].setPosition(divPosition + 10, position.y);
 
   //Make the second set of options
-  for(int i = 1; i < numNotPunch; i++){
-    notPunch[i].setFont(mainFont);
-    notPunch[i].setCharacterSize(25);
-    notPunch[i].setFillColor(sf::Color::Black);
-    notPunch[i].setPosition(divPosition + 10, position.y + float(30 * i));
+  for(int i = sizeOfEachList + 1; i < numOptionsText; i++){
+    optionsText[i].setFont(mainFont);
+    optionsText[i].setCharacterSize(25);
+    optionsText[i].setFillColor(sf::Color::Black);
+    optionsText[i].setPosition(divPosition + 10,
+                               position.y + float(30 * (i - sizeOfEachList)));
   }
-  notPunch[1].setString("4:Quaff Drank");
-  notPunch[2].setString("5:Cast Spell");
-  notPunch[3].setString("6:Flee");
+  optionsText[5].setString("4:Quaff Drank");
+  optionsText[6].setString("5:Cast Spell");
+  optionsText[7].setString("6:Flee");
 
-  //Make the first set of bounding boxes
-  for(int i = 0; i < numPunch - 1; i++){
-    textBox[i] = punch[i + 1].getGlobalBounds();
+  //Make the first set of hightlight boxes
+  for(int i = 0; i < sizeOfEachList - 1; i++){
+    highlightBox[i] = optionsText[i + 1].getGlobalBounds();
   }
 
-  //Make the second set of bounding boxes
-  for(int i = 3; i < numTextBox; i++){
-    textBox[i] = notPunch[i - 2].getGlobalBounds();
+  //Make the second set of hightlight boxes
+  for(int i = sizeOfEachList - 1; i < numHighlightBox; i++){
+    highlightBox[i] = optionsText[i + 2].getGlobalBounds();
   }
 }
 
@@ -226,11 +227,8 @@ void OptionsBox::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
   window -> draw(divLine);
-  for(int i = 0; i < numPunch; i++){
-    window -> draw(punch[i]);
-  }
-  for(int i = 0; i < numNotPunch; i++){
-    window -> draw(notPunch[i]);
+  for(int  i = 0; i < numOptionsText; i++){
+    window -> draw(optionsText[i]);
   }
 }
 
@@ -268,22 +266,22 @@ Action OptionsBox::GetAction(sf::Event theEvent){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
 
-    if (textBox[0].contains(clickLocation)){
+    if (highlightBox[0].contains(clickLocation)){
       return Action::leg;
     }
-    else if (textBox[1].contains(clickLocation)){
+    else if (highlightBox[1].contains(clickLocation)){
       return Action::eye;
     }
-    else if (textBox[2].contains(clickLocation)){
+    else if (highlightBox[2].contains(clickLocation)){
       return Action::john_hopkins;
     }
-    else if (textBox[3].contains(clickLocation)){
+    else if (highlightBox[3].contains(clickLocation)){
       return Action::quaff;
     }
-    else if (textBox[4].contains(clickLocation)){
+    else if (highlightBox[4].contains(clickLocation)){
       return Action::cast;
     }
-    else if (textBox[5].contains(clickLocation)){
+    else if (highlightBox[5].contains(clickLocation)){
       return Action::flee;
     }
     else{
@@ -296,10 +294,11 @@ void OptionsBox::Highlight(){
   sf::RectangleShape highlight;
   highlight.setFillColor(ClearYellow);
 
-  for(int i = 0; i < numTextBox; i++){
-    if(textBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
-      highlight.setSize(sf::Vector2f(textBox[i].width,textBox[i].height));
-      highlight.setPosition(textBox[i].left,textBox[i].top);
+  for(int i = 0; i < numHighlightBox; i++){
+    if(highlightBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
+      highlight.setSize(sf::Vector2f(highlightBox[i].width,
+                                     highlightBox[i].height));
+      highlight.setPosition(highlightBox[i].left,highlightBox[i].top);
       window -> draw(highlight);
     }
   }
