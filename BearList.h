@@ -88,6 +88,8 @@ class PolarBear : public Bear{
 
 
 //TEMP: Belongs in FindBear.cpp
+#include "HUD.h"
+
 void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
   Bear theBear[4];
   bool isRandom = (sf::Keyboard::Z == theKey);
@@ -168,6 +170,7 @@ void FindBear(sf::Keyboard::Key& theKey, HUD& theHUD){
 
 //TEMP: Belongs in ModifierList.cpp
 #include <iostream> //for std::cerr
+#include "ModifierList.h"
 
 Modifier GetModifier(ModifierIs identifier){
   Modifier theModifier;
@@ -215,12 +218,12 @@ Modifier GetModifier(ModifierIs identifier){
     theModifier = tempMod;
   }
   else if(ModifierIs::SIZE == identifier){
-    std::cerr << "Warning!";
+    std::cerr << "Warning! ";
     std::cerr << "Attempted use of ModifierIs::SIZE in GetModifier() function.";
     std::cerr << std::endl;
   }
   else{
-    std::cerr << "Warning!";
+    std::cerr << "Warning! ";
     std::cerr << "Attempted use of modifier unknown to GetModifier() function.";
     std::cerr << std::endl;
   }
