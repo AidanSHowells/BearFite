@@ -2,7 +2,7 @@
 #define MODIFIERLIST_H
 
 //List of all modifiers that can occur (plus SIZE, which is always last):
-enum class ModifierIs{none, beefy, exact, sturdy, genious, socrates, handsome,
+enum class ModifierID{none, beefy, exact, sturdy, genious, socrates, handsome,
                       numerous, experienced, keen, crictal, SIZE};
 
 
@@ -11,7 +11,7 @@ enum class ModifierIs{none, beefy, exact, sturdy, genious, socrates, handsome,
 //      non-zero, or either one non-zero for any modifier where derivedModifier
 //      isn't nullptr, you'll have to edit Bear::ApplyModifier().
 struct Modifier{
-  //ModifierIs identifier = ModifierIs::none;
+  //ModifierID identifier = ModifierID::none;
   Modifier* derivedModifier = nullptr;
   //sf::String GetName() const;//Function for getting the name
   sf::String name = sf::String("None");
@@ -33,7 +33,7 @@ struct Modifier{
   //bool isInvisible = false;//We want to be able to make "life saving" a suprise
 };
 
-Modifier GetModifier(ModifierIs);
+Modifier GetModifier(ModifierID);
 
 
 struct Beefy : Modifier{

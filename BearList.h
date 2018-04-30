@@ -89,6 +89,8 @@ class PolarBear : public Bear{
 
 //TEMP: Belongs in FindBear.cpp
 #include "HUD.h"
+#include "Bear.h"
+#include "ModifierList.h"
 
 void FindBear(sf::Keyboard::Key& theKey, BattleHUD& theHUD){
   Bear theBear[4];
@@ -137,11 +139,11 @@ void FindBear(sf::Keyboard::Key& theKey, BattleHUD& theHUD){
                            sf::String("not supported."));
   }
   if(isRandom){
-    int randInt = Roll(1, int(ModifierIs::SIZE)) - 1;
+    int randInt = Roll(1, int(ModifierID::SIZE)) - 1;
     if(1 == Roll(1,3)){
       randInt = 0;
     }
-    Modifier mod = GetModifier(ModifierIs(randInt));
+    Modifier mod = GetModifier(ModifierID(randInt));
 
     //Functions can't return C-style arrays, so we have to get "creative":
     std::array<Bear, 4> bears = theBear[0].ApplyModifier(mod);
@@ -172,54 +174,54 @@ void FindBear(sf::Keyboard::Key& theKey, BattleHUD& theHUD){
 #include <iostream> //for std::cerr
 #include "ModifierList.h"
 
-Modifier GetModifier(ModifierIs identifier){
+Modifier GetModifier(ModifierID identifier){
   Modifier theModifier;
-  if(ModifierIs::none == identifier){
+  if(ModifierID::none == identifier){
     //Do nothing
   }
-  else if(ModifierIs::beefy == identifier){
+  else if(ModifierID::beefy == identifier){
     Beefy tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::exact == identifier){
+  else if(ModifierID::exact == identifier){
     Exact tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::sturdy == identifier){
+  else if(ModifierID::sturdy == identifier){
     Sturdy tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::genious == identifier){
+  else if(ModifierID::genious == identifier){
     Genious tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::socrates == identifier){
+  else if(ModifierID::socrates == identifier){
     Socrates tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::handsome == identifier){
+  else if(ModifierID::handsome == identifier){
     Handsome tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::numerous == identifier){
+  else if(ModifierID::numerous == identifier){
     Numerous tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::experienced == identifier){
+  else if(ModifierID::experienced == identifier){
     Experienced tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::keen == identifier){
+  else if(ModifierID::keen == identifier){
     Keen tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::crictal == identifier){
+  else if(ModifierID::crictal == identifier){
     Crictal tempMod;
     theModifier = tempMod;
   }
-  else if(ModifierIs::SIZE == identifier){
+  else if(ModifierID::SIZE == identifier){
     std::cerr << "Warning! ";
-    std::cerr << "Attempted use of ModifierIs::SIZE in GetModifier() function.";
+    std::cerr << "Attempted use of ModifierID::SIZE in GetModifier() function.";
     std::cerr << std::endl;
   }
   else{
