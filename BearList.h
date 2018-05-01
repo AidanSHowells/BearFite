@@ -125,6 +125,7 @@ bool FindBear(const sf::Keyboard::Key theKey,
       theBear[i] = bear;
     }
     theHUD.AddEnemyBears(theBear, 4);
+    return true;//This is gross, but this part of the function is temporary
   }
   else if(sf::Keyboard::F == theKey){//Special Bear
     theBear[0] = GetBear(bearID);
@@ -168,44 +169,34 @@ Modifier GetModifier(ModifierID identifier){
     //Do nothing
   }
   else if(ModifierID::beefy == identifier){
-    Beefy tempMod;
-    theModifier = tempMod;
+    theModifier = Beefy();
   }
   else if(ModifierID::exact == identifier){
-    Exact tempMod;
-    theModifier = tempMod;
+    theModifier = Exact();
   }
   else if(ModifierID::sturdy == identifier){
-    Sturdy tempMod;
-    theModifier = tempMod;
+    theModifier = Sturdy();
   }
   else if(ModifierID::genious == identifier){
-    Genious tempMod;
-    theModifier = tempMod;
+    theModifier = Genious();
   }
   else if(ModifierID::socrates == identifier){
-    Socrates tempMod;
-    theModifier = tempMod;
+    theModifier = Socrates();
   }
   else if(ModifierID::handsome == identifier){
-    Handsome tempMod;
-    theModifier = tempMod;
+    theModifier = Handsome();
   }
   else if(ModifierID::numerous == identifier){
-    Numerous tempMod;
-    theModifier = tempMod;
+    theModifier = Numerous();
   }
   else if(ModifierID::experienced == identifier){
-    Experienced tempMod;
-    theModifier = tempMod;
+    theModifier = Experienced();
   }
   else if(ModifierID::keen == identifier){
-    Keen tempMod;
-    theModifier = tempMod;
+    theModifier = Keen();
   }
   else if(ModifierID::crictal == identifier){
-    Crictal tempMod;
-    theModifier = tempMod;
+    theModifier = Crictal();
   }
   else if(ModifierID::SIZE == identifier){
     std::cerr << "Warning! ";
