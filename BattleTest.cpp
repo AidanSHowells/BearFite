@@ -112,6 +112,8 @@ int main(){
     status.draw();
     window.display();
   }//end while(window.isOpen())
+
+  return 0;
 }
 
 void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
@@ -168,6 +170,7 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
     fin >> tempInt;
     if(fin.fail()){
       messages.Update(sf::String("Invalid file format."));
+      return;
     }
   }
 
@@ -175,6 +178,7 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
     fin >> newAbil.at(i);
     if(fin.fail()){
       messages.Update(sf::String("Invalid file format."));
+      return;
     }
   }
   player.SetAbil(newAbil);
@@ -192,6 +196,7 @@ void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
   if(!fout.is_open()){
     messages.Update(sf::String("Failed to open file."),
                     sf::String("Stats won't be kept"));
+    return;
   }
 
   //Record the wins and losses
