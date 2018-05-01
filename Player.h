@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <array>
 #include "Messages.h"
 
 class Bear;
@@ -13,6 +14,7 @@ class Player{
     int GetMaxHealth();
     int GetNumDranks();
     int GetAbil(int i){return abil[i];}//FIXME:Should probably validate input
+    void SetAbil(std::array<int,6> newAbil);
     //void Quaff();
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player

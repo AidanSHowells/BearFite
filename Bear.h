@@ -6,6 +6,7 @@
 #include "ModifierList.h"
 
 class Player;
+enum class BearID;
 
 class Body{
   public:
@@ -25,6 +26,7 @@ class Bear{
     void SetMessageBox(MessageBox& theMessages);
     int AC(Action);
     sf::String GetName();
+    BearID GetID(){return identifier;}
     sf::String GetModifier();
     void Bash(Player& thePlayer);
     void Hurt(int); //how the player lowers the bear's health
@@ -35,6 +37,7 @@ class Bear{
   protected:
     MessageBox* Messages; //So damage statements know where to print
     sf::String name = sf::String("Klepto");
+    BearID identifier;
     Modifier modifier;
     Modifier modifier2;
     int abil[6] = {10, 10, 10, 10, 10, 10};

@@ -102,6 +102,27 @@ void MessageBox::Update(sf::String inputString1,
   Update(inputString1, inputString2, inputString3);
 }
 
+void MessageBox::Update(sf::String inputString1,
+                        sf::String inputString2,
+                        sf::String inputString3,
+                        sf::String inputString4,
+                        sf::String inputString5)
+{
+  SetTopString(sf::String(" ") + inputString5);
+  Update(inputString1, inputString2, inputString3, inputString4);
+}
+
+void MessageBox::Update(sf::String inputString1,
+                        sf::String inputString2,
+                        sf::String inputString3,
+                        sf::String inputString4,
+                        sf::String inputString5,
+                        sf::String inputString6)
+{
+  SetTopString(sf::String(" ") + inputString6);
+  Update(inputString1, inputString2, inputString3, inputString4, inputString5);
+}
+
 void MessageBox::Update(sf::String inputString, int inputInt, bool makeLine){
   //Note that makeLine defaults to false
   SetTopString( AddSpacing(std::to_string(inputInt), 22) , makeLine);

@@ -12,6 +12,12 @@ int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 
+void Player::SetAbil(std::array<int,6> newAbil){
+  for(int i = 0; i < newAbil.size(); i++){
+    abil[i] = newAbil.at(i);
+  }
+}
+
 int Player::HealthBonus(){return (abil[2] - 10) * 2;}
 
 int Player::LegAttackBonus(){return abil[0] - 10;}

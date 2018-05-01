@@ -5,11 +5,17 @@
 #include "RollDice.h"
 #include <algorithm>//for std::max and std::min
 
+//List of all bears that can appear (plus NUM_BEARS, which MUST be last):
+enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};
+
+Bear GetBear(const BearID identifier);
+
 //Babby Bear
 class BabbyBear : public Bear{
   public:
     BabbyBear(){
       name = sf::String("Babby ");
+      identifier = BearID::Babby;
       SetAbil(4, 12, 7, 1, 3, 6);
       level = std::max(0, Roll(1,6) - 4); //babby occasionally has a level
       body.hitDieSize = 6;
@@ -30,6 +36,7 @@ class BlackBear : public Bear{
   public:
     BlackBear(){
       name = sf::String("Black ");
+      identifier = BearID::Black;
       SetAbil(8, 17, 12, 7, 5, 8);
       level = std::max(1, Roll(1,6) - 3);
       body.hitDieSize = 6;
@@ -50,6 +57,7 @@ class BrownBear : public Bear{
   public:
     BrownBear(){
       name = sf::String("Brown ");
+      identifier = BearID::Brown;
       SetAbil(14, 7, 16, 5, 5, 10);
       level = std::max(1, Roll(1,6) - 3);
       body.hitDieSize = 6;
@@ -70,6 +78,7 @@ class PolarBear : public Bear{
   public:
     PolarBear(){
       name = sf::String("Polar ");
+      identifier = BearID::Polar;
       SetAbil(14, 2, 21, 3, 3, 4);
       level = std::max(1, Roll(1,6) - 3);
       body.hitDieSize = 10;
@@ -92,72 +101,51 @@ class PolarBear : public Bear{
 #include "Bear.h"
 #include "ModifierList.h"
 
-void FindBear(sf::Keyboard::Key& theKey, BattleHUD& theHUD){
+bool FindBear(const sf::Keyboard::Key theKey,
+              BattleHUD& theHUD,
+              const BearID bearID,
+              const ModifierID modID)
+{
   Bear theBear[4];
-  bool isRandom = (sf::Keyboard::Z == theKey);
-  if(isRandom){
-    const int tempInt = Roll(1,4);
-    if(tempInt == 1){
-      theKey = sf::Keyboard::Q;
+  Modifier theModifier = GetModifier(ModifierID::none);
+
+  if(sf::Keyboard::Z == theKey){//Random Bear
+    int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
+    theBear[0] = GetBear(BearID(randInt));
+
+    randInt = Roll(1, int(ModifierID::SIZE)) - 1;
+    if(1 == Roll(1,3)){
+      randInt = 0;
     }
-    if(tempInt == 2){
-      theKey = sf::Keyboard::W;
-    }
-    if(tempInt == 3){
-      theKey = sf::Keyboard::E;
-    }
-    if(tempInt == 4){
-      theKey = sf::Keyboard::R;
-    }
+    theModifier = GetModifier(ModifierID(randInt));
   }
-  if(sf::Keyboard::Q == theKey){
-    BabbyBear bear;
-    theBear[0] = bear;
-  }
-  else if(sf::Keyboard::W == theKey){
-    BlackBear bear;
-    theBear[0] = bear;
-  }
-  else if(sf::Keyboard::E == theKey){
-    BrownBear bear;
-    theBear[0] = bear;
-  }
-  else if(sf::Keyboard::R == theKey){
-    PolarBear bear;
-    theBear[0] = bear;
-  }
-  else if(sf::Keyboard::A == theKey){
+  else if(sf::Keyboard::Q == theKey){//Babby Party
     for(int i = 0; i < 4; i++){
       BabbyBear bear;
       theBear[i] = bear;
     }
     theHUD.AddEnemyBears(theBear, 4);
-    return;//This is gross, but this whole part of the function is temporary
+  }
+  else if(sf::Keyboard::F == theKey){//Special Bear
+    theBear[0] = GetBear(bearID);
+    theModifier = GetModifier(modID);
   }
   else{
     theHUD.messages.Update(sf::String("Whoops! That key is"),
                            sf::String("not supported."));
+    return false;//Failure
   }
-  if(isRandom){
-    int randInt = Roll(1, int(ModifierID::SIZE)) - 1;
-    if(1 == Roll(1,3)){
-      randInt = 0;
-    }
-    Modifier mod = GetModifier(ModifierID(randInt));
 
-    //Functions can't return C-style arrays, so we have to get "creative":
-    std::array<Bear, 4> bears = theBear[0].ApplyModifier(mod);
-    for(int i = 0; i < 4; i++){
-      theBear[i] = bears.at(i);
-    }
+  //Functions can't return C-style arrays, so we have to get "creative":
+  std::array<Bear, 4> bears = theBear[0].ApplyModifier(theModifier);
+  for(int i = 0; i < 4; i++){
+    theBear[i] = bears.at(i);
+  }
 
-    int numBears = 1 + mod.numTwins;//For the moment
-    //int numBears = 1 + mod.numCompanians + mod.numTwins;//Eventually
-    theHUD.AddEnemyBears(theBear, numBears);
-  }
-  else{
-    theHUD.AddEnemyBears(theBear, 1);
-  }
+  int numBears = 1 + theModifier.numTwins;//To be replaced with the next line
+  //int numBears = 1 + theModifier.numCompanians + theModifier.numTwins;
+  theHUD.AddEnemyBears(theBear, numBears);
+  return true;//Success
 }
 //Eventual Algorithm:
 //Make vector of bears whose base level is small enough
@@ -232,7 +220,35 @@ Modifier GetModifier(ModifierID identifier){
   return theModifier;
 }
 
-
 //end TEMP (Belongs in ModifierList.cpp)
+
+//Begin TEMP (Belongs in BearList.cpp)
+#include <iostream> //for std::cerr
+
+Bear GetBear(const BearID identifier){
+  Bear bear;
+  if(identifier == BearID::Babby){
+    bear = BabbyBear();
+  }
+  else if(identifier == BearID::Black){
+    bear = BlackBear();
+  }
+  else if(identifier == BearID::Brown){
+    bear = BrownBear();
+  }
+  else if(identifier == BearID::Polar){
+    bear = PolarBear();
+  }
+  else if(identifier == BearID::NUM_BEARS){
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of BearID::NUM_BEARS in GetBear() function.\n";
+  }
+  else{
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of BearID unknown to GetBear() function.\n";
+  }
+  return bear;
+}
+//end TEMP (Belongs in BearList.cpp)
 
 #endif
