@@ -29,6 +29,18 @@ Thoughts on player spellcasting:
 * Bear and Player trade health
 * ?Higher/Lower tier version of vampirism?
 
+### Time Stop
+* Lowest level is Refuge.
+   * Lasts at least 1 (2?) turns
+   * Chance of ending each turn from that point on
+   * If you try to hurt the bear, "Bear is stop"
+* Middle level is Sanctuary
+  * Always lasts five turns
+  * If you try to hurt the bear, "Bear is stop"
+* Time stop
+  * Same duration as Refuge
+  * You can hurt the bear
+
 ### Other Possible Spells
 * Ability boost (one per stat)
 * Ability drain (one per stat)
@@ -39,6 +51,7 @@ Possible modifiers that bears can have:
 
 ### Friendly
 * Appears with an allied bear of lesser level
+* Allied bears have to be close in alignment
 * Lesser form of Gregarious (more allied bears)
 * Lesser form of Numerous (allied bears are identical, instead of lower level)
 
