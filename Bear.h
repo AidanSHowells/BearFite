@@ -3,10 +3,12 @@
 
 #include <array>//For std::array
 #include "Messages.h"
-#include "ModifierList.h"
+#include "Modifier.h"
 
 class Player;
-enum class BearID;
+
+//List of all bears that can appear (plus NUM_BEARS, which MUST be last):
+enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};
 
 class Body{
   public:
@@ -23,6 +25,8 @@ class Body{
 
 class Bear{
   public:
+    Bear(){}//canBeFought = false;}
+    Bear(const BearID bearID);
     void SetMessageBox(MessageBox& theMessages);
     int AC(Action);
     sf::String GetName();

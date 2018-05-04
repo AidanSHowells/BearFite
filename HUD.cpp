@@ -376,9 +376,11 @@ shouldAppear(theBear.CanBeFought())
 }
 
 void BearStats::Update(){
-  bearInfo[1].setString(bear.GetName());
-  bearInfo[3].setString( AddSpacing(std::to_string(bear.GetHealth()), 7) );
-  bearInfo[5].setString(bear.GetModifier());
+  if(shouldAppear){
+    bearInfo[1].setString(bear.GetName());
+    bearInfo[3].setString( AddSpacing(std::to_string(bear.GetHealth()), 7) );
+    bearInfo[5].setString(bear.GetModifier());
+  }
 }
 
 void BearStats::SetBear(const Bear& theNewBear){
@@ -705,10 +707,11 @@ void BattleHUD::draw(){
   playerStats.Update();
   playerStats.draw();
 
-  for(int i = 0; i < 5; i++){
+  for(int i = 0; i < GetNumBears(); i++){
     bearStats[i].Update();
     bearStats[i].draw();
   }
+  //If friend bear is present, call bearStats[4] Update() and draw() here
 
   Highlight();
 }

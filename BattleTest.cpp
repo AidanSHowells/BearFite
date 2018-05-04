@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "HUD.h"
-#include "BearList.h"
 #include "BearBattle.h"
 #include "Player.h"
 
@@ -13,6 +12,12 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages);
 void UpdatePlayerAbilities(Player& player, MessageBox& messages);
 void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
                    MessageBox& messages);
+
+//TEMP: Belongs in FindBear.h:
+bool FindBear(const sf::Keyboard::Key theKey,
+              BattleHUD& theHUD,
+              const BearID bearID,
+              const ModifierID modID);
 
 int main(){
   srand(unsigned(time(NULL)));
@@ -148,9 +153,9 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
   bearID = BearID(bearInt);
   modID = ModifierID(modInt);
   if(modID != ModifierID::none){
-    messages.Update(sf::String("Bear is ") + GetModifier(modID).name, true);
+    messages.Update(sf::String("Bear is ") + Modifier(modID).name, true);
   }
-  messages.Update(sf::String("New Special Bear is"), GetBear(bearID));
+  messages.Update(sf::String("New Special Bear is"), Bear(bearID));
 }
 
 void UpdatePlayerAbilities(Player& player, MessageBox& messages){
@@ -202,10 +207,73 @@ void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
   //Record the wins and losses
   std::string bearName;
   for(int i = 0; i < int(BearID::NUM_BEARS); i++){
-    bearName = GetBear(BearID(i)).GetName();
+    bearName = Bear(BearID(i)).GetName();
     fout << "Against " << bearName << "bear: " << winLoss.at(2 * i) << "/";
     fout << winLoss.at(2 * i) + winLoss.at(2 * i + 1) << "\n";
   }
 
   fout.close();
 }
+
+//TEMP: Belongs in FindBear.cpp
+#include "HUD.h"
+#include "Bear.h"
+#include "Modifier.h"
+#include "RollDice.h"
+
+bool FindBear(const sf::Keyboard::Key theKey,
+              BattleHUD& theHUD,
+              const BearID bearID,
+              const ModifierID modID)
+{
+  Bear theBear[4];
+  Modifier theModifier = Modifier(ModifierID::none);
+
+  if(sf::Keyboard::Z == theKey){//Random Bear
+    int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
+    theBear[0] = Bear(BearID(randInt));
+
+    randInt = Roll(1, int(ModifierID::SIZE)) - 1;
+    if(1 == Roll(1,3)){
+      randInt = 0;
+    }
+    theModifier = Modifier(ModifierID(randInt));
+  }
+  else if(sf::Keyboard::Q == theKey){//Babby Party
+    for(int i = 0; i < 4; i++){
+      Bear bear(BearID::Babby);
+      theBear[i] = bear;
+    }
+    theHUD.AddEnemyBears(theBear, 4);
+    return true;//This is gross, but this part of the function is temporary
+  }
+  else if(sf::Keyboard::F == theKey){//Special Bear
+    theBear[0] = Bear(bearID);
+    theModifier = Modifier(modID);
+  }
+  else{
+    theHUD.messages.Update(sf::String("Whoops! That key is"),
+                           sf::String("not supported."));
+    return false;//Failure
+  }
+
+  //Functions can't return C-style arrays, so we have to get "creative":
+  std::array<Bear, 4> bears = theBear[0].ApplyModifier(theModifier);
+  for(int i = 0; i < 4; i++){
+    theBear[i] = bears.at(i);
+  }
+
+  int numBears = 1 + theModifier.numTwins;//To be replaced with the next line
+  //int numBears = 1 + theModifier.numCompanians + theModifier.numTwins;
+  theHUD.AddEnemyBears(theBear, numBears);
+  return true;//Success
+}
+//Eventual Algorithm:
+//Make vector of bears whose base level is small enough
+//Choose a bear from the vector at random
+//Some (25% ?) chance of no modifier. Else:
+  //Make vector of modifiers whose effective level is small enough (none, etc.)
+  //Choose a modifier from the vector at random
+
+
+//end TEMP (Belongs in FindBear.cpp)
