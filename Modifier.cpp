@@ -48,11 +48,9 @@ Modifier::Modifier(ModifierID modID){
     int critMultAdd = 1;
   }
   else if(ModifierID::SIZE == modID){
-    std::cerr << "Warning! Attempted use of ModifierID::SIZE in constructor.";
-    std::cerr << std::endl;
+    std::cerr << "Warning! Attempted use of ModifierID::SIZE in constructor.\n";
   }
   else{
-    std::cerr << "Warning! Attempted use of modifier unknown to constructor.";
-    std::cerr << std::endl;
+    std::cerr << "Warning! Attempted use of modifier unknown to constructor.\n";
   }
 }
