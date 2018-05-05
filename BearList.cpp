@@ -19,7 +19,6 @@ Bear::Bear(const BearID bearID){
     armor = 0;
     critThreat = 0;
     critMult = 2;
-    canBeFought = true;
   }
   else if(bearID == BearID::Black){
     name = sf::String("Black ");
@@ -35,7 +34,6 @@ Bear::Bear(const BearID bearID){
     armor = 0;
     critThreat = 3 + level/5;
     critMult = 2;
-    canBeFought = true;
   }
   else if(bearID == BearID::Brown){
     name = sf::String("Brown ");
@@ -51,7 +49,6 @@ Bear::Bear(const BearID bearID){
     armor = 0;
     critThreat = 2;
     critMult = 3;
-    canBeFought = true;
   }
   else if(bearID == BearID::Polar){
     name = sf::String("Polar ");
@@ -67,7 +64,6 @@ Bear::Bear(const BearID bearID){
     armor = 0;
     critThreat = 0;
     critMult = 5;
-    canBeFought = true;
   }
   else if(bearID == BearID::NUM_BEARS){
     std::cerr << "Warning! ";

@@ -25,7 +25,7 @@ class Body{
 
 class Bear{
   public:
-    Bear(){}//canBeFought = false;}
+    Bear(){canBeFought = false;}
     Bear(const BearID bearID);
     void SetMessageBox(MessageBox& theMessages);
     int AC(Action);
@@ -59,7 +59,7 @@ class Bear{
     int critMult = 1; //how painful the bear criticals are
     int AttackBonus();
     int DamageBonus();
-    bool canBeFought = false;
+    bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR);
 };
 
