@@ -152,10 +152,22 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
 
   bearID = BearID(bearInt);
   modID = ModifierID(modInt);
+
   if(modID != ModifierID::none){
-    messages.Update(sf::String("Bear is ") + Modifier(modID).name, true);
+    if(ModifierID::SIZE == modID){
+      messages.Update(sf::String("Modifier is Random"), true);
+    }
+    else{
+      messages.Update(sf::String("Bear is ") + Modifier(modID).name, true);
+    }
   }
-  messages.Update(sf::String("New Special Bear is"), Bear(bearID));
+
+  if(BearID::NUM_BEARS == bearID){
+    messages.Update(sf::String("New Special Bear"), sf::String("is Random"));
+  }
+  else{
+    messages.Update(sf::String("New Special Bear is"), Bear(bearID));
+  }
 }
 
 void UpdatePlayerAbilities(Player& player, MessageBox& messages){
@@ -248,8 +260,20 @@ bool FindBear(const sf::Keyboard::Key theKey,
     return true;//This is gross, but this part of the function is temporary
   }
   else if(sf::Keyboard::F == theKey){//Special Bear
-    theBear[0] = Bear(bearID);
-    theModifier = Modifier(modID);
+    if(bearID == BearID::NUM_BEARS){//Random bear in this case
+      int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
+      theBear[0] = Bear(BearID(randInt));
+    }
+    else{
+      theBear[0] = Bear(bearID);
+    }
+    if(modID == ModifierID::SIZE){//Random Modifier in this case
+      int randInt = Roll(1, int(ModifierID::SIZE)) - 1;
+      theModifier = Modifier(ModifierID(randInt));
+    }
+    else{
+      theModifier = Modifier(modID);
+    }
   }
   else{
     theHUD.messages.Update(sf::String("Whoops! That key is"),

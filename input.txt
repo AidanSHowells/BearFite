@@ -1,0 +1,19 @@
+0
+0
+
+10
+10
+10
+10
+10
+10
+
+This file's purpose is to hold information that you want to give the program. The program won't automatically check this file for changes; you have to tell it to check by pressing the corresponding keys when prompted before each fight. This file is structured as follows:
+
+*First is an integer corresponding to the bear you want to fight. For a list of bears in order, starting from zero, see the definition of BearID (located in Bear.h). If this integer is equal to the value corresponding to BearID::NUM_BEARS, then the bear will be randomized each time you fight.
+
+*Second is an integer corresponding to the modifier that you want the bear to have. For a list of the modifiers in order (again starting from zero) see the definition of ModifierID (located in Modifier.h). If this integer is equal to the value corresponding to ModifierID::SIZE, then the modifier will be randomized each time you fight.
+
+*The next six items are the ability scores you want to have.
+
+*The program only reads as much as it needs, so comments and any other garbage can be freely appended to the end.
