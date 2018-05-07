@@ -5,7 +5,7 @@
 
 //List of all modifiers that can occur (plus SIZE, which is always last):
 enum class ModifierID{none, beefy, exact, sturdy, genious, socrates, handsome,
-                      numerous, experienced, keen, crictal, SIZE};
+                      numerous, experienced, elite, keen, crictal, SIZE};
 
 
 //NOTE: If you make numTwins and/or numCompanians dynamic for some modifier,

@@ -37,6 +37,13 @@ Modifier::Modifier(ModifierID modID){
     name = sf::String("Experienced");
     levelAdd = 5;
   }
+  else if(ModifierID::elite == modID){
+    name = sf::String("Elite");
+    for(int i = 0; i < 6; i++){
+      abilAdd[i] = 5;
+    }
+    levelAdd = 5;
+  }
   else if(ModifierID::keen == modID){
     name = sf::String("Keen");
     critThreatMult = 2;
