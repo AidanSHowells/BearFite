@@ -178,14 +178,14 @@ OptionsBox::OptionsBox(
   sf::Font& titleFont,
   sf::Font& mainFont,
   const std::array <sf::String, 8>& optionString, //Defaults to the battle text
-  sf::Vector2f thePosition,                       //sf::Vector2f(0,465)
-  sf::Vector2f theSize,                           //sf::Vector2f(595, 135)
-  float dividerPosition                           //350.0f
+  bool boxHasTwoTitles                            //Defaults to true
 ):
   window(&theWindow),
-  position(thePosition),
-  size(theSize),
-  divPosition(dividerPosition)
+  hasTwoTitles(boxHasTwoTitles),
+  sizeOfFirstList(4),
+  sizeOfSecondList(4),
+  numOptions(sizeOfFirstList + sizeOfSecondList),
+  numHighlightBoxes(numOptions - 1 - int(boxHasTwoTitles)) //Minus one per title
 {
   //Make the background rectangle
   background.setSize(size);
@@ -198,13 +198,13 @@ OptionsBox::OptionsBox(
   divLine.setPosition(divPosition, position.y);
 
   //Make the options
-  for(int i = 0; i < numOptionsText; i++){
+  for(int i = 0; i < numOptions; i++){
     optionsText[i].setCharacterSize(25);
     optionsText[i].setFillColor(sf::Color::Black);
     optionsText[i].setString(optionString.at(i));
 
     //Headings get titleFont, everything else gets mainFont
-    if(0 == i % sizeOfEachList){
+    if(0 == i || (sizeOfFirstList == i && hasTwoTitles)){
       optionsText[i].setFont(titleFont);
     }
     else{
@@ -214,33 +214,35 @@ OptionsBox::OptionsBox(
     //Positioning depends on which list you're in
     float xPos;
     float yPos;
-    if(i < sizeOfEachList){
+    if(i < sizeOfFirstList){
       xPos = position.x;
       yPos = position.y + float(30 * i);
     }
     else{
       xPos = divPosition + 10;
-      yPos = position.y + float(30 * (i - sizeOfEachList));
+      yPos = position.y + float(30*(i - sizeOfFirstList + int(!hasTwoTitles)));
     }
     optionsText[i].setPosition(xPos, yPos);
   }
 
   //Make the first set of hightlight boxes
-  for(int i = 0; i < sizeOfEachList - 1; i++){
+  for(int i = 0; i < sizeOfFirstList - 1; i++){
     highlightBox[i] = optionsText[i + 1].getGlobalBounds();
   }
 
   //Make the second set of hightlight boxes
-  for(int i = sizeOfEachList - 1; i < numHighlightBox; i++){
-    highlightBox[i] = optionsText[i + 2].getGlobalBounds();
+  for(int i = sizeOfFirstList - 1; i < numHighlightBoxes; i++){
+    highlightBox[i] = optionsText[i + 1 + int(hasTwoTitles)].getGlobalBounds();
   }
 }
 
 void OptionsBox::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
-  window -> draw(divLine);
-  for(int  i = 0; i < numOptionsText; i++){
+  if(hasTwoTitles){
+    window -> draw(divLine);
+  }
+  for(int  i = 0; i < numOptions; i++){
     window -> draw(optionsText[i]);
   }
 }
@@ -307,7 +309,7 @@ void OptionsBox::Highlight(){
   sf::RectangleShape highlight;
   highlight.setFillColor(ClearYellow);
 
-  for(int i = 0; i < numHighlightBox; i++){
+  for(int i = 0; i < numHighlightBoxes; i++){
     if(highlightBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
       highlight.setSize(sf::Vector2f(highlightBox[i].width,
                                      highlightBox[i].height));

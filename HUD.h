@@ -54,26 +54,28 @@ class OptionsBox{
                const std::array <sf::String, 8>& optionString
                  = {"PUNCH:Where Punch Bear?","1:Leg","2:Eye","3:John Hopkins",
                     "ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
-               sf::Vector2f thePosition = sf::Vector2f(0,465),
-               sf::Vector2f theSize = sf::Vector2f(595, 135),
-               float dividerPosition = 350.0f );
+               bool boxHasTwoTitles = true);
     Action GetAction(sf::Event theEvent);
     void Highlight();
     void draw();//See comment in MessageBox
   private:
     sf::RenderWindow* window;
-    const sf::Vector2f position;
-    const sf::Vector2f size;
-    const float divPosition;
+    const sf::Vector2f position = sf::Vector2f(0,465);
+    const sf::Vector2f size = sf::Vector2f(595, 135);
+    const float divPosition = 350.0f;
     sf::RectangleShape background;
     sf::RectangleShape divLine;
 
-    static const int sizeOfEachList = 4;
-    static const int numOptionsText = 2 * sizeOfEachList;
-    static const int numHighlightBox = numOptionsText - 2;//-2 for the headers
+    static const int maxNumOptions = 8;
 
-    sf::Text optionsText[numOptionsText];
-    sf::FloatRect highlightBox[numHighlightBox];
+    const bool hasTwoTitles;
+    const int sizeOfFirstList;  //Includes the title
+    const int sizeOfSecondList; //Includes the second title, if one exists
+    const int numOptions;       //Includes the title(s)
+    const int numHighlightBoxes;
+
+    sf::Text optionsText[maxNumOptions];
+    sf::FloatRect highlightBox[maxNumOptions];
 };
 
 
