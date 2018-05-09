@@ -1,6 +1,6 @@
 #include "HUD.h"
 #include <string>//For std::to_string
-#include <cassert>//For error handling
+#include <iostream>//For std::cerr
 #include "Player.h"
 #include "Bear.h"
 
@@ -187,6 +187,10 @@ OptionsBox::OptionsBox(
   numOptions(sizeOfFirstList + sizeOfSecondList),
   numHighlightBoxes(numOptions - 1 - int(boxHasTwoTitles)) //Minus one per title
 {
+  if(sizeOfFirstList + sizeOfSecondList > maxNumOptions){
+    std::cerr << "Too many options. They're not all going to fit.\n";
+  }
+
   //Make the background rectangle
   background.setSize(size);
   background.setFillColor(Gray);
