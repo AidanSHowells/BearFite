@@ -19,7 +19,7 @@ class Player{
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
-    TurnOf TakeAction(Action theAction, Bear& theBear);//See below for syntax
+    TurnOf TakeAction(Action theAction, Bear& theBear);
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
   private:
@@ -42,14 +42,5 @@ class Player{
     TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();
 };
-
-/*Syntax for TakeAction:
-if(event.type == sf::Event::MouseButtonPressed ||
-   event.type == sf::Event::KeyPressed)
-{
-  turn = player.TakeAction(optionsBox.GetAction(event), bear);
-}
-//Returns TurnOf::player if it's still the player's turn, TurnOf::bear otherwise
-*/
 
 #endif

@@ -251,62 +251,30 @@ void OptionsBox::draw(){
   }
 }
 
-Action OptionsBox::GetAction(sf::Event theEvent){
+int OptionsBox::GetChoice(const sf::Event theEvent){
+  int playerChoice = 0;//Zero if they didn't choose anything
+
   if(theEvent.type == sf::Event::KeyPressed){
-    if (theEvent.key.code == sf::Keyboard::Num1 ||
-        theEvent.key.code == sf::Keyboard::Numpad1)
-    {return Action::leg;}
-
-    else if (theEvent.key.code == sf::Keyboard::Num2 ||
-             theEvent.key.code == sf::Keyboard::Numpad2)
-    {return Action::eye;}
-
-    else if (theEvent.key.code == sf::Keyboard::Num3 ||
-             theEvent.key.code == sf::Keyboard::Numpad3)
-    {return Action::john_hopkins;}
-
-    else if (theEvent.key.code == sf::Keyboard::Num4 ||
-             theEvent.key.code == sf::Keyboard::Numpad4)
-    {return Action::quaff;}
-
-    else if (theEvent.key.code == sf::Keyboard::Num5 ||
-             theEvent.key.code == sf::Keyboard::Numpad5)
-    {return Action::cast;}
-
-    else if (theEvent.key.code == sf::Keyboard::Num6 ||
-             theEvent.key.code == sf::Keyboard::Numpad6)
-    {return Action::flee;}
-
-    else{
-      return Action::nothing;
+    for(int i = 0; i < numHighlightBoxes; i++){
+      if(theEvent.key.code == (i + sf::Keyboard::Num1) ||
+         theEvent.key.code == (i + sf::Keyboard::Numpad1))
+      {
+        playerChoice = i + 1;
+      }
     }
   }
+
   else if(theEvent.type == sf::Event::MouseButtonPressed){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
-
-    if (highlightBox[0].contains(clickLocation)){
-      return Action::leg;
-    }
-    else if (highlightBox[1].contains(clickLocation)){
-      return Action::eye;
-    }
-    else if (highlightBox[2].contains(clickLocation)){
-      return Action::john_hopkins;
-    }
-    else if (highlightBox[3].contains(clickLocation)){
-      return Action::quaff;
-    }
-    else if (highlightBox[4].contains(clickLocation)){
-      return Action::cast;
-    }
-    else if (highlightBox[5].contains(clickLocation)){
-      return Action::flee;
-    }
-    else{
-      return Action::nothing;
+    for(int i = 0; i < numHighlightBoxes; i++){
+      if(highlightBox[i].contains(clickLocation)){
+        playerChoice = i + 1;
+      }
     }
   }
+
+  return playerChoice;
 }
 
 void OptionsBox::Highlight(){
@@ -691,7 +659,7 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent)
       }
     }
     else{
-      Action theAction = options.GetAction(theEvent);
+      Action theAction = Action(options.GetChoice(theEvent));
       if (theAction == Action::cast) {
         //isPickingSpell = true;
         messages.Update(sf::String("Spellcasting"),

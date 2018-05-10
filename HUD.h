@@ -23,10 +23,10 @@ class Player;
  *use, and the font everything else uses. Optionally, specify the position and
  *size of the box, as well as the horizontal position of the divider line.
  *Member functions are "draw", which draws the options box to the window,
- *"GetAction", which takes an sf::Event argument and returns an Action if one
- *should occur, and "Highlight", which should be called right before
- *window.display() and which highlights any clickable things that the user is
- *hovering over.
+ *"GetChoice", which takes an sf::Event argument and returns the index of the
+ *option the player picked (zero for nothing), and "Highlight", which should be
+ *called right before window.display() and which highlights any clickable things
+ *that the user is hovering over.
  */
 
 /*The PlayerStats class is for displaying the stats of the player. When
@@ -55,7 +55,7 @@ class OptionsBox{
                  = {"PUNCH:Where Punch Bear?","1:Leg","2:Eye","3:John Hopkins",
                     "ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
                bool boxHasTwoTitles = true);
-    Action GetAction(sf::Event theEvent);
+    int GetChoice(sf::Event theEvent);
     void Highlight();
     void draw();//See comment in MessageBox
   private:
