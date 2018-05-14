@@ -12,10 +12,10 @@ int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 
-void Player::SetAbil(std::array<int,6> newAbil){
-  for(int i = 0; i < newAbil.size(); i++){
-    abil[i] = newAbil.at(i);
-  }
+void Player::SetAbil(std::array<int,6> newAbil){abil = newAbil;}
+
+int Player::GetSave(SaveType saveType){
+  return 30;//TEMP
 }
 
 int Player::HealthBonus(){return (abil[2] - 10) * 2;}
