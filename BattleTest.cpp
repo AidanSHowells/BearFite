@@ -142,7 +142,7 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
   }
   //Get the modifier
   fin >> modInt;
-  if(fin.fail() || modInt < 0 || modInt > int(ModifierID::SIZE)){
+  if(fin.fail() || modInt < 0 || modInt > int(ModifierID::NUM_MODIFIERS)){
     messages.Update(sf::String("Invalid Modifier."));
     fin.close();
     return;
@@ -154,7 +154,7 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
   modID = ModifierID(modInt);
 
   if(modID != ModifierID::none){
-    if(ModifierID::SIZE == modID){
+    if(ModifierID::NUM_MODIFIERS == modID){
       messages.Update(sf::String("Modifier is Random"), true);
     }
     else{
@@ -245,7 +245,7 @@ bool FindBear(const sf::Keyboard::Key theKey,
     int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
     theBear[0] = Bear(BearID(randInt));
 
-    randInt = Roll(1, int(ModifierID::SIZE)) - 1;
+    randInt = Roll(1, int(ModifierID::NUM_MODIFIERS)) - 1;
     if(1 == Roll(1,3)){
       randInt = 0;
     }
@@ -267,8 +267,8 @@ bool FindBear(const sf::Keyboard::Key theKey,
     else{
       theBear[0] = Bear(bearID);
     }
-    if(modID == ModifierID::SIZE){//Random Modifier in this case
-      int randInt = Roll(1, int(ModifierID::SIZE)) - 1;
+    if(modID == ModifierID::NUM_MODIFIERS){//Random Modifier in this case
+      int randInt = Roll(1, int(ModifierID::NUM_MODIFIERS)) - 1;
       theModifier = Modifier(ModifierID(randInt));
     }
     else{

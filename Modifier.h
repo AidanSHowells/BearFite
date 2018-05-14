@@ -3,9 +3,10 @@
 
 #include <SFML/System/String.hpp>
 
-//List of all modifiers that can occur (plus SIZE, which is always last):
+//List of all possible modifiers (plus NUM_MODIFIERS, which is always last):
 enum class ModifierID{none, beefy, exact, sturdy, genious, socrates, handsome,
-                      numerous, experienced, elite, keen, crictal, SIZE};
+                      numerous, experienced, elite, keen, crictal,
+                      NUM_MODIFIERS};
 
 
 //NOTE: If you make numTwins and/or numCompanians dynamic for some modifier,
