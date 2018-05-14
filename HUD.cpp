@@ -188,7 +188,7 @@ OptionsBox::OptionsBox(
   numHighlightBoxes(numOptions - 1 - int(boxHasTwoTitles)) //Minus one per title
 {
   if(sizeOfFirstList + sizeOfSecondList > maxNumOptions){
-    std::cerr << "Too many options. They're not all going to fit.\n";
+    std::cerr << "Too many options. They're not all going to fit.\n\n";
   }
 
   //Make the background rectangle

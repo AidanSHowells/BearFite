@@ -57,8 +57,11 @@ Modifier::Modifier(ModifierID modID){
   else if(ModifierID::NUM_MODIFIERS == modID){
     std::cerr << "Warning! ";
     std::cerr << "Attempted use of ModifierID::NUM_MODIFIERS in constructor.\n";
+    std::cerr << "\n";
   }
   else{
     std::cerr << "Warning! Attempted use of modifier unknown to constructor.\n";
+    std::cerr << "The number corresponding to the invalid modifier was ";
+    std::cerr << int(modID) << ".\n\n";
   }
 }

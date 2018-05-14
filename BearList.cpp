@@ -67,10 +67,12 @@ Bear::Bear(const BearID bearID){
   }
   else if(bearID == BearID::NUM_BEARS){
     std::cerr << "Warning! ";
-    std::cerr << "Attempted use of BearID::NUM_BEARS in constructor.\n";
+    std::cerr << "Attempted use of BearID::NUM_BEARS in constructor.\n\n";
   }
   else{
     std::cerr << "Warning! ";
     std::cerr << "Attempted use of BearID unknown to constructor.\n";
+    std::cerr << "The number corresponding to the invalid BearID was ";
+    std::cerr << int(bearID) << ".\n\n";
   }
 }
