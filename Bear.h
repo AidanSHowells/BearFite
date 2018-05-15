@@ -4,6 +4,7 @@
 #include <array>//For std::array
 #include "Messages.h"
 #include "Modifier.h"
+#include "Abilities.h"
 
 class Player;
 
@@ -44,7 +45,7 @@ class Bear{
     BearID identifier;
     Modifier modifier;
     Modifier modifier2;
-    int abil[6] = {10, 10, 10, 10, 10, 10};
+    std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
 
     int health;
     Body body;
@@ -60,7 +61,7 @@ class Bear{
     int AttackBonus();
     int DamageBonus();
     bool canBeFought = true;
-    void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR);
+    void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);
 };
 
 #endif

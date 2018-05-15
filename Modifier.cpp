@@ -7,27 +7,27 @@ Modifier::Modifier(ModifierID modID){
   }
   else if(ModifierID::beefy == modID){
     name = sf::String("Beefy");
-    abilAdd[0] = 10;
+    abilAdd[int(Abil::STR)] = 10;
   }
   else if(ModifierID::exact == modID){
     name = sf::String("Exact");
-    abilAdd[1] = 10;
+    abilAdd[int(Abil::DEX)] = 10;
   }
   else if(ModifierID::sturdy == modID){
     name = sf::String("Sturdy");
-    abilAdd[2] = 10;
+    abilAdd[int(Abil::CON)] = 10;
   }
   else if(ModifierID::genious == modID){
     name = sf::String("Genious");
-    abilAdd[3] = 10;
+    abilAdd[int(Abil::INT)] = 10;
   }
   else if(ModifierID::socrates == modID){
     name = sf::String("Socrates");
-    abilAdd[4] = 10;
+    abilAdd[int(Abil::WIS)] = 10;
   }
   else if(ModifierID::handsome == modID){
     name = sf::String("Handsome");
-    abilAdd[5] = 10;
+    abilAdd[int(Abil::CHA)] = 10;
   }
   else if(ModifierID::numerous == modID){
     name = sf::String("Numerous");
@@ -39,7 +39,7 @@ Modifier::Modifier(ModifierID modID){
   }
   else if(ModifierID::elite == modID){
     name = sf::String("Elite");
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < int(Abil::NUM_ABIL); i++){
       abilAdd[i] = 5;
     }
     levelAdd = 5;

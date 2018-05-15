@@ -2,6 +2,7 @@
 #define MODIFIER_H
 
 #include <SFML/System/String.hpp>
+#include "Abilities.h"
 
 //List of all possible modifiers (plus NUM_MODIFIERS, which is always last):
 enum class ModifierID{none, beefy, exact, sturdy, genious, socrates, handsome,
@@ -22,7 +23,7 @@ struct Modifier{
   int effectiveLevel = 0;
 
   int levelAdd = 0;
-  int abilAdd[6] = {0,0,0,0,0,0};
+  int abilAdd[int(Abil::NUM_ABIL)] = {0,0,0,0,0,0};
 
   int critThreatMult = 1;
   int critThreatAdd = 0;

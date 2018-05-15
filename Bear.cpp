@@ -8,16 +8,18 @@ void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
 }
 
-int Bear::AttackBonus(){return abil[0] - 10 + 2*(abil[1] - 10);}
+int Bear::AttackBonus(){
+  return abil[int(Abil::STR)] - 10 + 2*(abil[int(Abil::DEX)] - 10);
+}
 
-int Bear::DamageBonus(){return (abil[0] - 10)/2;}
+int Bear::DamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
 
 int Bear::AC(Action attackType){
   if(attackType == Action::leg){
-    return baseAC + armor + abil[1] - 10;
+    return baseAC + armor + abil[int(Abil::DEX)] - 10;
   }
   if(attackType == Action::eye){
-    return baseAC + armor + abil[1] - 10 + eyeACBonus;
+    return baseAC + armor + abil[int(Abil::DEX)] - 10 + eyeACBonus;
   }
 }
 
@@ -27,12 +29,12 @@ sf::String Bear::GetModifier(){return modifier.name;}
 
 
 void Bear::SetHealth(){
-  health = body.UpdateHealth(body.baseHealth, level, abil[2]);
+  health = body.UpdateHealth(body.baseHealth, level, abil[int(Abil::CON)]);
 }
 
 
 int Bear::GetHealth(){
-  health = body.UpdateHealth(health, level, abil[2]);
+  health = body.UpdateHealth(health, level, abil[int(Abil::CON)]);
 
   return health;
 }
@@ -44,7 +46,7 @@ std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
   else{
     modifier = mod;
   }
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
     abil[i] = std::max(abil[i] + mod.abilAdd[i], 1);//Don't kill the bear
   }
   level += mod.levelAdd;
@@ -91,13 +93,13 @@ void Bear::Bash(Player& thePlayer){
   }
 }
 
-void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHR){
-  abil[0] = STR;
-  abil[1] = DEX;
-  abil[2] = CON;
-  abil[3] = INT;
-  abil[4] = WIS;
-  abil[5] = CHR;
+void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA){
+  abil[int(Abil::STR)] = STR;
+  abil[int(Abil::DEX)] = DEX;
+  abil[int(Abil::CON)] = CON;
+  abil[int(Abil::INT)] = INT;
+  abil[int(Abil::WIS)] = WIS;
+  abil[int(Abil::CHA)] = CHA;
 }
 
 int Body::UpdateHealth(int newHealth, int newLevel, int newCON){

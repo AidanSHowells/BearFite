@@ -3,6 +3,7 @@
 
 #include <array>
 #include "Messages.h"
+#include "Abilities.h"
 
 class Bear;
 
@@ -14,7 +15,7 @@ class Player{
     int GetMaxHealth();
     int GetNumDranks();
     int GetAbil(int i){return abil.at(i);}
-    void SetAbil(std::array<int,6> newAbil);
+    void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
@@ -23,7 +24,7 @@ class Player{
     void Replenish(){numDranks++;}//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
-    std::array<int, 6> abil = {10,10,10,10,10,10}; //STR,DEX,CON,INT,WIS,CHR
+    std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
     int HealthBonus(); //Calculates increased health from intrinsics
     int maxHealth = 50 + HealthBonus();
     int health = maxHealth;

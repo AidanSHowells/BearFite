@@ -12,19 +12,23 @@ int Player::GetMaxHealth(){return maxHealth;}
 
 int Player::GetNumDranks(){return numDranks;}
 
-void Player::SetAbil(std::array<int,6> newAbil){abil = newAbil;}
+void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
+  abil = newAbil;
+}
 
-int Player::HealthBonus(){return (abil[2] - 10) * 2;}
+int Player::HealthBonus(){return (abil[int(Abil::CON)] - 10) * 2;}
 
-int Player::LegAttackBonus(){return abil[0] - 10;}
+int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}
 
-int Player::LegDamageBonus(){return (abil[0] - 10)/2;}
+int Player::LegDamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
 
-int Player::EyeAttackBonus(){return abil[0] - 10 + abil[1] - 10;}
+int Player::EyeAttackBonus(){
+  return abil[int(Abil::STR)] - 10 + abil[int(Abil::DEX)] - 10;
+}
 
-int Player::EyeDamageBonus(){return 2*(abil[0] - 10) + 5;}
+int Player::EyeDamageBonus(){return 2*(abil[int(Abil::STR)] - 10) + 5;}
 
-int Player::AC(){return baseAC + armor + abil[1] - 10;}
+int Player::AC(){return baseAC + armor + abil[int(Abil::DEX)] - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
