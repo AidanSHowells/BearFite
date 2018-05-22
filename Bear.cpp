@@ -2,7 +2,9 @@
 #include "Bear.h"
 #include "RollDice.h"
 #include "HUD.h"
+#include "Spell.h"
 #include <algorithm>//for std::max and std::min
+#include <iostream>//for std::cerr
 
 void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
@@ -18,8 +20,17 @@ int Bear::AC(Action attackType){
   if(attackType == Action::leg){
     return baseAC + armor + abil[int(Abil::DEX)] - 10;
   }
-  if(attackType == Action::eye){
+  else if(attackType == Action::eye){
     return baseAC + armor + abil[int(Abil::DEX)] - 10 + eyeACBonus;
+  }
+  else if(attackType == Action::cast){//Ranged touch attack
+    return baseAC + abil[int(Abil::DEX)] - 10;
+  }
+  else{
+    std::cerr << "Warning! Use of invalid Action in Bear::AC.\n";
+    std::cerr << "The index of the invalid Action was ";
+    std::cerr << int(attackType) << ".\n\n";
+    return -1;
   }
 }
 
@@ -37,6 +48,33 @@ int Bear::GetHealth(){
   health = body.UpdateHealth(health, level, abil[int(Abil::CON)]);
 
   return health;
+}
+
+int Bear::GetSave(const SaveType saveType){
+  int save = Roll(1,60);
+  if(saveType == SaveType::reflex){
+    save += 2 * abil.at(int(Abil::DEX)) - 20;
+  }
+  else if(saveType == SaveType::fort){
+    save += 2 * abil.at(int(Abil::CON)) - 20;
+  }
+  else if(saveType == SaveType::will){
+    save += 2 * abil.at(int(Abil::INT)) - 20;
+  }
+  else if(saveType == SaveType::COUNT){
+    std::cerr << "Warning! Invalid use of ";
+    std::cerr << "SaveType::COUNT in function Bear::GetSave.\n\n";
+  }
+  else{
+    std::cerr << "Warning! Use of SaveType unknown to Bear::GetSave.\n";
+    std::cerr << "The index of the invalid SaveType was ";
+    std::cerr << int(save) << ".\n\n";
+  }
+  return save;
+}
+
+void Bear::DrainAbil(int ability, int drain){
+  abil.at(ability) -= drain;
 }
 
 std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){

@@ -11,6 +11,8 @@ class Player;
 //List of all bears that can appear (plus NUM_BEARS, which MUST be last):
 enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};
 
+enum class SaveType;
+
 class Body{
   public:
     int baseHealth = 420;
@@ -36,6 +38,8 @@ class Bear{
     void Bash(Player& thePlayer);
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
+    int GetSave(const SaveType saveType);
+    void DrainAbil(int ability, int drain);
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);

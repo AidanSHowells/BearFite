@@ -6,6 +6,8 @@
 #include "Abilities.h"
 
 class Bear;
+enum class SpellID;
+enum class SpellSchool;
 
 
 class Player{
@@ -20,6 +22,9 @@ class Player{
     void Hurt(int); //How the bear injures the player
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     TurnOf TakeAction(Action theAction, Bear& theBear);
+    int GetSpellcastingLevel(){return spellcastingLevel;}
+    int GetSpellSchoolBonus(const SpellSchool school);
+    bool TouchAttack(Bear bear);
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
   private:
@@ -34,10 +39,12 @@ class Player{
     int armor = 0; //This will be determined by equipped items and magic
     int legCritThreat = 1;
     int eyeCritThreat = 3;
+    int spellcastingLevel;
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
     int EyeAttackBonus();
     int EyeDamageBonus();
+    int TouchAttackBonus();
     TurnOf LegPunch(Bear& bear);
     TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();
