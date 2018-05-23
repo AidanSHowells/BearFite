@@ -34,7 +34,7 @@ int Bear::AC(Action attackType){
   }
 }
 
-sf::String Bear::GetName(){return name;}
+sf::String Bear::GetName() const {return name;}
 
 sf::String Bear::GetModifier(){return modifier.name;}
 

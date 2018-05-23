@@ -27,28 +27,33 @@ class MessageBox{
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 460) );
     //~MessageBox();//Removed since line[] is no longer dynamically allocated
-    void Update(sf::String inputString, bool makeLine = false);//Details of Update below
-    void Update(sf::String inputString1, sf::String inputString2);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3,
-                sf::String inputString4);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3,
-                sf::String inputString4,
-                sf::String inputString5);
-    void Update(sf::String inputString1,
-                sf::String inputString2,
-                sf::String inputString3,
-                sf::String inputString4,
-                sf::String inputString5,
-                sf::String inputString6);
-    void Update(sf::String inputString, int inputInt, bool makeLine = false);
-    void Update(sf::String inputString, Bear inputBear);
+    void Update(const sf::String& inputString,
+                bool makeLine = false);//Details of Update below
+    void Update(const sf::String& inputString1,
+                const sf::String& inputString2,
+                bool makeLine = false);
+    void Update(const sf::String& inputString1,
+                const sf::String& inputString2,
+                const sf::String& inputString3);
+    void Update(const sf::String& inputString1,
+                const sf::String& inputString2,
+                const sf::String& inputString3,
+                const sf::String& inputString4);
+    void Update(const sf::String& inputString1,
+                const sf::String& inputString2,
+                const sf::String& inputString3,
+                const sf::String& inputString4,
+                const sf::String& inputString5);
+    void Update(const sf::String& inputString1,
+                const sf::String& inputString2,
+                const sf::String& inputString3,
+                const sf::String& inputString4,
+                const sf::String& inputString5,
+                const sf::String& inputString6);
+    void Update(const sf::String& inputString,
+                int inputInt,
+                bool makeLine = false);
+    void Update(const sf::String& inputString, const Bear& inputBear);
     //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
     void draw();//"Draw" would be consistant with our funcion naming convention,
                 //but "draw" is consistant with SFML

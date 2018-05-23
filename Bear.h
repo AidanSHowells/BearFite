@@ -32,7 +32,7 @@ class Bear{
     Bear(const BearID bearID);
     void SetMessageBox(MessageBox& theMessages);
     int AC(Action);
-    sf::String GetName();
+    sf::String GetName() const;
     BearID GetID(){return identifier;}
     sf::String GetModifier();
     void Bash(Player& thePlayer);

@@ -75,61 +75,68 @@ MessageBox::MessageBox(
 //Destructor removed since line[] is no longer dynamically allocated
 //MessageBox::~MessageBox(){delete[] line;}
 
-void MessageBox::Update(sf::String inputString, bool makeLine){
+void MessageBox::Update(const sf::String& inputString, bool makeLine){
   //Note: makeLine defaults to false
   SetTopString(markChar + inputString, makeLine);
 }
 
-void MessageBox::Update(sf::String inputString1, sf::String inputString2){
-  SetTopString(sf::String(" ") + inputString2);
+void MessageBox::Update(const sf::String& inputString1,
+                        const sf::String& inputString2,
+                        bool makeLine)
+{
+  //Note: makeLine defaults to false
+  SetTopString(sf::String(" ") + inputString2, makeLine);
   Update(inputString1);
 }
 
-void MessageBox::Update(sf::String inputString1,
-                        sf::String inputString2,
-                        sf::String inputString3)
+void MessageBox::Update(const sf::String& inputString1,
+                        const sf::String& inputString2,
+                        const sf::String& inputString3)
 {
   SetTopString(sf::String(" ") + inputString3);
   Update(inputString1, inputString2);
 }
 
-void MessageBox::Update(sf::String inputString1,
-                        sf::String inputString2,
-                        sf::String inputString3,
-                        sf::String inputString4)
+void MessageBox::Update(const sf::String& inputString1,
+                        const sf::String& inputString2,
+                        const sf::String& inputString3,
+                        const sf::String& inputString4)
 {
   SetTopString(sf::String(" ") + inputString4);
   Update(inputString1, inputString2, inputString3);
 }
 
-void MessageBox::Update(sf::String inputString1,
-                        sf::String inputString2,
-                        sf::String inputString3,
-                        sf::String inputString4,
-                        sf::String inputString5)
+void MessageBox::Update(const sf::String& inputString1,
+                        const sf::String& inputString2,
+                        const sf::String& inputString3,
+                        const sf::String& inputString4,
+                        const sf::String& inputString5)
 {
   SetTopString(sf::String(" ") + inputString5);
   Update(inputString1, inputString2, inputString3, inputString4);
 }
 
-void MessageBox::Update(sf::String inputString1,
-                        sf::String inputString2,
-                        sf::String inputString3,
-                        sf::String inputString4,
-                        sf::String inputString5,
-                        sf::String inputString6)
+void MessageBox::Update(const sf::String& inputString1,
+                        const sf::String& inputString2,
+                        const sf::String& inputString3,
+                        const sf::String& inputString4,
+                        const sf::String& inputString5,
+                        const sf::String& inputString6)
 {
   SetTopString(sf::String(" ") + inputString6);
   Update(inputString1, inputString2, inputString3, inputString4, inputString5);
 }
 
-void MessageBox::Update(sf::String inputString, int inputInt, bool makeLine){
+void MessageBox::Update(const sf::String& inputString,
+                        int inputInt,
+                        bool makeLine)
+{
   //Note that makeLine defaults to false
   SetTopString( AddSpacing(std::to_string(inputInt), 22) , makeLine);
   Update(inputString);
 }
 
-void MessageBox::Update(sf::String inputString, Bear inputBear){
+void MessageBox::Update(const sf::String& inputString, const Bear& inputBear){
   sf::String outputString = inputBear.GetName() + "bear";
   SetTopString( AddSpacing(outputString, 22) );
   Update(inputString);
