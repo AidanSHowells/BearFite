@@ -64,11 +64,12 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     makeLove = true;
   }
   else if(spellID == SpellID::NUM_SPELLS){
-    std::cerr << "Warning! ";
-    std::cerr << "Attempted use of SpellID::NUM_SPELLS in constructor.\n\n";
+    std::cerr << "Warning! Attempted use of ";
+    std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
   }
   else{
-    std::cerr << "Warning! Attempted use of SpellID unknown to constructor.\n";
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of SpellID unknown to Spell constructor.\n";
     std::cerr << "The number corresponding to the invalid SpellID was ";
     std::cerr << int(spellID) << ".\n\n";
   }
