@@ -22,6 +22,12 @@ bool Player::TouchAttack(Bear bear){
   return (Roll(1,60) + TouchAttackBonus() >= bear.AC(Action::cast));
 }
 
+void Player::MakeSweetLove(){
+  Messages -> Update("You have lost", "your virginity.", true);
+  Messages -> Update("Bear is love.");
+  numVirginities--;
+}
+
 int Player::HealthBonus(){return (abil[int(Abil::CON)] - 10) * 2;}
 
 int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}

@@ -5,7 +5,7 @@
 #include <SFML/System/String.hpp>
 #include "Abilities.h"
 
-enum class SpellID{none, pain, death, NUM_SPELLS};
+enum class SpellID{none, pain, death, pleasure, NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 
@@ -46,7 +46,7 @@ class Spell{
 
     //General stuff that applies to the bear
     bool drainAbil[int(Abil::NUM_ABIL)] = {false,false,false,false,false,false};
-    //bool makeLove = false;
+    bool makeLove = false;
     //bool givesFish = false;
 
     //Damage done to the bear

@@ -25,6 +25,7 @@ class Player{
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
     bool TouchAttack(Bear bear);
+    void MakeSweetLove();
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
   private:
@@ -34,6 +35,7 @@ class Player{
     int maxHealth = 50 + HealthBonus();
     int health = maxHealth;
     int numDranks = 5;
+    int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based
     int baseAC = 30; //This will be level-based
     int armor = 0; //This will be determined by equipped items and magic

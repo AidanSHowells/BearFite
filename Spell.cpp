@@ -47,6 +47,22 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     bearHealthPercentDamage = 100;
     spellSchoolBonusDamageFactor = 2;
   }
+  else if(spellID == SpellID::pleasure){
+    name = sf::String("Pleasure");
+    school = SpellSchool::CHA;
+    successText = sf::String("Hard bear");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::will;
+    saveText = sf::String("Soft bear");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+
+    //Set extra effects
+    makeLove = true;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! ";
     std::cerr << "Attempted use of SpellID::NUM_SPELLS in constructor.\n\n";
@@ -82,6 +98,9 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
     if(drainAbil[i]){
       targetBear.DrainAbil(i, Roll(1,4));
     }
+  }
+  if(makeLove){
+    player.MakeSweetLove();
   }
 
   Spell(castOnSuccess).Cast(player, battleHUD);
