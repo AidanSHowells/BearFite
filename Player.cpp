@@ -89,6 +89,93 @@ int Player::GetSpellSchoolBonus(const SpellSchool school){
   return bonus;
 }
 
+sf::String Player::GetSpellName(const int index){
+  if(index < 0 || index >= 3 * GetNumSpellTrees()){
+    return sf::String("");
+  }
+  else if(index == 0){
+    return sf::String(" Pain:");
+  }
+  else if(index == 1){
+    return sf::String(" Death:");
+  }
+  else if(index == 2){
+    return sf::String(" Pleasure:");
+  }
+  else if(index == 3){
+    return sf::String(" STR Up:");
+  }
+  else if(index == 4){
+    return sf::String(" STR Jump:");
+  }
+  else if(index == 5){
+    return sf::String(" STR Boost:");
+  }
+  else if(index == 6){
+    return sf::String(" Fish:");
+  }
+  else if(index == 7){
+    return sf::String(" Big Fish:");
+  }
+  else if(index == 8){
+    return sf::String(" Invuln:");
+  }
+  else if(index == 9){
+    return sf::String(" Fireball:");
+  }
+  else if(index == 10){
+    return sf::String(" Iceball:");
+  }
+  else if(index == 11){
+    return sf::String(" Lightning:");
+  }
+  else if(index == 12){
+    return sf::String(" STR Down:");
+  }
+  else if(index == 13){
+    return sf::String(" STR Drain:");
+  }
+  else if(index == 14){
+    return sf::String(" Weakness:");
+  }
+  else if(index == 15){
+    return sf::String(" Reversal:");
+  }
+  else if(index == 16){
+    return sf::String(" HP Drain:");
+  }
+  else if(index == 17){
+    return sf::String(" Vampirism:");
+  }
+  else if(index == 18){
+    return sf::String(" Detect:");
+  }
+  else if(index == 19){
+    return sf::String(" Dispel:");
+  }
+  else if(index == 20){
+    return sf::String(" Cleanse:");
+  }
+}
+
+int Player::GetNumSpell(const int index){
+  if(index < 0 || index >= 3 * GetNumSpellTrees()){
+    return 0;
+  }
+  else{
+    return 5;
+  }
+}
+
+int Player::GetMaxNumSpell(const int index){
+  if(index < 0 || index >= 3 * GetNumSpellTrees()){
+    return 0;
+  }
+  else{
+    return 5;
+  }
+}
+
 bool Player::TouchAttack(Bear bear){
   return (Roll(1,60) + TouchAttackBonus() >= bear.AC(Action::cast));
 }

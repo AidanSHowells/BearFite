@@ -489,40 +489,12 @@ size(theSize)
   spell[0].setPosition(position.x, position.y + 155);
 
   //Make the spells info
-  for(int i = 1; i < numSpell; i += 2){
+  for(int i = 1; i < maxSpells; i++){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
-    spell[i].setPosition(position.x, position.y + float(163 + i * 10) );
-
-    spell[i+1].setFont(mainFont);
-    spell[i+1].setCharacterSize(15);
-    spell[i+1].setFillColor(sf::Color::Black);
-    spell[i+1].setPosition(position.x, position.y + float(163 + i * 10) );
-    spell[i+1].setString("            5");//FIXME
+    spell[i].setPosition(position.x, position.y + float(153 + 20 * i) );
   }
-  //FIXME: This whole list should eventually be dynamic
-  spell[1].setString(" Pain:");
-  spell[3].setString(" Death:");
-  spell[5].setString(" Pleasure:");
-  spell[7].setString(" STR Up:");
-  spell[9].setString(" STR Jump:");
-  spell[11].setString(" STR Boost:");
-  spell[13].setString(" Fish:");
-  spell[15].setString(" Big Fish:");
-  spell[17].setString(" Invuln:");
-  spell[19].setString(" Fireball:");
-  spell[21].setString(" Iceball:");
-  spell[23].setString(" Lightning:");
-  spell[25].setString(" STR Down:");
-  spell[27].setString(" STR Drain:");
-  spell[29].setString(" Weakness:");
-  spell[31].setString(" Reversal:");
-  spell[33].setString(" HP Drain:");
-  spell[35].setString(" Vampirism:");
-  spell[37].setString(" Detect:");
-  spell[39].setString(" Dispel:");
-  spell[41].setString(" Cleanse:");
 
   //Divide up the spells
   for(int i = 0; i < numDivLine; i++){
@@ -546,6 +518,21 @@ void PlayerStats::Update(){
   for(int i = 1; i <= 6; i++){
     ability[2*i].setString(AddSpacing(std::to_string(player->GetAbil(i-1)),10));
   }
+
+  //Spells
+  for(int i = 1; i < maxSpells; i++){
+    if(player -> GetMaxNumSpell(i - 1) == 0){
+      spell[i].setString(sf::String(""));
+    }
+    else{
+      sf::String name = player -> GetSpellName(i - 1);
+      sf::String count = std::to_string(player -> GetNumSpell(i - 1));
+      count = AddSpacing(count, 13 - name.getSize());
+      sf::String max = std::to_string(player -> GetMaxNumSpell(i - 1));
+
+      spell[i].setString(name + count + sf::String("/") + max);
+    }
+  }
 }
 
 void PlayerStats::draw(){
@@ -558,7 +545,7 @@ void PlayerStats::draw(){
   for(int i = 0; i < numAbility; i++){
     window -> draw(ability[i]);
   }
-  for(int i = 0; i < numSpell; i++){
+  for(int i = 0; i < maxSpells; i++){
     window -> draw(spell[i]);
   }
   for(int i = 0; i < numDivLine; i++){

@@ -132,13 +132,13 @@ class PlayerStats{
 
     static const int numHealth = 6;
     static const int numAbility = 13;
-    static const int numSpell = 43;
+    static const int maxSpells = 22;
     static const int numDivLine = 7;
 
     sf::Text header;
     sf::Text health[numHealth];
     sf::Text ability[numAbility];
-    sf::Text spell[numSpell];
+    sf::Text spell[maxSpells];
     sf::RectangleShape divLine[numDivLine];
 };
 

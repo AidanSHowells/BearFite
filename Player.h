@@ -24,6 +24,10 @@ class Player{
     TurnOf TakeAction(Action theAction, Bear& theBear);
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
+    int GetNumSpellTrees(){return 7;/*TEMP*/}
+    sf::String GetSpellName(const int index);
+    int GetNumSpell(const int index);
+    int GetMaxNumSpell(const int index);
     bool TouchAttack(Bear bear);
     void MakeSweetLove();
     void Heal(){Quaff();}//TEMP
