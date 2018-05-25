@@ -122,13 +122,18 @@ class PlayerStats{
               sf::Vector2f thePosition = sf::Vector2f(600, 0),
               sf::Vector2f theSize = sf::Vector2f(200, 600) );
     void Update();
+    bool SpellChoiceProcessStarted(MessageBox& messages);
+    int GetSpell(const sf::Event theEvent);
+    void HighlightSpells();
     void draw();//See comment in MessageBox
+    enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
     sf::RenderWindow* window;
     Player* player;
     const sf::Vector2f position;
     const sf::Vector2f size;
     sf::RectangleShape background;
+    int selectedSpellIndex;
 
     static const int numHealth = 6;
     static const int numAbility = 13;
@@ -139,6 +144,7 @@ class PlayerStats{
     sf::Text health[numHealth];
     sf::Text ability[numAbility];
     sf::Text spell[maxSpells];
+    sf::FloatRect highlightBox[maxSpells];
     sf::RectangleShape divLine[numDivLine];
 };
 

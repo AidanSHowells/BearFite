@@ -535,6 +535,104 @@ void PlayerStats::Update(){
   }
 }
 
+bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
+  bool playerHasSpells = false;
+  for(int i = 0; i < maxSpells && !playerHasSpells; i++){
+    playerHasSpells = (player -> GetNumSpell(i) > 0 );
+  }
+
+  if(playerHasSpells){
+    messages.Update("Press Esc to cancle", "and Enter to select", true);
+
+    //Start with the first usable spell selected by using GetSpell()
+    selectedSpellIndex = -1;
+    sf::Event scrollDown;
+    scrollDown.type = sf::Event::KeyPressed;
+    scrollDown.key.code = sf::Keyboard::Down;
+    GetSpell(scrollDown);
+  }
+  else{
+    messages.Update("No Spells To Cast");
+  }
+
+  return playerHasSpells;
+}
+
+int PlayerStats::GetSpell(const sf::Event theEvent){
+  if(theEvent.type == sf::Event::KeyPressed){
+    if(theEvent.key.code == sf::Keyboard::Escape){
+      return changedMindAboutCasting;
+    }
+    if(theEvent.key.code == sf::Keyboard::Up){
+      selectedSpellIndex--;
+      while(player -> GetNumSpell(selectedSpellIndex) <= 0 &&
+            selectedSpellIndex >= 0)
+      {
+        selectedSpellIndex--;
+      }
+      if(selectedSpellIndex < 0){
+        selectedSpellIndex = maxSpells;
+        while(player -> GetNumSpell(selectedSpellIndex) <= 0){
+          selectedSpellIndex--;
+        }
+      }
+    }
+    else if(theEvent.key.code == sf::Keyboard::Down){
+      selectedSpellIndex++;
+      while(player -> GetNumSpell(selectedSpellIndex) <= 0 &&
+            selectedSpellIndex < maxSpells)
+      {
+        selectedSpellIndex++;
+      }
+      if(selectedSpellIndex >= maxSpells){
+        selectedSpellIndex = 0;
+        while(player -> GetNumSpell(selectedSpellIndex) <= 0){
+          selectedSpellIndex++;
+        }
+      }
+    }
+    else if(theEvent.key.code == sf::Keyboard::Return){
+      return selectedSpellIndex;
+    }
+  }
+
+  else if(theEvent.type == sf::Event::MouseButtonPressed){
+    sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
+                               float(theEvent.mouseButton.y) );
+    for(int i = 0; i < maxSpells - 1; i++){
+      if(highlightBox[i].contains(clickLocation)){
+        return i;
+      }
+    }
+  }
+
+  return noChoice;
+}
+
+void PlayerStats::HighlightSpells(){
+  //Make sure the highlight boxes are the right size
+  for(int i = 0; i < maxSpells - 1; i++){
+    highlightBox[i] = spell[i + 1].getGlobalBounds();
+  }
+
+  //If they're hovering over a valid spell, jump to it
+  sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*window));
+  for(int i = 0; i < maxSpells - 1; i++){
+    if(highlightBox[i].contains(mousePosition) && player -> GetNumSpell(i) > 0){
+      selectedSpellIndex = i;
+    }
+  }
+
+  //Highlight the selected spell
+  sf::RectangleShape highlight;
+  highlight.setFillColor(ClearYellow);
+  highlight.setSize(sf::Vector2f(highlightBox[selectedSpellIndex].width,
+                                 highlightBox[selectedSpellIndex].height));
+  highlight.setPosition(highlightBox[selectedSpellIndex].left,
+                        highlightBox[selectedSpellIndex].top);
+  window -> draw(highlight);
+}
+
 void PlayerStats::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
@@ -631,7 +729,9 @@ bool BattleHUD::RemoveDeadCombatants(){
 TurnOf BattleHUD::TakeAction(sf::Event theEvent)
 {
   if(isPickingSpell){
-    //playerStats.GetSpell(theEvent);
+    if(playerStats.GetSpell(theEvent) != PlayerStats::noChoice){
+      isPickingSpell = false;
+    }
   }
   else{
     if(theEvent.key.code == sf::Keyboard::Up){
@@ -654,10 +754,10 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent)
     }
     else{
       Action theAction = Action(options.GetChoice(theEvent));
-      if (theAction == Action::cast) {
-        //isPickingSpell = true;
-        messages.Update(sf::String("Spellcasting"),
-                        sf::String("is unsupported."));//TEMP
+      if (theAction == Action::cast){
+        if(playerStats.SpellChoiceProcessStarted(messages)){
+          isPickingSpell = true;
+        }
       }
       else{
         return player -> TakeAction(theAction, *bear);
@@ -685,7 +785,12 @@ void BattleHUD::draw(){
 }
 
 void BattleHUD::Highlight(){
-  options.Highlight();
+  if(isPickingSpell){
+    playerStats.HighlightSpells();
+  }
+  else{
+    options.Highlight();
+  }
 
   sf::RectangleShape bearHighlight;
   bearHighlight.setFillColor(ClearYellow);
