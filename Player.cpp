@@ -18,65 +18,6 @@ void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
   abil = newAbil;
 }
 
-bool Player::TouchAttack(Bear bear){
-  return (Roll(1,60) + TouchAttackBonus() >= bear.AC(Action::cast));
-}
-
-void Player::MakeSweetLove(){
-  Messages -> Update("You have lost", "your virginity.", true);
-  Messages -> Update("Bear is love.");
-  numVirginities--;
-}
-
-int Player::HealthBonus(){return (abil[int(Abil::CON)] - 10) * 2;}
-
-int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}
-
-int Player::LegDamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
-
-int Player::EyeAttackBonus(){
-  return abil[int(Abil::STR)] - 10 + abil[int(Abil::DEX)] - 10;
-}
-
-int Player::EyeDamageBonus(){return 2*(abil[int(Abil::STR)] - 10) + 5;}
-
-int Player::TouchAttackBonus(){
-  return 0;//FIXME
-}
-
-int Player::GetSpellSchoolBonus(const SpellSchool school){
-  int bonus;
-  if(school == SpellSchool::STR){
-    bonus = abil.at(int(Abil::STR)) + 2 * abil.at(int(Abil::INT));
-  }
-  else if(school == SpellSchool::DEX){
-    bonus = abil.at(int(Abil::DEX)) + 2 * abil.at(int(Abil::INT));
-  }
-  else if(school == SpellSchool::CON){
-    bonus = abil.at(int(Abil::CON)) + 2 * abil.at(int(Abil::INT));
-  }
-  else if(school == SpellSchool::INT){
-    bonus = 3 * abil.at(int(Abil::INT));
-  }
-  else if(school == SpellSchool::WIS){
-    bonus = ( 3 * abil.at(int(Abil::WIS)) + 3 * abil.at(int(Abil::INT)) )/2;
-  }
-  else if(school == SpellSchool::CHA){
-    bonus = ( 3 * abil.at(int(Abil::CHA)) + 3 * abil.at(int(Abil::INT)) )/2;
-  }
-  else if (school == SpellSchool::WIS_CHA){
-    bonus = abil.at(int(Abil::INT)) + abil.at(int(Abil::WIS))
-            + abil.at(int(Abil::CHA));
-  }
-  else{
-    std::cerr << "Warning! Use of SpellSchool unknown to ";
-    std::cerr << "Player::GetSpellcastingLevel.\n";
-    std::cerr << "The index of the invalid SpellSchool was ";
-    std::cerr << int(school) << ".\n\n";
-  }
-  return bonus;
-}
-
 int Player::AC(){return baseAC + armor + abil[int(Abil::DEX)] - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
@@ -114,6 +55,66 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
     return TurnOf::player;
   }
 }
+
+int Player::GetSpellSchoolBonus(const SpellSchool school){
+  int bonus;
+  if(school == SpellSchool::STR){
+    bonus = abil.at(int(Abil::STR)) + 2 * abil.at(int(Abil::INT));
+  }
+  else if(school == SpellSchool::DEX){
+    bonus = abil.at(int(Abil::DEX)) + 2 * abil.at(int(Abil::INT));
+  }
+  else if(school == SpellSchool::CON){
+    bonus = abil.at(int(Abil::CON)) + 2 * abil.at(int(Abil::INT));
+  }
+  else if(school == SpellSchool::INT){
+    bonus = 3 * abil.at(int(Abil::INT));
+  }
+  else if(school == SpellSchool::WIS){
+    bonus = ( 3 * abil.at(int(Abil::WIS)) + 3 * abil.at(int(Abil::INT)) )/2;
+  }
+  else if(school == SpellSchool::CHA){
+    bonus = ( 3 * abil.at(int(Abil::CHA)) + 3 * abil.at(int(Abil::INT)) )/2;
+  }
+  else if (school == SpellSchool::WIS_CHA){
+    bonus = abil.at(int(Abil::INT)) + abil.at(int(Abil::WIS))
+            + abil.at(int(Abil::CHA));
+  }
+  else{
+    std::cerr << "Warning! Use of SpellSchool unknown to ";
+    std::cerr << "Player::GetSpellcastingLevel.\n";
+    std::cerr << "The index of the invalid SpellSchool was ";
+    std::cerr << int(school) << ".\n\n";
+  }
+  return bonus;
+}
+
+bool Player::TouchAttack(Bear bear){
+  return (Roll(1,60) + TouchAttackBonus() >= bear.AC(Action::cast));
+}
+
+void Player::MakeSweetLove(){
+  Messages -> Update("You have lost", "your virginity.", true);
+  Messages -> Update("Bear is love.");
+  numVirginities--;
+}
+
+int Player::HealthBonus(){return (abil[int(Abil::CON)] - 10) * 2;}
+
+int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}
+
+int Player::LegDamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
+
+int Player::EyeAttackBonus(){
+  return abil[int(Abil::STR)] - 10 + abil[int(Abil::DEX)] - 10;
+}
+
+int Player::EyeDamageBonus(){return 2*(abil[int(Abil::STR)] - 10) + 5;}
+
+int Player::TouchAttackBonus(){
+  return 0;//FIXME
+}
+
 
 TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
