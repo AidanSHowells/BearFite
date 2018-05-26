@@ -709,7 +709,9 @@ bool BattleHUD::RemoveDeadCombatants(){
   }
   //FriendBear stuff here. (No return statement)
   for(int i = GetNumBears() - 1; i >= 0; i--){
-    if(bearStats[i].GetBearPtr() -> IsDead()){
+    if(bearStats[i].GetBearPtr() -> IsDead() ||
+       bearStats[i].GetBearPtr() -> IsLove())
+    {
       Bear tempBear = *bearStats[i].GetBearPtr();
       for(int j = i; j < 3; j++){
         bearStats[j].SetBear( *bearStats[j + 1].GetBearPtr() );

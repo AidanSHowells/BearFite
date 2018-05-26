@@ -35,6 +35,7 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
   }
   if(makeLove){
     player.MakeSweetLove();
+    targetBear.MakeSweetLove();
   }
 
   Spell(castOnSuccess).Cast(player, battleHUD);

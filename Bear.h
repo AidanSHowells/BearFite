@@ -40,6 +40,8 @@ class Bear{
     int GetHealth();
     int GetSave(const SaveType saveType);
     void DrainAbil(int ability, int drain);
+    void MakeSweetLove(){isLove = true;}
+    bool IsLove(){return isLove;}
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
@@ -64,6 +66,7 @@ class Bear{
     int critMult = 1; //how painful the bear criticals are
     int AttackBonus();
     int DamageBonus();
+    bool isLove = false;
     bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);
 };
