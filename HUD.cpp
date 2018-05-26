@@ -609,7 +609,9 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
   return noChoice;
 }
 
-void PlayerStats::HighlightSpells(){
+void PlayerStats::HighlightSpells(bool isPickingSpell){
+  bool isHoveringOverSpell = false;
+
   //Make sure the highlight boxes are the right size
   for(int i = 0; i < maxSpells - 1; i++){
     highlightBox[i] = spell[i + 1].getGlobalBounds();
@@ -620,17 +622,20 @@ void PlayerStats::HighlightSpells(){
   for(int i = 0; i < maxSpells - 1; i++){
     if(highlightBox[i].contains(mousePosition) && player -> GetNumSpell(i) > 0){
       selectedSpellIndex = i;
+      isHoveringOverSpell = true;
     }
   }
 
   //Highlight the selected spell
-  sf::RectangleShape highlight;
-  highlight.setFillColor(ClearYellow);
-  highlight.setSize(sf::Vector2f(highlightBox[selectedSpellIndex].width,
-                                 highlightBox[selectedSpellIndex].height));
-  highlight.setPosition(highlightBox[selectedSpellIndex].left,
-                        highlightBox[selectedSpellIndex].top);
-  window -> draw(highlight);
+  if(isPickingSpell || isHoveringOverSpell){
+    sf::RectangleShape highlight;
+    highlight.setFillColor(ClearYellow);
+    highlight.setSize(sf::Vector2f(highlightBox[selectedSpellIndex].width,
+                                   highlightBox[selectedSpellIndex].height));
+    highlight.setPosition(highlightBox[selectedSpellIndex].left,
+                          highlightBox[selectedSpellIndex].top);
+    window -> draw(highlight);
+  }
 }
 
 void PlayerStats::draw(){
@@ -728,9 +733,8 @@ bool BattleHUD::RemoveDeadCombatants(){
   return(!bearStats[0].GetShouldAppear());
 }
 
-TurnOf BattleHUD::TakeAction(sf::Event theEvent)
-{
-  if(isPickingSpell){
+TurnOf BattleHUD::TakeAction(sf::Event theEvent){
+  if(isPickingSpell || theEvent.type == sf::Event::MouseButtonPressed){
     int spellIndex = playerStats.GetSpell(theEvent);
     if(spellIndex != PlayerStats::noChoice){
       isPickingSpell = false;
@@ -739,35 +743,35 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent)
       }
     }
   }
-  else{
-    if(theEvent.key.code == sf::Keyboard::Up){
-      const int targetBearIndex = TargetBearIndex();
-      if(0 == targetBearIndex){
-        bear = bearStats[GetNumBears() - 1].GetBearPtr();
+  if(!isPickingSpell){
+    if(theEvent.type == sf::Event::KeyPressed){
+      if(theEvent.key.code == sf::Keyboard::Up){
+        const int targetBearIndex = TargetBearIndex();
+        if(0 == targetBearIndex){
+          bear = bearStats[GetNumBears() - 1].GetBearPtr();
+        }
+        else{
+          bear = bearStats[targetBearIndex - 1].GetBearPtr();
+        }
       }
-      else{
-        bear = bearStats[targetBearIndex - 1].GetBearPtr();
+      else if(theEvent.key.code == sf::Keyboard::Down){
+        const int targetBearIndex = TargetBearIndex();
+        if(GetNumBears() - 1 == targetBearIndex){
+          bear = bearStats[0].GetBearPtr();
+        }
+        else{
+          bear = bearStats[targetBearIndex + 1].GetBearPtr();
+        }
       }
     }
-    else if(theEvent.key.code == sf::Keyboard::Down){
-      const int targetBearIndex = TargetBearIndex();
-      if(GetNumBears() - 1 == targetBearIndex){
-        bear = bearStats[0].GetBearPtr();
-      }
-      else{
-        bear = bearStats[targetBearIndex + 1].GetBearPtr();
+    Action theAction = Action(options.GetChoice(theEvent));
+    if (theAction == Action::cast){
+      if(playerStats.SpellChoiceProcessStarted(messages)){
+        isPickingSpell = true;
       }
     }
     else{
-      Action theAction = Action(options.GetChoice(theEvent));
-      if (theAction == Action::cast){
-        if(playerStats.SpellChoiceProcessStarted(messages)){
-          isPickingSpell = true;
-        }
-      }
-      else{
-        return player -> TakeAction(theAction, *bear);
-      }
+      return player -> TakeAction(theAction, *bear);
     }
   }
   return TurnOf::player;
@@ -791,10 +795,8 @@ void BattleHUD::draw(){
 }
 
 void BattleHUD::Highlight(){
-  if(isPickingSpell){
-    playerStats.HighlightSpells();
-  }
-  else{
+  playerStats.HighlightSpells(isPickingSpell);
+  if(!isPickingSpell){
     options.Highlight();
   }
 

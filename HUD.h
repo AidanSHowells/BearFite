@@ -124,7 +124,7 @@ class PlayerStats{
     void Update();
     bool SpellChoiceProcessStarted(MessageBox& messages);
     int GetSpell(const sf::Event theEvent);
-    void HighlightSpells();
+    void HighlightSpells(bool isPickingSpell);
     void draw();//See comment in MessageBox
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
