@@ -7,9 +7,11 @@
 #include "HUD.h"
 #include "BearBattle.h"
 #include "Player.h"
+#include "Spell.h"
 
 void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages);
 void UpdatePlayerAbilities(Player& player, MessageBox& messages);
+void ResetPlayerSpells(Player& player, MessageBox& messages);
 void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
                    MessageBox& messages);
 
@@ -33,18 +35,20 @@ int main(){
   }
 
   //Create the window
-  sf::RenderWindow window(sf::VideoMode(800, 600), "BearFite", sf::Style::Titlebar | sf::Style::Close);
+  sf::RenderWindow window(sf::VideoMode(800, 600),
+                          "BearFite",
+                          sf::Style::Titlebar | sf::Style::Close);
   window.setKeyRepeatEnabled(false);
 
   //Keep track of wins
   std::array<int, 2 * int(BearID::NUM_BEARS)> scoreArray = {};//All zeros
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-  messages.Update("Q: Fight Babby Party",
-                  "A: New Abilities",
-                  "S: New Special Bear",
-                  "F: Fight Special Bear",
-                  "Z: Random Bear");
+  messages.Update("Q:Fight Babby Party.",
+                  "A/S/G:Get Abilities,",
+                  "Bear, or Spells.",
+                  "F:Fight Special Bear.",
+                  "Z:Fight Random Bear.");
 
   Player player;
   player.SetMessageBox(messages);
@@ -84,12 +88,12 @@ int main(){
             messages.Update("Bear's Final Health:", fakeBear.GetHealth());
             messages.Update("Last Bear Was:", fakeBear);
 
-            messages.Update("Q: Fight Babby Party",
-                            "A: New Abilities",
-                            "S: New Special Bear",
-                            "F: Fight Special Bear",
-                            "Z: Random Bear",
-                            "D: Dranks, H: Heal");
+            messages.Update("Q:Fight Babby Party.",
+                            "A/S/G:Get Abilities,",
+                            "Bear, or Spells.",
+                            "F:Fight Special Bear.",
+                            "Z:Fight Random Bear.",
+                            "D:Dranks, H: Heal.");
           }//endif FindBear
         }//endif specific key
         else if(event.key.code == sf::Keyboard::A){
@@ -97,6 +101,9 @@ int main(){
         }
         else if(event.key.code == sf::Keyboard::S){
           UpdateSpecialBear(specialBearID, specialModID, messages);
+        }
+        else if(event.key.code == sf::Keyboard::G){
+          ResetPlayerSpells(player, messages);
         }
         else if(event.key.code == sf::Keyboard::D){
           player.Replenish();
@@ -200,6 +207,64 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
   }
   player.SetAbil(newAbil);
   messages.Update(sf::String("Abilities Updated"));
+
+  fin.close();
+}
+
+void ResetPlayerSpells(Player& player, MessageBox& messages){
+  int tempInt;
+  int spellInt;
+  std::array<int,3> newNumSpells;
+
+  //Open the input file
+  std::ifstream fin;
+  fin.open("input.txt");
+  if(!fin.is_open()){
+    messages.Update(sf::String("Failed to open file"));
+    return;
+  }
+
+  //First eight things in the file are the bear, modifier, and ability scores
+  for(int i = 0; i < 8; i++){
+    fin >> tempInt;
+    if(fin.fail()){
+      messages.Update(sf::String("Invalid file format."));
+      return;
+    }
+  }
+
+  player.ClearSpells();
+
+  fin >> spellInt;
+  while(!fin.fail() && spellInt > 0 && spellInt < int(SpellID::NUM_SPELLS)){
+
+    for(int i = 0; i < 3 && !fin.fail(); i++){
+      fin >> newNumSpells.at(i);
+      if(fin.fail()){
+        messages.Update(sf::String("Invalid file format."));
+        return;
+      }
+    }
+    if(!fin.fail()){
+      SpellTree tree = SpellTree(SpellID(spellInt));
+      for(int i = 0; i < 3; i++){
+        tree.numSpells.at(i) = newNumSpells.at(i);
+        tree.maxSpells.at(i) = newNumSpells.at(i);
+      }
+      player.UnlockSpellTree(tree);
+      fin >> spellInt;
+    }
+  }
+
+  //Reading only stops without failing in case of an invalid SpellID
+  if(!fin.fail()){
+    messages.Update(sf::String("SpellID must be"), sf::String("between 1 and "
+                      + std::to_string(int(SpellID::NUM_SPELLS)-1)), true);
+  }
+  else{
+    //Spells were updated in both cases, but we don't want to bombard the user
+    messages.Update(sf::String("Spells Updated"));
+  }
 
   fin.close();
 }

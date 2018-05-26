@@ -36,10 +36,12 @@ class Player{
     sf::String GetSpellName(const int index);
     int GetNumSpell(const int index);
     int GetMaxNumSpell(const int index);
+    void UnlockSpellTree(SpellTree tree);
     bool TouchAttack(Bear bear);
     void MakeSweetLove();
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
+    void ClearSpells(){spellList.clear();}//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};

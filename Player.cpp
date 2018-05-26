@@ -28,10 +28,6 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
   }
   else if(theAction == Action::eye){
     return EyePunch(theBear);
-    //return EyePunch(theBear);
-    //Messages -> Update(sf::String("Eye punching"),
-    //                   sf::String("is unsupported."));//TEMP
-    //return TurnOf::player;//TEMP
   }
   else if(theAction == Action::john_hopkins){
     Messages -> Update(sf::String("John Hopkins punching"),
@@ -132,6 +128,10 @@ int Player::GetMaxNumSpell(const int index){
     int spellIndex = index % 3;
     return spellList.at(spellTreeIndex).maxSpells.at(spellIndex);
   }
+}
+
+void Player::UnlockSpellTree(SpellTree tree){
+  spellList.push_back(tree);
 }
 
 bool Player::TouchAttack(Bear bear){
