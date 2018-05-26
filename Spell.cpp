@@ -1,82 +1,15 @@
-#include <iostream> //For std::cerr
 #include "RollDice.h"
 #include "Spell.h"
 #include "HUD.h"
 #include "Bear.h"
 #include "Player.h"
 
-Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
-  identifier = spellID;
-  if(spellID == SpellID::none){}
-  else if(spellID == SpellID::pain){
-    name = sf::String("Pain");
-    school = SpellSchool::CHA;
-    successText = sf::String("Ouch");
-
-    //Set saves
-    allowsSave = true;
-    saveType = SaveType::will;
-    saveText = sf::String("Bear is unperturbed");
-    saveBaseDC = -20;
-    saveLevelFactor = 1;
-    saveSchoolFactor = 1;
-
-    //Set damage
-    baseDamage = 0;
-    bearHealthPercentDamage = 50;
-    baseNumDamageDice = 1;
-    levelAffectsNumDamageDice = true;
-    spellLevelsPerExtraDamageDie = 2;
-    damageDiceSize = 4;
-  }
-  else if(spellID == SpellID::death){
-    name = sf::String("Death");
-    school = SpellSchool::CHA;
-    successText = sf::String("No more bear");
-
-    //Set saves
-    allowsSave = true;
-    saveType = SaveType::will;
-    saveText = sf::String("Bad failure");
-    saveBaseDC = -30;
-    saveLevelFactor = 1;
-    saveSchoolFactor = 1;
-
-    //Set damage
-    baseDamage = 0;
-    bearHealthPercentDamage = 100;
-    spellSchoolBonusDamageFactor = 2;
-  }
-  else if(spellID == SpellID::pleasure){
-    name = sf::String("Pleasure");
-    school = SpellSchool::CHA;
-    successText = sf::String("Hard bear");
-
-    //Set saves
-    allowsSave = true;
-    saveType = SaveType::will;
-    saveText = sf::String("Soft bear");
-    saveBaseDC = -30;
-    saveLevelFactor = 1;
-    saveSchoolFactor = 1;
-
-    //Set extra effects
-    makeLove = true;
-  }
-  else if(spellID == SpellID::NUM_SPELLS){
-    std::cerr << "Warning! Attempted use of ";
-    std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
-  }
-  else{
-    std::cerr << "Warning! ";
-    std::cerr << "Attempted use of SpellID unknown to Spell constructor.\n";
-    std::cerr << "The number corresponding to the invalid SpellID was ";
-    std::cerr << int(spellID) << ".\n\n";
-  }
-}
-
 void Spell::Cast(Player& player, BattleHUD& battleHUD){
-  Bear targetBear = *(battleHUD.GetBearPtr());
+  if(identifier == SpellID::none){
+    return;
+  }
+
+  Bear& targetBear = *(battleHUD.GetBearPtr());
 
   if(requiresTouchAttack){
     if(!player.TouchAttack(targetBear)){

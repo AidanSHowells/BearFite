@@ -56,6 +56,17 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
   }
 }
 
+TurnOf Player::Cast(const int index, BattleHUD& environment){
+  int spellTreeIndex = index / 3;
+  int spellIndex = index % 3;
+  SpellID spellToCast = spellList.at(spellTreeIndex).spellIDList.at(spellIndex);
+
+  spellList.at(spellTreeIndex).numSpells.at(spellIndex) --;
+  Spell(spellToCast).Cast(*this, environment);
+
+  return TurnOf::bear;
+}
+
 int Player::GetSpellSchoolBonus(const SpellSchool school){
   int bonus;
   if(school == SpellSchool::STR){
@@ -81,10 +92,11 @@ int Player::GetSpellSchoolBonus(const SpellSchool school){
             + abil.at(int(Abil::CHA));
   }
   else{
-    std::cerr << "Warning! Use of SpellSchool unknown to ";
-    std::cerr << "Player::GetSpellcastingLevel.\n";
+    std::cerr << "Warning! ";
+    std::cerr << "Use of SpellSchool unknown to Player::GetSpellSchoolBonus.\n";
     std::cerr << "The index of the invalid SpellSchool was ";
     std::cerr << int(school) << ".\n\n";
+    bonus = 0;
   }
   return bonus;
 }
@@ -93,69 +105,11 @@ sf::String Player::GetSpellName(const int index){
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return sf::String("");
   }
-  else if(index == 0){
-    return sf::String(" Pain:");
-  }
-  else if(index == 1){
-    return sf::String(" Death:");
-  }
-  else if(index == 2){
-    return sf::String(" Pleasure:");
-  }
-  else if(index == 3){
-    return sf::String(" STR Up:");
-  }
-  else if(index == 4){
-    return sf::String(" STR Jump:");
-  }
-  else if(index == 5){
-    return sf::String(" STR Boost:");
-  }
-  else if(index == 6){
-    return sf::String(" Fish:");
-  }
-  else if(index == 7){
-    return sf::String(" Big Fish:");
-  }
-  else if(index == 8){
-    return sf::String(" Invuln:");
-  }
-  else if(index == 9){
-    return sf::String(" Fireball:");
-  }
-  else if(index == 10){
-    return sf::String(" Iceball:");
-  }
-  else if(index == 11){
-    return sf::String(" Lightning:");
-  }
-  else if(index == 12){
-    return sf::String(" STR Down:");
-  }
-  else if(index == 13){
-    return sf::String(" STR Drain:");
-  }
-  else if(index == 14){
-    return sf::String(" Weakness:");
-  }
-  else if(index == 15){
-    return sf::String(" Reversal:");
-  }
-  else if(index == 16){
-    return sf::String(" HP Drain:");
-  }
-  else if(index == 17){
-    return sf::String(" Vampirism:");
-  }
-  else if(index == 18){
-    return sf::String(" Detect:");
-  }
-  else if(index == 19){
-    return sf::String(" Dispel:");
-  }
-  else if(index == 20){
-    return sf::String(" Cleanse:");
-  }
+
+  int spellTreeIndex = index / 3;
+  int spellIndex = index % 3;
+  SpellID spellID = spellList.at(spellTreeIndex).spellIDList.at(spellIndex);
+  return Spell(spellID).GetName();
 }
 
 int Player::GetNumSpell(const int index){
@@ -163,7 +117,9 @@ int Player::GetNumSpell(const int index){
     return 0;
   }
   else{
-    return 5;
+    int spellTreeIndex = index / 3;
+    int spellIndex = index % 3;
+    return spellList.at(spellTreeIndex).numSpells.at(spellIndex);
   }
 }
 
@@ -172,7 +128,9 @@ int Player::GetMaxNumSpell(const int index){
     return 0;
   }
   else{
-    return 5;
+    int spellTreeIndex = index / 3;
+    int spellIndex = index % 3;
+    return spellList.at(spellTreeIndex).maxSpells.at(spellIndex);
   }
 }
 

@@ -19,6 +19,7 @@ class Spell{
   public:
     Spell(const SpellID spellID = SpellID::none);
     void Cast(Player& player, BattleHUD& battleHUD);
+    sf::String GetName(){return name;}
   private:
     SpellID identifier;
     sf::String name;

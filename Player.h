@@ -2,13 +2,20 @@
 #define PLAYER_H
 
 #include <array>
-#include "Messages.h"
+#include <vector>
+#include "HUD.h"
 #include "Abilities.h"
 
 class Bear;
 enum class SpellID;
 enum class SpellSchool;
 
+struct SpellTree{
+  SpellTree(const SpellID spellID);//NOTE: See SpellList.cpp for definition
+  std::array<SpellID, 3> spellIDList;
+  std::array<int, 3> numSpells = {3,0,0};
+  std::array<int, 3> maxSpells = {3,0,0};
+};
 
 class Player{
   public:
@@ -22,9 +29,10 @@ class Player{
     void Hurt(int); //How the bear injures the player
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
     TurnOf TakeAction(Action theAction, Bear& theBear);
+    TurnOf Cast(const int index, BattleHUD& environment);
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
-    int GetNumSpellTrees(){return 7;/*TEMP*/}
+    int GetNumSpellTrees(){return spellList.size();}
     sf::String GetSpellName(const int index);
     int GetNumSpell(const int index);
     int GetMaxNumSpell(const int index);
@@ -35,6 +43,7 @@ class Player{
   private:
     MessageBox* Messages; //So damage statements know where to print
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
+    std::vector<SpellTree> spellList;
     int HealthBonus(); //Calculates increased health from intrinsics
     int maxHealth = 50 + HealthBonus();
     int health = maxHealth;

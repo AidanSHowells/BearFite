@@ -729,8 +729,12 @@ bool BattleHUD::RemoveDeadCombatants(){
 TurnOf BattleHUD::TakeAction(sf::Event theEvent)
 {
   if(isPickingSpell){
-    if(playerStats.GetSpell(theEvent) != PlayerStats::noChoice){
+    int spellIndex = playerStats.GetSpell(theEvent);
+    if(spellIndex != PlayerStats::noChoice){
       isPickingSpell = false;
+      if(spellIndex != PlayerStats::changedMindAboutCasting){
+        return player -> Cast(spellIndex, *this);
+      }
     }
   }
   else{
