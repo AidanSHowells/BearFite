@@ -198,6 +198,12 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
     }
   }
 
+  fin >> tempInt;
+  if(fin.fail()){
+    messages.Update(sf::String("Invalid file format."));
+    return;
+  }
+
   for(int i = 0; i < 6; i++){
     fin >> newAbil.at(i);
     if(fin.fail()){
@@ -205,6 +211,8 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
       return;
     }
   }
+
+  player.SetSpellcastingLevel(tempInt);
   player.SetAbil(newAbil);
   messages.Update(sf::String("Abilities Updated"));
 
@@ -224,8 +232,8 @@ void ResetPlayerSpells(Player& player, MessageBox& messages){
     return;
   }
 
-  //First eight things in the file are the bear, modifier, and ability scores
-  for(int i = 0; i < 8; i++){
+  //First nine things in the file: bear, modifier, spellcasting level, abilities
+  for(int i = 0; i < 9; i++){
     fin >> tempInt;
     if(fin.fail()){
       messages.Update(sf::String("Invalid file format."));

@@ -444,9 +444,8 @@ size(theSize)
   health[3].setFont(mainFont);
   //no need to set numDranks here, since Update is called by HUD::draw
   health[4].setFont(titleFont);
-  health[4].setString("Effects:");
+  health[4].setString("SpellCasting Level:");
   health[5].setFont(mainFont);
-  health[5].setString("                  None");//FIXME
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
@@ -513,6 +512,10 @@ void PlayerStats::Update(){
 
   //Dranks
   health[3].setString(AddSpacing(std::to_string(player -> GetNumDranks()), 22));
+
+  //Spellcasting Level
+  sf::String level = std::to_string(player -> GetSpellcastingLevel());
+  health[5].setString(AddSpacing(level, 22));
 
   //Ability scores
   for(int i = 1; i <= 6; i++){

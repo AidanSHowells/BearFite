@@ -1,6 +1,8 @@
 0
 0
 
+0
+
 10
 10
 10
@@ -16,8 +18,10 @@ This file's purpose is to hold information that you want to give the program. Th
 
 *Second is an integer corresponding to the modifier that you want the bear to have. For a list of the modifiers in order (again starting from zero) see the definition of ModifierID (located in Modifier.h). If this integer is equal to the value corresponding to ModifierID::NUM_MODIFIERS, then the modifier will be randomized each time you fight.
 
+*Third is the spellcasting level you want to have.
+
 *The next six integers are the ability scores you want to have.
 
-*After this, there can be zero to seven sets of four integers each. The first integer in each group corresponds to a SpellID in the same way that the first two integers in this file correspond to bears and modifiers (except that SpellID::NUM_SPELLS is invalid instead of giving you a random spell). The spell tree containing this spell is added to the player's arsenal, where the next three integers in the group correspond to the number of castings you want to have of each spell in the tree. (For the definition of SpellID, see Spell.h.)
+*After this, there can be zero to seven sets of four integers each. The first integer in each group corresponds to a SpellID in the same way that the first two integers in this file correspond to bears and modifiers (except that SpellID::NUM_SPELLS is invalid instead of giving you a random spell). The spell tree containing the chosen SpellID is added to the player's arsenal, where the next three integers in the group correspond to the number of castings you want to have of each spell in the tree. (For the definition of SpellID, see Spell.h.)
 
-Note that the program only reads as much as it needs, so comments and any other garbage can be freely appended to the end.
+Note that the program only reads as much as it needs, so comments can be freely appended to the end of this file as long as the very first comment doesn't start with a number (in which case the program will understandably be confused).

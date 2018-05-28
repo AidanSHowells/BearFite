@@ -39,9 +39,12 @@ class Player{
     void UnlockSpellTree(SpellTree tree);
     bool TouchAttack(Bear bear);
     void MakeSweetLove();
+
+    //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
+    void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
