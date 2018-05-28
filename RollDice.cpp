@@ -1,7 +1,10 @@
 #include <cstdlib>//include random number generator
 #include <array>//for std::array
 #include <algorithm>//for std::sort
+#include <iostream>//for std::cout in debug mode
 #include "RollDice.h"
+
+const bool inDebugMode = true;
 
 //Rolls diceNumber "d" diceType. modifier defaults to RollMod::none
 int Roll(const int diceNumber, const int diceType, const RollMod modifier){
@@ -39,6 +42,18 @@ int Roll(const int diceNumber, const int diceType, const RollMod modifier){
     }
     std::sort(numList.begin(), numList.end());
     total = numList.at(consistantNum / 2);
+  }
+  if(inDebugMode){
+    std::cout << "Roll(" << diceNumber << ", " << diceType << ") = " << total;
+
+    if(modifier == RollMod::wild){
+      std::cout << "  Note: Using modifier \"wild\"";
+    }
+    else if(modifier == RollMod::consistant){
+      std::cout << "  Note: Using modifier \"consistant\"";
+    }
+
+    std::cout << "\n";
   }
   return (total);
 }
