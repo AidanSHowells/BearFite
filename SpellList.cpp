@@ -53,7 +53,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     baseDamage = 0;
     bearHealthPercentDamage = 50;
     baseNumDamageDice = 1;
-    levelAffectsNumDamageDice = true;
+    spellcastingLevelAffectsNumDamageDice = true;
     spellLevelsPerExtraDamageDie = 2;
     damageDiceSize = 4;
   }

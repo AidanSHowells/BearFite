@@ -54,7 +54,7 @@ int Spell::GetSaveDC(Player player){
 
 int Spell::GetDamage(Player player, Bear bear){
   int numDamageDice = baseNumDamageDice;
-  if(levelAffectsNumDamageDice){
+  if(spellcastingLevelAffectsNumDamageDice){
     int spellLevel = player.GetSpellcastingLevel();
     numDamageDice += spellLevel / spellLevelsPerExtraDamageDie;
   }

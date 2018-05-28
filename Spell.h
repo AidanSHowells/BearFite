@@ -56,7 +56,7 @@ class Spell{
     int bearHealthPercentDamage = 0;
     int spellSchoolBonusDamageFactor = 0;
     int baseNumDamageDice = 0;
-    bool levelAffectsNumDamageDice = false;
+    bool spellcastingLevelAffectsNumDamageDice = false;
     int spellLevelsPerExtraDamageDie;
     int damageDiceSize = 0;
 
