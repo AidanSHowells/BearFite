@@ -1,5 +1,6 @@
 #include <iostream> //For std::cerr
 #include <string>
+#include "RollDice.h"
 #include "Spell.h"
 #include "Player.h"
 
@@ -48,14 +49,6 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveBaseDC = -20;
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
-
-    //Set damage
-    baseDamage = 0;
-    bearHealthPercentDamage = 50;
-    baseNumDamageDice = 1;
-    spellcastingLevelAffectsNumDamageDice = true;
-    spellLevelsPerExtraDamageDie = 2;
-    damageDiceSize = 4;
   }
   else if(spellID == SpellID::death){
     name = sf::String("Death");
@@ -69,11 +62,6 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveBaseDC = -30;
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
-
-    //Set damage
-    baseDamage = 0;
-    bearHealthPercentDamage = 100;
-    spellSchoolBonusDamageFactor = 2;
   }
   else if(spellID == SpellID::pleasure){
     name = sf::String("Pleasure");
@@ -87,9 +75,6 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveBaseDC = -30;
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
-
-    //Set extra effects
-    makeLove = true;
   }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
@@ -101,4 +86,36 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     std::cerr << "The number corresponding to the invalid SpellID was ";
     std::cerr << int(spellID) << ".\n\n";
   }
+}
+
+
+void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD){
+  Bear& targetBear = *(battleHUD.GetBearPtr());
+  int damage = 0;
+
+  if(SpellID::none == identifier){}
+  else if(SpellID::pain == identifier){
+    damage = targetBear.GetHealth() / 2;
+    damage += Roll(1 + player.GetSpellcastingLevel() / 2, 4);
+  }
+  else if(SpellID::death == identifier){
+    damage = targetBear.GetHealth();
+    damage += 2 * player.GetSpellSchoolBonus(school);
+  }
+  else if(SpellID::pleasure == identifier){
+    player.MakeSweetLove();
+    targetBear.MakeSweetLove();
+  }
+  else if(SpellID::NUM_SPELLS == identifier){
+    std::cerr << "Warning! Attempted use of ";
+    std::cerr << "SpellID::NUM_SPELLS in Spell::ApplyEffects.\n\n";
+  }
+  else{
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of SpellID unknown to Spell::ApplyEffects.\n";
+    std::cerr << "The number corresponding to the invalid SpellID was ";
+    std::cerr << int(identifier) << ".\n\n";
+  }
+
+  targetBear.Hurt(damage);
 }

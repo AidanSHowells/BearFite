@@ -45,26 +45,8 @@ class Spell{
     SpellID castIfBearSaves = SpellID::none;
     SpellID castIfPlayerMisses = SpellID::none;
 
-    //General stuff that applies to the bear
-    bool drainAbil[int(Abil::NUM_ABIL)] = {false,false,false,false,false,false};
-    bool makeLove = false;
-    //bool givesFish = false;
-
-    //Damage done to the bear
-    int GetDamage(Player player, Bear bear);
-    int baseDamage = 0;
-    int bearHealthPercentDamage = 0;
-    int spellSchoolBonusDamageFactor = 0;
-    int baseNumDamageDice = 0;
-    bool spellcastingLevelAffectsNumDamageDice = false;
-    int spellLevelsPerExtraDamageDie;
-    int damageDiceSize = 0;
-
-    //Stuff that applies to the player
-    bool abilBoost[int(Abil::NUM_ABIL)] = {false,false,false,false,false,false};
-
-    //Stuff that applies to the environment
-    //TimeStop stuff goes here
+    //Function for actually doing the stuff if casting is successful
+    void ApplyEffects(Player& player, BattleHUD& battleHUD);
 };
 
 #endif
