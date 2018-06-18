@@ -73,6 +73,12 @@ int Bear::GetSave(const SaveType saveType){
   return save;
 }
 
+void Bear::TimerTick(){
+  hastedTime = std::max(0, hastedTime - 1);
+  slowedTime = std::max(0, slowedTime - 1);
+  paralyzedTime = std::max(0, paralyzedTime - 1);
+}
+
 void Bear::DrainAbil(int ability, int drain){
   abil.at(ability) -= drain;
 }

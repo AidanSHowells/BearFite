@@ -31,6 +31,13 @@ class Bear{
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
+    bool IsSlowed(){return (slowedTime > 0);}
+    bool IsParalyzed(){return (paralyzedTime > 0);}
+    bool IsHasted(){return (hastedTime > 0);}
+    void Slow(int time){slowedTime = time;}
+    void Paralyze(int time){paralyzedTime = time;}
+    void Haste(int time){hastedTime = time;}
+    void TimerTick();
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
   protected:
@@ -55,6 +62,9 @@ class Bear{
     int AttackBonus();
     int DamageBonus();
     bool isLove = false;
+    int slowedTime = 0;
+    int paralyzedTime = 0;
+    int hastedTime = 0;
     bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);
 };
