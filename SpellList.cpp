@@ -21,6 +21,14 @@ SpellTree::SpellTree(const SpellID spellID){
     spellIDList.at(1) = SpellID::death;
     spellIDList.at(2) = SpellID::pleasure;
   }
+  else if(spellID == SpellID::leech ||
+          spellID == SpellID::reversal ||
+          spellID == SpellID::abilDrain)
+  {
+    spellIDList.at(0) = SpellID::leech;
+    spellIDList.at(1) = SpellID::reversal;
+    spellIDList.at(2) = SpellID::abilDrain;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in SpellTree constructor.\n\n";
@@ -76,6 +84,45 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
   }
+  else if(spellID == SpellID::leech){
+    name = sf::String("Leech");
+    school = SpellSchool::STR;
+    successText = sf::String("*Slurp*");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::fort;
+    saveText = sf::String("Bear tastes gross");
+    saveBaseDC = -20;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::reversal){
+    name = sf::String("Reversal");
+    school = SpellSchool::STR;
+    successText = sf::String("The tabled turn");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::fort;
+    saveText = sf::String("Bear not trade");
+    saveBaseDC = -20;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::abilDrain){
+    name = sf::String("Ability Drain");
+    school = SpellSchool::STR;
+    successText = sf::String("You are drain bear");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::fort;
+    saveText = sf::String("Not today");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
   else if(spellID == SpellID::inferno){
     name = sf::String("Inferno");
     school = SpellSchool::INT;
@@ -126,6 +173,32 @@ void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
     if(!saveMade){
       player.MakeSweetLove();
       targetBear.MakeSweetLove();
+    }
+  }
+  else if(SpellID::leech == identifier){
+    if(!saveMade){
+      damage = Roll(1 + player.GetSpellcastingLevel() / 3, 6);
+      player.Hurt(-damage);
+    }
+  }
+  else if(SpellID::reversal == identifier){
+    if(!saveMade){
+      int diff = targetBear.GetHealth() - player.GetHealth();
+      targetBear.Hurt(diff);
+      player.Hurt(-diff);
+    }
+  }
+  else if(SpellID::abilDrain == identifier){
+    if(!saveMade){
+      int numDrains = std::min(1 + player.GetSpellcastingLevel() / 4,
+                               player.GetAbil(int(Abil::CHA)) - 10);
+
+      for(int i = 0; i < numDrains; i++){
+        int targetAbil = Roll(1,6) - 1;
+        int drain = std::min(targetBear.GetAbil(targetAbil) - 1, Roll(1,4));
+        targetBear.DrainAbil(targetAbil, drain);
+        player.BuffAbil(targetAbil, drain);
+      }
     }
   }
   else if(SpellID::inferno == identifier){

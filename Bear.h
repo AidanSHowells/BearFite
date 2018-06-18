@@ -27,6 +27,7 @@ class Bear{
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     int GetSave(const SaveType saveType);
+    int GetAbil(int index){return abil.at(index);}
     void DrainAbil(int ability, int drain);
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}

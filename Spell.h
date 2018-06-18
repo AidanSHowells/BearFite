@@ -5,7 +5,8 @@
 #include <SFML/System/String.hpp>
 #include "Abilities.h"
 
-enum class SpellID{none, pain, death, pleasure, inferno, NUM_SPELLS};
+enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
+                   inferno, NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 
