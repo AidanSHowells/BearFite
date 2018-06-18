@@ -25,8 +25,8 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks();
-    int GetAbil(int i){return abil.at(i);}
-    void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);
+    int GetAbil(int index);
+    void BuffAbil(int index, int buff);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
@@ -47,9 +47,11 @@ class Player{
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
+    void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
-    std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
+    std::array<int, int(Abil::NUM_ABIL)> baseAbil = {10,10,10,10,10,10};
+    std::array<int, int(Abil::NUM_ABIL)> abilBuff = {0,0,0,0,0,0};
     std::vector<SpellTree> spellList;
 
     Body body;

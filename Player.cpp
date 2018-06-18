@@ -12,7 +12,7 @@ Player::Player(){
 
   maxHealth = body.UpdateHealth(body.baseHealth,
                                 level,
-                                abil[int(Abil::CON)],
+                                GetAbil(int(Abil::CON)),
                                 numVirginities);
 
   health = maxHealth;
@@ -29,7 +29,7 @@ int Player::GetHealth(){
 int Player::GetMaxHealth(){
   maxHealth = body.UpdateHealth(maxHealth,
                                 level,
-                                abil[int(Abil::CON)],
+                                GetAbil(int(Abil::CON)),
                                 numVirginities);
 
   return maxHealth;
@@ -37,11 +37,15 @@ int Player::GetMaxHealth(){
 
 int Player::GetNumDranks(){return numDranks;}
 
-void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
-  abil = newAbil;
+int Player::GetAbil(int index){
+  return baseAbil.at(index) + abilBuff.at(index);
 }
 
-int Player::AC(){return baseAC + armor + abil[int(Abil::DEX)] - 10;}
+void Player::BuffAbil(int index, int buff){
+  abilBuff.at(index) += buff;
+}
+
+int Player::AC(){return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
@@ -89,26 +93,26 @@ TurnOf Player::Cast(const int index, BattleHUD& environment){
 int Player::GetSpellSchoolBonus(const SpellSchool school){
   int bonus;
   if(school == SpellSchool::STR){
-    bonus = abil.at(int(Abil::STR)) + 2 * abil.at(int(Abil::INT));
+    bonus = GetAbil(int(Abil::STR)) + 2 * GetAbil(int(Abil::INT));
   }
   else if(school == SpellSchool::DEX){
-    bonus = abil.at(int(Abil::DEX)) + 2 * abil.at(int(Abil::INT));
+    bonus = GetAbil(int(Abil::DEX)) + 2 * GetAbil(int(Abil::INT));
   }
   else if(school == SpellSchool::CON){
-    bonus = abil.at(int(Abil::CON)) + 2 * abil.at(int(Abil::INT));
+    bonus = GetAbil(int(Abil::CON)) + 2 * GetAbil(int(Abil::INT));
   }
   else if(school == SpellSchool::INT){
-    bonus = 3 * abil.at(int(Abil::INT));
+    bonus = 3 * GetAbil(int(Abil::INT));
   }
   else if(school == SpellSchool::WIS){
-    bonus = ( 3 * abil.at(int(Abil::WIS)) + 3 * abil.at(int(Abil::INT)) )/2;
+    bonus = ( 3 * GetAbil(int(Abil::WIS)) + 3 * GetAbil(int(Abil::INT)) )/2;
   }
   else if(school == SpellSchool::CHA){
-    bonus = ( 3 * abil.at(int(Abil::CHA)) + 3 * abil.at(int(Abil::INT)) )/2;
+    bonus = ( 3 * GetAbil(int(Abil::CHA)) + 3 * GetAbil(int(Abil::INT)) )/2;
   }
   else if (school == SpellSchool::WIS_CHA){
-    bonus = abil.at(int(Abil::INT)) + abil.at(int(Abil::WIS))
-            + abil.at(int(Abil::CHA));
+    bonus = GetAbil(int(Abil::INT)) + GetAbil(int(Abil::WIS))
+            + GetAbil(int(Abil::CHA));
   }
   else{
     std::cerr << "Warning! ";
@@ -167,15 +171,19 @@ void Player::MakeSweetLove(){
   numVirginities--;
 }
 
-int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}
-
-int Player::LegDamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
-
-int Player::EyeAttackBonus(){
-  return abil[int(Abil::STR)] - 10 + abil[int(Abil::DEX)] - 10;
+void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
+  baseAbil = newAbil;
 }
 
-int Player::EyeDamageBonus(){return 2*(abil[int(Abil::STR)] - 10) + 5;}
+int Player::LegAttackBonus(){return GetAbil(int(Abil::STR)) - 10;}
+
+int Player::LegDamageBonus(){return (GetAbil(int(Abil::STR)) - 10)/2;}
+
+int Player::EyeAttackBonus(){
+  return GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
+}
+
+int Player::EyeDamageBonus(){return 2*(GetAbil(int(Abil::STR)) - 10) + 5;}
 
 int Player::TouchAttackBonus(){
   return 0;//FIXME
