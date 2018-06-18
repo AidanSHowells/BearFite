@@ -5,7 +5,7 @@
 #include <SFML/System/String.hpp>
 #include "Abilities.h"
 
-enum class SpellID{none, pain, death, pleasure, NUM_SPELLS};
+enum class SpellID{none, pain, death, pleasure, inferno, NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 
@@ -46,7 +46,7 @@ class Spell{
     SpellID castIfPlayerMisses = SpellID::none;
 
     //Function for actually doing the stuff if casting is successful
-    void ApplyEffects(Player& player, BattleHUD& battleHUD);
+    void ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade);
 };
 
 #endif

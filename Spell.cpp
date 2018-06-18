@@ -10,6 +10,8 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
 
   Bear& targetBear = *(battleHUD.GetBearPtr());
 
+  bool saveMade = false;
+
   if(requiresTouchAttack){
     if(!player.TouchAttack(targetBear)){
       battleHUD.messages.Update(dodgeText, true);
@@ -21,16 +23,17 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
   if(allowsSave){
     if(targetBear.GetSave(saveType) >= GetSaveDC(player)){
       battleHUD.messages.Update(saveText, true);
-      Spell(castIfBearSaves).Cast(player, battleHUD);
-      return;
+      saveMade = true;
     }
   }
 
-  ApplyEffects(player, battleHUD);
+  ApplyEffects(player, battleHUD, saveMade);
 
   Spell(castOnSuccess).Cast(player, battleHUD);
 
-  battleHUD.messages.Update(successText, true);
+  if(!saveMade){
+    battleHUD.messages.Update(successText, true);
+  }
 }
 
 

@@ -76,6 +76,19 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
   }
+  else if(spellID == SpellID::inferno){
+    name = sf::String("Inferno");
+    school = SpellSchool::INT;
+    successText = sf::String("Bear is cooked");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::reflex;
+    saveText = sf::String("Bear flip away");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
@@ -89,22 +102,35 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
 }
 
 
-void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD){
+void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
   Bear& targetBear = *(battleHUD.GetBearPtr());
   int damage = 0;
 
   if(SpellID::none == identifier){}
   else if(SpellID::pain == identifier){
-    damage = targetBear.GetHealth() / 2;
-    damage += Roll(1 + player.GetSpellcastingLevel() / 2, 4);
+    if(!saveMade){
+      damage = targetBear.GetHealth() / 2;
+      damage += Roll(1 + player.GetSpellcastingLevel() / 2, 4);
+    }
   }
   else if(SpellID::death == identifier){
-    damage = targetBear.GetHealth();
-    damage += 2 * player.GetSpellSchoolBonus(school);
+    if(saveMade){
+      damage = Roll(3,6);
+    }
+    else{
+      damage = targetBear.GetHealth();
+      damage += 2 * player.GetSpellSchoolBonus(school);
+    }
   }
   else if(SpellID::pleasure == identifier){
-    player.MakeSweetLove();
-    targetBear.MakeSweetLove();
+    if(!saveMade){
+      player.MakeSweetLove();
+      targetBear.MakeSweetLove();
+    }
+  }
+  else if(SpellID::inferno == identifier){
+    damage = Roll(1 + player.GetSpellcastingLevel() / 3, 6);
+    if(saveMade) damage = damage / 2;
   }
   else if(SpellID::NUM_SPELLS == identifier){
     std::cerr << "Warning! Attempted use of ";
