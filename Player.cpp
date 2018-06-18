@@ -6,11 +6,34 @@
 #include <iostream>//for std::cerr
 
 
+Player::Player(){
+  body.hitDieSize = 6;
+  body.baseHealth = 50;
+
+  maxHealth = body.UpdateHealth(body.baseHealth,
+                                level,
+                                abil[int(Abil::CON)],
+                                numVirginities);
+
+  health = maxHealth;
+}
+
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
 
-int Player::GetHealth(){return health;}
+int Player::GetHealth(){
+  health = std::min(health, GetMaxHealth());
 
-int Player::GetMaxHealth(){return maxHealth;}
+  return health;
+}
+
+int Player::GetMaxHealth(){
+  maxHealth = body.UpdateHealth(maxHealth,
+                                level,
+                                abil[int(Abil::CON)],
+                                numVirginities);
+
+  return maxHealth;
+}
 
 int Player::GetNumDranks(){return numDranks;}
 
@@ -143,8 +166,6 @@ void Player::MakeSweetLove(){
   Messages -> Update("Bear is love.");
   numVirginities--;
 }
-
-int Player::HealthBonus(){return (abil[int(Abil::CON)] - 10) * 2;}
 
 int Player::LegAttackBonus(){return abil[int(Abil::STR)] - 10;}
 

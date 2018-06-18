@@ -5,6 +5,7 @@
 #include "Messages.h"
 #include "Modifier.h"
 #include "Abilities.h"
+#include "Body.h"
 
 class Player;
 
@@ -12,19 +13,6 @@ class Player;
 enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};
 
 enum class SaveType;
-
-class Body{
-  public:
-    int baseHealth = 420;
-    int hitDieSize = 0;
-    int UpdateHealth(int newHealth, int newLevel, int newCON);
-  private:
-    int health;
-    int level = 0;
-    int CON = 10;
-    std::vector<int> hitDice;
-    int HealthBonus(int constitution){return (constitution - 10) * 2;}
-};
 
 class Bear{
   public:

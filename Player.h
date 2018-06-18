@@ -5,6 +5,7 @@
 #include <vector>
 #include "HUD.h"
 #include "Abilities.h"
+#include "Body.h"
 
 class Bear;
 enum class SpellID;
@@ -19,6 +20,7 @@ struct SpellTree{
 
 class Player{
   public:
+    Player();
     void SetMessageBox(MessageBox& theMessages);
     int GetHealth();
     int GetMaxHealth();
@@ -49,10 +51,13 @@ class Player{
     MessageBox* Messages; //So damage statements know where to print
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
     std::vector<SpellTree> spellList;
-    int HealthBonus(); //Calculates increased health from intrinsics
-    int maxHealth = 50 + HealthBonus();
-    int health = maxHealth;
+
+    Body body;
+    int maxHealth;
+    int health;
+
     int numDranks = 5;
+    int level = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based
     int baseAC = 30; //This will be level-based

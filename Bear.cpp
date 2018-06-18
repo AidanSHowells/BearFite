@@ -139,27 +139,3 @@ void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA){
   abil[int(Abil::WIS)] = WIS;
   abil[int(Abil::CHA)] = CHA;
 }
-
-int Body::UpdateHealth(int newHealth, int newLevel, int newCON){
-  health = newHealth;
-
-  if(level < newLevel){
-    //Roll any missing hit dice
-    for(int i = hitDice.size(); i < newLevel; i++){
-      hitDice.push_back(Roll(1,hitDieSize));
-    }
-    for(int i = level; i < newLevel; i++){
-      health += hitDice.at(i);
-    }
-  }
-  if(level > newLevel){
-    for(int i = newLevel; i < level; i++){
-      health -= hitDice.at(i);
-    }
-  }
-  health = health - HealthBonus(CON) + HealthBonus(newCON);
-
-  level = newLevel;
-  CON = newCON;
-  return health;
-}
