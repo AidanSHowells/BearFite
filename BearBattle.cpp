@@ -25,8 +25,8 @@ bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
       int i = 0;
       while(i < theHUD.GetNumBears()){
         Bear& currentBear = *theHUD.bearStats[i].GetBearPtr();
-        if(currentBear.IsParalyzed() ||
-            (currentBear.IsSlowed() && Roll(1,2) == 1)){
+        if(!(currentBear.IsParalyzed() ||
+            (currentBear.IsSlowed() && Roll(1,2) == 1))){
           currentBear.Bash(*theHUD.GetPlayerPtr());
         }
         if(!currentBear.IsHasted() || Roll(1,2) == 1){
