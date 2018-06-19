@@ -29,6 +29,14 @@ SpellTree::SpellTree(const SpellID spellID){
     spellIDList.at(1) = SpellID::reversal;
     spellIDList.at(2) = SpellID::abilDrain;
   }
+  else if(spellID == SpellID::inferno ||
+          spellID == SpellID::blizzard ||
+          spellID == SpellID::storm)
+  {
+    spellIDList.at(0) = SpellID::inferno;
+    spellIDList.at(1) = SpellID::blizzard;
+    spellIDList.at(2) = SpellID::storm;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in SpellTree constructor.\n\n";
@@ -136,6 +144,32 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
   }
+  else if(spellID == SpellID::blizzard){
+    name = sf::String("Blizzard");
+    school = SpellSchool::INT;
+    successText = sf::String("Bear is freeze");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::reflex;
+    saveText = sf::String("Bear is only chilly");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::storm){
+    name = sf::String("Storm");
+    school = SpellSchool::INT;
+    successText = sf::String("*BZZZZZZZZZZ*");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::reflex;
+    saveText = sf::String("Bear weathers storm");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
@@ -204,6 +238,24 @@ void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
   else if(SpellID::inferno == identifier){
     damage = Roll(1 + player.GetSpellcastingLevel() / 3, 6);
     if(saveMade) damage = damage / 2;
+  }
+  else if(SpellID::blizzard == identifier){
+    damage = Roll(1 + player.GetSpellcastingLevel() / 3, 8);
+    if(saveMade){
+      damage = damage / 2;
+    }
+    else{
+      targetBear.Slow(10);
+    }
+  }
+  else if(SpellID::storm == identifier){
+    damage = Roll(1 + player.GetSpellcastingLevel() / 3, 10);
+    if(saveMade){
+      damage = damage / 2;
+    }
+    else{
+      targetBear.Paralyze(10);
+    }
   }
   else if(SpellID::NUM_SPELLS == identifier){
     std::cerr << "Warning! Attempted use of ";
