@@ -34,9 +34,9 @@ class Bear{
     bool IsSlowed(){return (slowedTime > 0);}
     bool IsParalyzed(){return (paralyzedTime > 0);}
     bool IsHasted(){return (hastedTime > 0);}
-    void Slow(int time){slowedTime = time;}
-    void Paralyze(int time){paralyzedTime = time;}
-    void Haste(int time){hastedTime = time;}
+    void Slow(int time){slowedTime = std::max(time, slowedTime);}
+    void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
+    void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void TimerTick();
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);

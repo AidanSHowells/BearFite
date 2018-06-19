@@ -41,6 +41,9 @@ class Player{
     void UnlockSpellTree(SpellTree tree);
     bool TouchAttack(Bear bear);
     void MakeSweetLove();
+    void TimerTick();
+    void Haste(int time){hastedTime = std::max(time, hastedTime);}
+    bool IsHasted(){return (hastedTime > 0);}
 
     //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP
@@ -67,6 +70,7 @@ class Player{
     int legCritThreat = 1;
     int eyeCritThreat = 3;
     int spellcastingLevel;
+    int hastedTime = 0;
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
     int EyeAttackBonus();

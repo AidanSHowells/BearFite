@@ -7,6 +7,8 @@ void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
 void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
 
 bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
+  Player& player = *(theHUD.GetPlayerPtr());
+
   //Keep track of turns
   TurnOf turn = TurnOf::player;
 
@@ -50,6 +52,10 @@ bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
           event.type == sf::Event::MouseButtonPressed)
       {
         turn = theHUD.TakeAction(event);
+        if(turn == TurnOf::bear){
+          if(player.IsHasted() && Roll(1,2) == 2) turn = TurnOf::bear;
+          else player.TimerTick();
+        }
       }
     }
     fakeBear = *(theHUD.GetBearPtr() );//TEMP

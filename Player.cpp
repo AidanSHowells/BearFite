@@ -171,6 +171,8 @@ void Player::MakeSweetLove(){
   numVirginities--;
 }
 
+void Player::TimerTick(){hastedTime = std::max(0, hastedTime - 1);}
+
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
   baseAbil = newAbil;
 }
