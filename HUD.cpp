@@ -25,6 +25,12 @@ sf::String AddSpacing(const sf::String& inputString, int totalLength){
   for(int i = 0; i < totalLength - inputString.getSize(); i++){
     spacing += sf::String(" ");
   }
+  if(totalLength - inputString.getSize() < 0){
+    std::cerr << "Warning! ";
+    std::cerr << "AddSpacing was told to add spacing to make the string ";
+    std::cerr << "\"" << std::string(inputString) << "\" " << totalLength;
+    std::cerr << " characters long, which may cause issues.\n\n";
+  }
   return(spacing + inputString);
 }
 
@@ -530,7 +536,7 @@ void PlayerStats::Update(){
     else{
       sf::String name = player -> GetSpellName(i - 1);
       sf::String count = std::to_string(player -> GetNumSpell(i - 1));
-      count = AddSpacing(count, 13 - name.getSize());
+      count = AddSpacing(count, 18 - name.getSize());
       sf::String max = std::to_string(player -> GetMaxNumSpell(i - 1));
 
       spell[i].setString(name + count + sf::String("/") + max);
