@@ -103,8 +103,13 @@ void Bear::TimerTick(){
   cryingTime = std::max(0, cryingTime - 1);
 }
 
-void Bear::DrainAbil(int ability, int drain){
+int Bear::DrainAbil(const int ability, int drain, const bool canKill){
+  if(!canKill && abil.at(ability) - drain < 1){
+    drain = std::max(0, abil.at(ability) - 1);
+  }
   abil.at(ability) -= drain;
+
+  return drain;
 }
 
 std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){

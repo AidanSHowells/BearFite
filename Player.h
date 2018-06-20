@@ -81,7 +81,7 @@ class Player{
     int armor = 0; //This will be determined by equipped items and magic
     int legCritThreat = 1;
     int eyeCritThreat = 3;
-    int spellcastingLevel;
+    int spellcastingLevel = 0;
 
     int hastedTime = 0;
     int slowedTime = 0;

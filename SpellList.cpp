@@ -266,8 +266,7 @@ void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
 
       for(int i = 0; i < numDrains; i++){
         int targetAbil = Roll(1,6) - 1;
-        int drain = std::min(targetBear.GetAbil(targetAbil) - 1, Roll(1,4));
-        targetBear.DrainAbil(targetAbil, drain);
+        int drain = targetBear.DrainAbil(targetAbil, Roll(1,4));
         player.BuffAbil(targetAbil, drain);
       }
     }

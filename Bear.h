@@ -28,7 +28,7 @@ class Bear{
     int GetHealth();
     int GetSave(const SaveType saveType);
     int GetAbil(int index, bool isCheckingDeath = false);
-    void DrainAbil(int ability, int drain);
+    int DrainAbil(const int ability, int drain, const bool canKill = false);
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
