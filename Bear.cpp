@@ -112,6 +112,18 @@ int Bear::DrainAbil(const int ability, int drain, const bool canKill){
   return drain;
 }
 
+bool Bear::IsDead(){
+  if(GetHealth() <= 0){
+    return true;
+  }
+  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
+    if(GetAbil(i, true) < 1){
+      return true;
+    }
+  }
+  return false;
+}
+
 std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
   if(isDerived){
     modifier2 = mod;

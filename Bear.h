@@ -31,7 +31,7 @@ class Bear{
     int DrainAbil(const int ability, int drain, const bool canKill = false);
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}
-    bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
+    bool IsDead();
 
     bool IsSlowed(){return (slowedTime > 0);}
     bool IsParalyzed(){return (paralyzedTime > 0);}

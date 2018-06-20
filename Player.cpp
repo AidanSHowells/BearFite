@@ -69,6 +69,18 @@ int Player::AC(){return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
+bool Player::IsDead(){
+  if(GetHealth() <= 0){
+    return true;
+  }
+  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
+    if(GetAbil(i, true) < 1){
+      return true;
+    }
+  }
+  return false;
+}
+
 TurnOf Player::TakeAction(Action theAction, Bear& theBear){
   if(theAction == Action::leg){
     return LegPunch(theBear);

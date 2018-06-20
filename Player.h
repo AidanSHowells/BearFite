@@ -29,7 +29,7 @@ class Player{
     void BuffAbil(int index, int buff);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
-    bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
+    bool IsDead();
     TurnOf TakeAction(Action theAction, Bear& theBear);
     TurnOf Cast(const int index, BattleHUD& environment);
     int GetSpellcastingLevel(){return spellcastingLevel;}
