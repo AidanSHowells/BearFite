@@ -181,6 +181,7 @@ class BattleHUD : public HUD{
               const Bear& theBear);
     BearStats bearStats[5];
     Bear* GetBearPtr(){return bear;}
+    std::vector<Bear*> GetAllEnemyBears();
     int GetNumBears();//The number of bears that exist
     void AddEnemyBears(Bear bear[], int numBears);
     bool RemoveDeadCombatants();//Returns true if fight is over

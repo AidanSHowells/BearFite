@@ -697,6 +697,14 @@ bearStats{BearStats(theWindow,titleFont,mainFont,theBear,true),
   bear -> SetMessageBox(messages);
 }
 
+std::vector<Bear*> BattleHUD::GetAllEnemyBears(){
+  std::vector<Bear*> bearVec;
+  for(int i = 0; i < GetNumBears(); i++){
+    bearVec.push_back(bearStats[i].GetBearPtr());
+  }
+  return bearVec;
+}
+
 int BattleHUD::GetNumBears(){
   int numBears = 4;
   for(int i = 3; i >= 0; i--){

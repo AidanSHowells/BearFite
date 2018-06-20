@@ -143,6 +143,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Inferno");
     school = SpellSchool::INT;
     successText = sf::String("Bear is cooked");
+    affectsAllBears = true;
 
     //Set saves
     allowsSave = true;
@@ -156,6 +157,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Blizzard");
     school = SpellSchool::INT;
     successText = sf::String("Bear is freeze");
+    affectsAllBears = true;
 
     //Set saves
     allowsSave = true;
@@ -169,6 +171,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Storm");
     school = SpellSchool::INT;
     successText = sf::String("*BZZZZZZZZZZ*");
+    affectsAllBears = true;
 
     //Set saves
     allowsSave = true;
@@ -189,7 +192,9 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
   else if(spellID == SpellID::warCry){
     name = sf::String("War Cry");
     school = SpellSchool::INT;
+    alwaysText = sf::String("You are LOUD");
     successText = sf::String("Bear is crying");
+    affectsAllBears = true;
 
     //Set saves
     allowsSave = true;
@@ -220,8 +225,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
 }
 
 
-void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
-  Bear& targetBear = *(battleHUD.GetBearPtr());
+void Spell::ApplyEffects(Player& player, Bear& targetBear, bool saveMade){
   int damage = 0;
 
   if(SpellID::none == identifier){}

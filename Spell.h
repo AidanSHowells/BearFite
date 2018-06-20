@@ -25,9 +25,10 @@ class Spell{
     SpellID identifier;
     sf::String name;
     SpellSchool school;
+    bool affectsAllBears = false;
 
     //Messages to print
-    sf::String dodgeText = sf::String("Bear is dodger.");
+    sf::String alwaysText = sf::String("");
     sf::String saveText = sf::String("Bear resists.");
     sf::String successText = sf::String("It is done.");
     sf::String spellEnds = sf::String("Spell Over.");
@@ -41,13 +42,8 @@ class Spell{
     int saveLevelFactor = 0;
     int saveSchoolFactor = 0;
 
-    //Helper spells
-    SpellID castOnSuccess = SpellID::none;
-    SpellID castIfBearSaves = SpellID::none;
-    SpellID castIfPlayerMisses = SpellID::none;
-
     //Function for actually doing the stuff if casting is successful
-    void ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade);
+    void ApplyEffects(Player& player, Bear& targetBear, bool saveMade);
 };
 
 #endif

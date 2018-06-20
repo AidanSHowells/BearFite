@@ -8,31 +8,36 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
     return;
   }
 
-  Bear& targetBear = *(battleHUD.GetBearPtr());
+  bool saveMade;
+  Bear* targetBear = battleHUD.GetBearPtr();
+  std::vector<Bear*> bearVector = battleHUD.GetAllEnemyBears();
+  int index = -1;
 
-  bool saveMade = false;
-
-  if(requiresTouchAttack){
-    if(!player.TouchAttack(targetBear)){
-      battleHUD.messages.Update(dodgeText, true);
-      Spell(castIfPlayerMisses).Cast(player, battleHUD);
-      return;
+  do{
+    if(affectsAllBears){
+      index++;
+      targetBear = bearVector.at(index);
     }
-  }
+    bool displayLine = (!affectsAllBears) || (0 == index);
 
-  if(allowsSave){
-    if(targetBear.GetSave(saveType) >= GetSaveDC(player)){
-      battleHUD.messages.Update(saveText, true);
-      saveMade = true;
+    saveMade = false;
+    if(allowsSave){
+      if(targetBear -> GetSave(saveType) >= GetSaveDC(player)){
+
+        battleHUD.messages.Update(saveText, displayLine);
+        saveMade = true;
+      }
     }
-  }
 
-  ApplyEffects(player, battleHUD, saveMade);
+    ApplyEffects(player, *targetBear, saveMade);
 
-  Spell(castOnSuccess).Cast(player, battleHUD);
+    if(!saveMade){
+      battleHUD.messages.Update(successText, displayLine);
+    }
+  } while(affectsAllBears && index < battleHUD.GetNumBears() - 1);
 
-  if(!saveMade){
-    battleHUD.messages.Update(successText, true);
+  if(alwaysText != sf::String("")){
+    battleHUD.messages.Update(alwaysText);
   }
 }
 
