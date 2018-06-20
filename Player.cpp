@@ -37,8 +37,28 @@ int Player::GetMaxHealth(){
 
 int Player::GetNumDranks(){return numDranks;}
 
-int Player::GetAbil(int index){
-  return baseAbil.at(index) + abilBuff.at(index);
+int Player::GetAbil(const int index, const bool isCheckingDeath){
+  int abil = baseAbil.at(index) + abilBuff.at(index);
+  if(index == int(Abil::STR)){
+    abil += 6 * IsRaging() + 4 * IsWarCrying() + 10 * HasBigFist();
+  }
+  if(index == int(Abil::DEX)){
+    abil += 4 * HasBigFist() + 6 * IsHasted() - 6 * IsSlowed();
+    if(!isCheckingDeath && IsParalyzed()){abil = 1;}
+  }
+  if(index == int(Abil::CON)){
+    abil += 6 * IsRaging() + 4 * IsWarCrying() + 10 * HasBigFist();
+  }
+  if(index == int(Abil::INT)){
+    abil += -4 * IsRaging();
+  }
+  if(index == int(Abil::WIS)){
+
+  }
+  if(index == int(Abil::CHA)){
+    abil += -4 * IsRaging();
+  }
+  return abil;
 }
 
 void Player::BuffAbil(int index, int buff){
@@ -171,7 +191,12 @@ void Player::MakeSweetLove(){
   numVirginities--;
 }
 
-void Player::TimerTick(){hastedTime = std::max(0, hastedTime - 1);}
+void Player::TimerTick(){
+  hastedTime = std::max(0, hastedTime - 1);
+  ragingTime = std::max(0, ragingTime - 1);
+  warCryingTime = std::max(0, warCryingTime - 1);
+  bigFistTime = std::max(0, bigFistTime - 1);
+}
 
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
   baseAbil = newAbil;

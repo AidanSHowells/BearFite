@@ -6,7 +6,7 @@
 #include "Abilities.h"
 
 enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
-                   inferno, blizzard, storm, NUM_SPELLS};
+                   inferno, blizzard, storm, rage, warCry, bigFist, NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 

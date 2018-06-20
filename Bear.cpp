@@ -73,10 +73,34 @@ int Bear::GetSave(const SaveType saveType){
   return save;
 }
 
+int Bear::GetAbil(int index, bool isCheckingDeath){
+  int ab = abil.at(index);
+  if(index = int(Abil::STR)){
+    ab += -4 * IsCrying();
+  }
+  if(index = int(Abil::DEX)){
+    ab += 6 * IsHasted() - 6 * IsSlowed();
+  }
+  if(index = int(Abil::CON)){
+
+  }
+  if(index = int(Abil::INT)){
+
+  }
+  if(index = int(Abil::WIS)){
+    ab += -2 * IsCrying();
+  }
+  if(index = int(Abil::CHA)){
+
+  }
+  return ab;
+}
+
 void Bear::TimerTick(){
   hastedTime = std::max(0, hastedTime - 1);
   slowedTime = std::max(0, slowedTime - 1);
   paralyzedTime = std::max(0, paralyzedTime - 1);
+  cryingTime = std::max(0, cryingTime - 1);
 }
 
 void Bear::DrainAbil(int ability, int drain){

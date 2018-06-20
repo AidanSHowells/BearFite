@@ -27,17 +27,22 @@ class Bear{
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     int GetSave(const SaveType saveType);
-    int GetAbil(int index){return abil.at(index);}
+    int GetAbil(int index, bool isCheckingDeath = false);
     void DrainAbil(int ability, int drain);
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}
     bool IsDead(){return(health <= 0);}//Add extra death conditions to this func
+
     bool IsSlowed(){return (slowedTime > 0);}
     bool IsParalyzed(){return (paralyzedTime > 0);}
     bool IsHasted(){return (hastedTime > 0);}
+    bool IsCrying(){return (cryingTime > 0);}
+
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
     void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
+    void Cry(int time){cryingTime = std::max(time, cryingTime);}
+
     void TimerTick();
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
@@ -63,9 +68,12 @@ class Bear{
     int AttackBonus();
     int DamageBonus();
     bool isLove = false;
+
     int slowedTime = 0;
     int paralyzedTime = 0;
     int hastedTime = 0;
+    int cryingTime = 0;
+
     bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);
 };

@@ -25,7 +25,7 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks();
-    int GetAbil(int index);
+    int GetAbil(const int index, const bool isCheckingDeath = false);
     void BuffAbil(int index, int buff);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
@@ -42,8 +42,20 @@ class Player{
     bool TouchAttack(Bear bear);
     void MakeSweetLove();
     void TimerTick();
+
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
+    void Slow(int time){slowedTime = std::max(time, slowedTime);}
+    void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
+    void Rage(int time){ragingTime = std::max(time, ragingTime);}
+    void WarCry(int time){warCryingTime = std::max(time, warCryingTime);}
+    void BigFist(int time){bigFistTime = std::max(time, bigFistTime);}
+
     bool IsHasted(){return (hastedTime > 0);}
+    bool IsSlowed(){return (slowedTime > 0);}
+    bool IsParalyzed(){return (paralyzedTime > 0);}
+    bool IsRaging(){return (ragingTime > 0);}
+    bool IsWarCrying(){return (warCryingTime > 0);}
+    bool HasBigFist(){return (bigFistTime > 0);}
 
     //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP
@@ -70,7 +82,14 @@ class Player{
     int legCritThreat = 1;
     int eyeCritThreat = 3;
     int spellcastingLevel;
+
     int hastedTime = 0;
+    int slowedTime = 0;
+    int paralyzedTime = 0;
+    int ragingTime = 0;
+    int warCryingTime = 0;
+    int bigFistTime = 0;
+
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage
     int EyeAttackBonus();

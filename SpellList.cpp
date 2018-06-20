@@ -37,6 +37,14 @@ SpellTree::SpellTree(const SpellID spellID){
     spellIDList.at(1) = SpellID::blizzard;
     spellIDList.at(2) = SpellID::storm;
   }
+  else if(spellID == SpellID::rage ||
+          spellID == SpellID::warCry ||
+          spellID == SpellID::bigFist)
+  {
+    spellIDList.at(0) = SpellID::rage;
+    spellIDList.at(1) = SpellID::warCry;
+    spellIDList.at(2) = SpellID::bigFist;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in SpellTree constructor.\n\n";
@@ -170,6 +178,35 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     saveLevelFactor = 1;
     saveSchoolFactor = 1;
   }
+  else if(spellID == SpellID::rage){
+    name = sf::String("Rage");
+    school = SpellSchool::INT;
+    successText = sf::String("yoU fEeL ARGER!");
+
+    //Set saves
+    allowsSave = false;
+  }
+  else if(spellID == SpellID::warCry){
+    name = sf::String("War Cry");
+    school = SpellSchool::INT;
+    successText = sf::String("Bear is crying");
+
+    //Set saves
+    allowsSave = true;
+    saveType = SaveType::will;
+    saveText = sf::String("Bear laughs");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::bigFist){
+    name = sf::String("Big Fist");
+    school = SpellSchool::INT;
+    successText = sf::String("Fist is Big");
+
+    //Set saves
+    allowsSave = false;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
@@ -256,6 +293,16 @@ void Spell::ApplyEffects(Player& player, BattleHUD& battleHUD, bool saveMade){
     else{
       targetBear.Paralyze(10);
     }
+  }
+  else if(SpellID::rage == identifier){
+    player.Rage(20);
+  }
+  else if(SpellID::warCry == identifier){
+    player.WarCry(20);
+    if(!saveMade){targetBear.Cry(20);}
+  }
+  else if(SpellID::bigFist == identifier){
+    player.BigFist(20);
   }
   else if(SpellID::NUM_SPELLS == identifier){
     std::cerr << "Warning! Attempted use of ";
