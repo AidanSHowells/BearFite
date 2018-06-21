@@ -609,7 +609,9 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
     for(int i = 0; i < maxSpells - 1; i++){
-      if(highlightBox[i].contains(clickLocation)){
+      if(highlightBox[i].contains(clickLocation) &&
+         player -> GetNumSpell(i) > 0)
+      {
         return i;
       }
     }
