@@ -5,46 +5,75 @@ This is the place for results of brainstorming sessions which have not yet been 
 Thoughts on player spellcasting:
 
 ### General
-* class Spell should be friends with class Player and class Bear
-* class Bear should have a boolean isBoss
-* class Player should have int arrays maxSpells and currSpells
 * maxSpells is determined by INT, and Spell regeneration is determined by WIS
 * Any given PC won't get access to all spells
-* ?Spells should be grouped into tiers?
 
-### Fish
-* Bear is munching while under the effect of this spell
-* The chance of this spell ending increases with each passing turn
-* ?Lower tier version of Invuln?
+### Already Implemented
+* Vampirism (STR & CHA)
+* Elements (INT)
+* Transformation (INT)
+* Life (CHA)
 
-### Death
-* Kills non-boss bears
-* Badly wounds boss bears
+### Safety (WIS)
+* Sanctuary
+  * Fixed duration
+  * Bears can't do anything to you
+  * You can't do anything to bears
+* Fish (Will Save)
+  * Works like in the calculator version
+  * If we end up giving individual bears an "attitude" toward you, this spell should improve it
+* Refuge
+  * Teleports you away and heals you
 
-### Pleasure
-* Player loses virginity
-* Battle ends
+### Metamagic (INT)
+* Maximize Spell
+  * Next (couple?) spells have maximized effects
+* Contingency
+  * Works similarly to D&D
+  * Can only be cast outside of battle
+  * Player can only have one in effect at a time
+* Free Spell
+  * The turn after casting this spell, the player can cast any spell they know for free
 
-### Reversal
-* Bear and Player trade health
-* ?Higher/Lower tier version of vampirism?
+### Conjuration (INT & CON)
+* Call
+  * Summons a low-level (relative to you) bear to fight for you
+  * You have to fight the bear once all other enemies are defeated
+* Dominate (Will Save)
+  * Target enemy bear fights on the player's side
+  * You have to fight the bear once all other enemies are defeated
+  * ?Perhaps this should switch with Call, or you shouldn't have to fight the bear?
+* Summon
+  * Works like Call, except the summoned bear is higher level
+  * Has the possibility of summoning a boss bear
+  * In unlikely event that you are fighting a long bear and this spell summons a long bear:
+    * The long bears make love and leave the fight
+    * Your CHA is permanently increased by 1 point ("You feel sexually enlightened")
+    * You have to fight any remaining enemy bears (e.g. homology bears, if the enemy long bear wasn't exact)
 
-### Time Stop
-* Lowest level is Refuge.
-   * Lasts at least 1 (2?) turns
-   * Chance of ending each turn from that point on
-   * If you try to hurt the bear, "Bear is stop"
-* Middle level is Sanctuary
-  * Always lasts five turns
-  * If you try to hurt the bear, "Bear is stop"
+### Speed (DEX & INT)
+* Slow (Will Save)
+  * Slowes the bear
+* Haste
+  * Speeds the player
 * Time stop
-  * Same duration as Refuge
-  * You can hurt the bear
+  * Player can attack bear while time is stopped
 
-### Other Possible Spells
-* Ability boost (one per stat)
-* Ability drain (one per stat)
+### Restoration (INT & WIS)
+* Divination (Will Save)
+  * You learn all there is to know about the target bear
+* Erase (Will Save)
+  * Resets some aspects of the target bear to default values
+* Dispel (Will Save)
+  * Like Erase, but affects more aspects of the target bear
 
+### Defense (INT & WIS)
+* Shield
+  * Increases AC
+* Spell Ward
+  * Provides protection from spells and spell-like abilities
+* Aegis
+  
 
 ## Bear Modifiers
 Possible modifiers that bears can have:
