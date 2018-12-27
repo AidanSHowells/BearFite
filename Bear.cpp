@@ -11,20 +11,20 @@ void Bear::SetMessageBox(MessageBox& theMessages){
 }
 
 int Bear::AttackBonus(){
-  return abil[int(Abil::STR)] - 10 + 2*(abil[int(Abil::DEX)] - 10);
+  return GetAbil(int(Abil::STR)) - 10 + 2*(GetAbil(int(Abil::DEX)) - 10);
 }
 
-int Bear::DamageBonus(){return (abil[int(Abil::STR)] - 10)/2;}
+int Bear::DamageBonus(){return (GetAbil(int(Abil::STR)) - 10)/2;}
 
 int Bear::AC(Action attackType){
   if(attackType == Action::leg){
-    return baseAC + armor + abil[int(Abil::DEX)] - 10;
+    return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
   }
   else if(attackType == Action::eye){
-    return baseAC + armor + abil[int(Abil::DEX)] - 10 + eyeACBonus;
+    return baseAC + armor + GetAbil(int(Abil::DEX)) - 10 + eyeACBonus;
   }
   else if(attackType == Action::cast){//Ranged touch attack
-    return baseAC + abil[int(Abil::DEX)] - 10;
+    return baseAC + GetAbil(int(Abil::DEX)) - 10;
   }
   else{
     std::cerr << "Warning! Use of invalid Action in Bear::AC.\n";
@@ -53,13 +53,13 @@ int Bear::GetHealth(){
 int Bear::GetSave(const SaveType saveType){
   int save = Roll(1,60);
   if(saveType == SaveType::reflex){
-    save += 2 * abil.at(int(Abil::DEX)) - 20;
+    save += 2 * GetAbil(int(Abil::DEX)) - 20;
   }
   else if(saveType == SaveType::fort){
-    save += 2 * abil.at(int(Abil::CON)) - 20;
+    save += 2 * GetAbil(int(Abil::CON)) - 20;
   }
   else if(saveType == SaveType::will){
-    save += 2 * abil.at(int(Abil::INT)) - 20;
+    save += 2 * GetAbil(int(Abil::INT)) - 20;
   }
   else if(saveType == SaveType::COUNT){
     std::cerr << "Warning! Invalid use of ";
@@ -132,7 +132,7 @@ std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
     modifier = mod;
   }
   for(int i = 0; i < int(Abil::NUM_ABIL); i++){
-    abil[i] = std::max(abil[i] + mod.abilAdd[i], 1);//Don't kill the bear
+    abil.at(i) = std::max(abil.at(i) + mod.abilAdd[i], 1);//Don't kill the bear
   }
   level += mod.levelAdd;
 
