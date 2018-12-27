@@ -76,10 +76,15 @@ int Bear::GetSave(const SaveType saveType){
 int Bear::GetAbil(int index, bool isCheckingDeath){
   int ab = abil.at(index);
   if(index = int(Abil::STR)){
-    ab += -4 * IsCrying();
+    if(!isCheckingDeath){
+      ab += -4 * IsCrying();
+    }
   }
   if(index = int(Abil::DEX)){
-    ab += 6 * IsHasted() - 6 * IsSlowed();
+    ab += 6 * IsHasted();
+    if(!isCheckingDeath){
+      ab += -6 * IsSlowed();
+    }
   }
   if(index = int(Abil::CON)){
 
@@ -88,7 +93,9 @@ int Bear::GetAbil(int index, bool isCheckingDeath){
 
   }
   if(index = int(Abil::WIS)){
-    ab += -2 * IsCrying();
+    if(!isCheckingDeath){
+      ab += -2 * IsCrying();
+    }
   }
   if(index = int(Abil::CHA)){
 
