@@ -23,7 +23,7 @@ class Bear{
     sf::String GetName() const;
     BearID GetID(){return identifier;}
     sf::String GetModifier();
-    void Bash(Player& thePlayer);
+    void TakeTurn(Player& target);
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     int GetSave(const SaveType saveType);
@@ -33,17 +33,11 @@ class Bear{
     bool IsLove(){return isLove;}
     bool IsDead();
 
-    bool IsSlowed(){return (slowedTime > 0);}
-    bool IsParalyzed(){return (paralyzedTime > 0);}
-    bool IsHasted(){return (hastedTime > 0);}
-    bool IsCrying(){return (cryingTime > 0);}
-
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
     void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
 
-    void TimerTick();
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
   protected:
@@ -73,6 +67,13 @@ class Bear{
     int paralyzedTime = 0;
     int hastedTime = 0;
     int cryingTime = 0;
+
+    bool IsSlowed(){return (slowedTime > 0);}
+    bool IsParalyzed(){return (paralyzedTime > 0);}
+    bool IsHasted(){return (hastedTime > 0);}
+    bool IsCrying(){return (cryingTime > 0);}
+    void Bash(Player& thePlayer);
+    void TimerTick();
 
     bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);

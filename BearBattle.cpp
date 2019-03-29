@@ -24,17 +24,9 @@ bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
 
     if(TurnOf::bear == turn){
       sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
-      int i = 0;
-      while(i < theHUD.GetNumBears()){
-        Bear& currentBear = *theHUD.bearStats[i].GetBearPtr();
-        if(!(currentBear.IsParalyzed() ||
-            (currentBear.IsSlowed() && Roll(1,2) == 1))){
-          currentBear.Bash(*theHUD.GetPlayerPtr());
-        }
-        if(!currentBear.IsHasted() || Roll(1,2) == 1){
-          currentBear.TimerTick();
-          i++;
-        }
+      int numBears = theHUD.GetNumBears();
+      for(int i = 0; i < numBears; i++){
+        theHUD.bearStats[i].GetBearPtr() -> TakeTurn(*theHUD.GetPlayerPtr());
       }
       turn = TurnOf::player;
     }

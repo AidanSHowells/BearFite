@@ -165,6 +165,19 @@ std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
 
 void Bear::Hurt(int dmg){health -= dmg;}
 
+void Bear::TakeTurn(Player& target){
+  bool done = false;
+  while(!done){
+    if(!(IsParalyzed() || (IsSlowed() && Roll(1,2) == 1) )){
+      Bash(target);
+    }
+    if(!IsHasted() || Roll(1,2) == 1){
+      TimerTick();
+      done = true;
+    }
+  }
+}
+
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //tracks bear attack roll for determining criticals
