@@ -44,7 +44,9 @@ int Player::GetAbil(const int index, const bool isCheckingDeath){
   }
   if(index == int(Abil::DEX)){
     abil += 4 * HasBigFist() + 6 * IsHasted() - 6 * IsSlowed();
-    if(!isCheckingDeath && IsParalyzed()){abil = 1;}
+    if(!isCheckingDeath && IsParalyzed()){
+      abil = std::min(1, abil);
+    }
   }
   if(index == int(Abil::CON)){
     abil += 6 * IsRaging() + 4 * IsWarCrying() + 10 * HasBigFist();
