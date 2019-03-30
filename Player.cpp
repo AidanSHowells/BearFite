@@ -37,7 +37,7 @@ int Player::GetMaxHealth(){
 
 int Player::GetNumDranks(){return numDranks;}
 
-int Player::GetAbil(const int index, const bool isCheckingDeath){
+int Player::GetAbil(const int index, const bool isCheckingDeath) const {
   int abil = baseAbil.at(index) + abilBuff.at(index);
   if(index == int(Abil::STR)){
     abil += 6 * IsRaging() + 4 * IsWarCrying() + 10 * HasBigFist();
@@ -63,7 +63,7 @@ int Player::GetAbil(const int index, const bool isCheckingDeath){
   return abil;
 }
 
-void Player::BuffAbil(int index, int buff){
+void Player::BuffAbil(const int index, const int buff){
   abilBuff.at(index) += buff;
 }
 
@@ -83,7 +83,7 @@ bool Player::IsDead(){
   return false;
 }
 
-TurnOf Player::TakeAction(Action theAction, Bear& theBear){
+TurnOf Player::TakeAction(const Action theAction, Bear& theBear){
   if(IsSafe() &&
     (theAction == Action::leg ||
     theAction == Action::eye ||

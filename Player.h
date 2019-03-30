@@ -25,12 +25,12 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks();
-    int GetAbil(const int index, const bool isCheckingDeath = false);
-    void BuffAbil(int index, int buff);
+    int GetAbil(const int index, const bool isCheckingDeath = false) const;
+    void BuffAbil(const int index, const int buff);
     int AC(); //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead();
-    TurnOf TakeAction(Action theAction, Bear& theBear);
+    TurnOf TakeAction(const Action theAction, Bear& theBear);
     TurnOf Cast(const int index, BattleHUD& environment);
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
@@ -51,13 +51,13 @@ class Player{
     void BigFist(int time){bigFistTime = std::max(time, bigFistTime);}
     void EnterSantuary(int time){santuaryTime = std::max(time, santuaryTime);}
 
-    bool IsHasted(){return (hastedTime > 0);}
-    bool IsSlowed(){return (slowedTime > 0);}
-    bool IsParalyzed(){return (paralyzedTime > 0);}
-    bool IsRaging(){return (ragingTime > 0);}
-    bool IsWarCrying(){return (warCryingTime > 0);}
-    bool HasBigFist(){return (bigFistTime > 0);}
-    bool IsSafe(){return (santuaryTime > 0);}
+    bool IsHasted() const {return (hastedTime > 0);}
+    bool IsSlowed() const {return (slowedTime > 0);}
+    bool IsParalyzed() const {return (paralyzedTime > 0);}
+    bool IsRaging() const {return (ragingTime > 0);}
+    bool IsWarCrying() const {return (warCryingTime > 0);}
+    bool HasBigFist() const {return (bigFistTime > 0);}
+    bool IsSafe() const {return (santuaryTime > 0);}
 
     //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP

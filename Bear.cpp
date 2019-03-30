@@ -79,31 +79,31 @@ void Bear::FeedFish(int fishSize){
   eatingTime = std::max(1, eatingTime);
 }
 
-int Bear::GetAbil(int index, bool isCheckingDeath){
+int Bear::GetAbil(const int index, const bool isCheckingDeath) const {
   int ab = abil.at(index);
-  if(index = int(Abil::STR)){
+  if(index == int(Abil::STR)){
     if(!isCheckingDeath){
       ab += -4 * IsCrying();
     }
   }
-  if(index = int(Abil::DEX)){
+  if(index == int(Abil::DEX)){
     ab += 6 * IsHasted();
     if(!isCheckingDeath){
       ab += -6 * IsSlowed();
     }
   }
-  if(index = int(Abil::CON)){
+  if(index == int(Abil::CON)){
 
   }
-  if(index = int(Abil::INT)){
+  if(index == int(Abil::INT)){
 
   }
-  if(index = int(Abil::WIS)){
+  if(index == int(Abil::WIS)){
     if(!isCheckingDeath){
       ab += -2 * IsCrying();
     }
   }
-  if(index = int(Abil::CHA)){
+  if(index == int(Abil::CHA)){
 
   }
   return ab;

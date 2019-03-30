@@ -27,7 +27,7 @@ class Bear{
     void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     int GetSave(const SaveType saveType);
-    int GetAbil(int index, bool isCheckingDeath = false);
+    int GetAbil(const int index, const bool isCheckingDeath = false) const;
     int DrainAbil(const int ability, int drain, const bool canKill = false);
     void MakeSweetLove(){isLove = true;}
     bool IsLove(){return isLove;}
@@ -71,11 +71,11 @@ class Bear{
     int cryingTime = 0;
     int eatingTime = 0;
 
-    bool IsSlowed(){return (slowedTime > 0);}
-    bool IsParalyzed(){return (paralyzedTime > 0);}
-    bool IsHasted(){return (hastedTime > 0);}
-    bool IsCrying(){return (cryingTime > 0);}
-    bool IsEating(){return (eatingTime > 0);}
+    bool IsSlowed() const {return (slowedTime > 0);}
+    bool IsParalyzed() const {return (paralyzedTime > 0);}
+    bool IsHasted() const {return (hastedTime > 0);}
+    bool IsCrying() const {return (cryingTime > 0);}
+    bool IsEating() const {return (eatingTime > 0);}
     void Bash(Player& thePlayer);
     void TimerTick();
 
