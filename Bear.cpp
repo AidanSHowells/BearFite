@@ -10,13 +10,15 @@ void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
 }
 
-int Bear::AttackBonus(){
+int Bear::GetAttackBonus() const {
   return GetAbil(int(Abil::STR)) - 10 + 2*(GetAbil(int(Abil::DEX)) - 10);
 }
 
-int Bear::DamageBonus(){return (GetAbil(int(Abil::STR)) - 10)/2;}
+int Bear::GetDamageBonus() const {
+  return (GetAbil(int(Abil::STR)) - 10)/2;
+}
 
-int Bear::AC(Action attackType){
+int Bear::GetAC(const Action attackType) const {
   if(attackType == Action::leg){
     return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
   }
@@ -27,7 +29,7 @@ int Bear::AC(Action attackType){
     return baseAC + GetAbil(int(Abil::DEX)) - 10;
   }
   else{
-    std::cerr << "Warning! Use of invalid Action in Bear::AC.\n";
+    std::cerr << "Warning! Use of invalid Action in Bear::GetAC.\n";
     std::cerr << "The index of the invalid Action was ";
     std::cerr << int(attackType) << ".\n\n";
     return -1;
@@ -209,13 +211,13 @@ void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //tracks bear attack roll for determining criticals
 
-  if(roll + AttackBonus() >= thePlayer.AC() || roll == 60){
+  if(roll + GetAttackBonus() >= thePlayer.GetAC() || roll == 60){
     if(roll > 60 - critThreat){
-      dmg = Roll(critMult,8) + critMult * DamageBonus();
+      dmg = Roll(critMult,8) + critMult * GetDamageBonus();
       Messages -> Update("Bear CRIT you for:", std::max(1,dmg));
     }
     else{
-      dmg = Roll(1,8) + DamageBonus();
+      dmg = Roll(1,8) + GetDamageBonus();
       Messages -> Update("Bear bash you for:", std::max(1,dmg));
     }
     thePlayer.Hurt(std::max(1,dmg));

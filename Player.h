@@ -27,7 +27,7 @@ class Player{
     int GetNumDranks();
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
     void BuffAbil(const int index, const int buff);
-    int AC(); //Combines all AC-affecting factors
+    int GetAC() const; //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead();
     TurnOf TakeAction(const Action theAction, Bear& theBear);
@@ -39,7 +39,7 @@ class Player{
     int GetNumSpell(const int index);
     int GetMaxNumSpell(const int index);
     void UnlockSpellTree(SpellTree tree);
-    bool TouchAttack(Bear bear);
+    bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
 
@@ -93,11 +93,11 @@ class Player{
     int bigFistTime = 0;
     int santuaryTime = 0;
 
-    int LegAttackBonus(); //Calculates attack bonus with abilities etc.
-    int LegDamageBonus(); // Same for damage
-    int EyeAttackBonus();
-    int EyeDamageBonus();
-    int TouchAttackBonus();
+    int GetLegAttackBonus() const; //Calculates attack bonus with abilities etc.
+    int GetLegDamageBonus() const; // Same for damage
+    int GetEyeAttackBonus() const;
+    int GetEyeDamageBonus() const;
+    int GetTouchAttackBonus() const;
     TurnOf LegPunch(Bear& bear);
     TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();

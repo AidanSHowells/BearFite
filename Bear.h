@@ -19,7 +19,7 @@ class Bear{
     Bear(){canBeFought = false;}
     Bear(const BearID bearID);
     void SetMessageBox(MessageBox& theMessages);
-    int AC(Action);
+    int GetAC(const Action attackType) const;
     sf::String GetName() const;
     BearID GetID(){return identifier;}
     sf::String GetModifier();
@@ -60,8 +60,8 @@ class Bear{
     int level = 0;
     int critThreat = 0; //how likely the bear is to crit
     int critMult = 1; //how painful the bear criticals are
-    int AttackBonus();
-    int DamageBonus();
+    int GetAttackBonus() const;
+    int GetDamageBonus() const;
     bool isLove = false;
     bool isAngry = false;
 

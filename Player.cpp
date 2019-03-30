@@ -67,7 +67,9 @@ void Player::BuffAbil(const int index, const int buff){
   abilBuff.at(index) += buff;
 }
 
-int Player::AC(){return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;}
+int Player::GetAC() const {
+  return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
+}
 
 void Player::Hurt(int dmg){health -= dmg;}
 
@@ -204,8 +206,8 @@ void Player::UnlockSpellTree(SpellTree tree){
   spellList.push_back(tree);
 }
 
-bool Player::TouchAttack(Bear bear){
-  return (Roll(1,60) + TouchAttackBonus() >= bear.AC(Action::cast));
+bool Player::TouchAttackSucceeds(const Bear& bear) const{
+  return (Roll(1,60) + GetTouchAttackBonus() >= bear.GetAC(Action::cast));
 }
 
 void Player::MakeSweetLove(){
@@ -226,17 +228,23 @@ void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
   baseAbil = newAbil;
 }
 
-int Player::LegAttackBonus(){return GetAbil(int(Abil::STR)) - 10;}
+int Player::GetLegAttackBonus() const {
+  return GetAbil(int(Abil::STR)) - 10;
+}
 
-int Player::LegDamageBonus(){return (GetAbil(int(Abil::STR)) - 10)/2;}
+int Player::GetLegDamageBonus() const {
+  return (GetAbil(int(Abil::STR)) - 10)/2;
+}
 
-int Player::EyeAttackBonus(){
+int Player::GetEyeAttackBonus() const {
   return GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
 }
 
-int Player::EyeDamageBonus(){return 2*(GetAbil(int(Abil::STR)) - 10) + 5;}
+int Player::GetEyeDamageBonus() const {
+  return 2*(GetAbil(int(Abil::STR)) - 10) + 5;
+}
 
-int Player::TouchAttackBonus(){
+int Player::GetTouchAttackBonus() const {
   return 0;//FIXME
 }
 
@@ -245,13 +253,13 @@ TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //keeps track of roll for handling criticals
 
-  if(roll + LegAttackBonus() >= bear.AC(Action::leg) || roll == 60){
+  if(roll + GetLegAttackBonus() >= bear.GetAC(Action::leg) || roll == 60){
     if(roll > 60 - legCritThreat){
-      dmg = Roll(2,8) + 2 * LegDamageBonus();
+      dmg = Roll(2,8) + 2 * GetLegDamageBonus();
       Messages -> Update("You CRIT bear for:", dmg, true);
     }
     else{
-      dmg = Roll(1,8) + LegDamageBonus();
+      dmg = Roll(1,8) + GetLegDamageBonus();
       Messages -> Update("You got bear for:", dmg, true);
     }
     bear.Hurt(std::max(1,dmg));
@@ -264,13 +272,13 @@ TurnOf Player::LegPunch(Bear& bear){
 TurnOf Player::EyePunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //keeps track fo roll for handling criticals
-  if(roll + EyeAttackBonus() >= bear.AC(Action::eye) || roll == 60){
+  if(roll + GetEyeAttackBonus() >= bear.GetAC(Action::eye) || roll == 60){
     if(roll > 60 - eyeCritThreat){
-      dmg = Roll(4,12) + 2 * EyeDamageBonus();
+      dmg = Roll(4,12) + 2 * GetEyeDamageBonus();
       Messages -> Update("You CRIT bear for:", std::max(1,dmg), true);
     }
     else{
-      dmg = Roll(2,12) + EyeDamageBonus();
+      dmg = Roll(2,12) + GetEyeDamageBonus();
       Messages -> Update("You got bear for:", std::max(1,dmg), true);
     }
     bear.Hurt(std::max(1,dmg));
