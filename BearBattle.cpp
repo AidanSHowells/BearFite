@@ -6,7 +6,7 @@
 void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
 void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
 
-bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
+TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear){
   Player& player = *(theHUD.GetPlayerPtr());
 
   //Keep track of turns
@@ -32,7 +32,8 @@ bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
     }
     if(theHUD.RemoveDeadCombatants()){
       WaitForEnter(theHUD, background);
-      return false;
+      return TurnOf::bear;//The bear just went and now the battle is over, so
+                          //we assume that the bear won
     }
 
     sf::Event event;
@@ -53,13 +54,20 @@ bool BearBattle(BattleHUD& theHUD, Bear& fakeBear){
     fakeBear = *(theHUD.GetBearPtr() );//TEMP
     if(theHUD.RemoveDeadCombatants()){
       WaitForEnter(theHUD, background);
-      return true;
+      return TurnOf::player;//The player just went and now the battle is over,
+                            //so we assume that the player won
+    }
+
+    if(TurnOf::neither == turn){
+      WaitForEnter(theHUD, background);
+      return turn;//If it's ever no one's turn, that means the battle ended
+                  //(Presumably because the player fled)
     }
 
     DrawStuff(theHUD, background);
   }
-  return false;//This shouldn't matter; we should only get here if !window.isOpen
-  //FIXME: Instead of returning, there should be a error message printed
+  return TurnOf::neither; //This should only execute if the player closes the
+                          //game in the middle of a battle
 }
 
 void DrawStuff(BattleHUD& theHUD, sf::Sprite background){

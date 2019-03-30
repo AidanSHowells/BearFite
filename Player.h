@@ -98,6 +98,7 @@ class Player{
     TurnOf LegPunch(Bear& bear);
     TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();
+    TurnOf Flee(Bear& bear);
 };
 
 #endif

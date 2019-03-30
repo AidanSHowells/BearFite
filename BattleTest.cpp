@@ -71,14 +71,14 @@ int main(){
            event.key.code == sf::Keyboard::F ||
            event.key.code == sf::Keyboard::Z)
         {
-          int bearHealth = 420;
           Bear fakeBear;
           BattleHUD battleHUD(window,courierNewBd,courierNew,player,fakeBear);
           if(FindBear(event.key.code, battleHUD, specialBearID, specialModID)){
-            if(BearBattle(battleHUD, fakeBear)){
+            TurnOf winner = BearBattle(battleHUD, fakeBear);
+            if(TurnOf::player == winner){
               scoreArray.at(2 * int(fakeBear.GetID()))++;
             }
-            else{
+            else if(TurnOf::bear == winner){
               scoreArray.at(2 * int(fakeBear.GetID()) + 1)++;
             }
             player.SetMessageBox(messages);

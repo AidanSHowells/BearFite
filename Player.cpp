@@ -101,10 +101,7 @@ TurnOf Player::TakeAction(Action theAction, Bear& theBear){
     return TurnOf::player;
   }
   else if(theAction == Action::flee){
-    //return Flee(theBear);
-    Messages -> Update(sf::String("Fleeing"),
-                       sf::String("is unsupported."));//TEMP
-    return TurnOf::player;//TEMP
+    return Flee(theBear);
   }
   else{
     return TurnOf::player;
@@ -283,4 +280,15 @@ TurnOf Player::Quaff(){
     numDranks--;
     return TurnOf::bear;
   }
+}
+
+TurnOf Player::Flee(Bear& bear){
+  if(IsHasted() ||
+    (Roll(1,60) + GetAbil(int(Abil::DEX)) >= 30 + bear.GetAbil(int(Abil::DEX))))
+  {//FIXME: The odds of successfully fleeing need to be fine-tuned
+    Messages -> Update("You escape bear", true);
+    return TurnOf::neither;
+  }
+  Messages -> Update("Bear still behind you", true);
+  return TurnOf::bear;
 }
