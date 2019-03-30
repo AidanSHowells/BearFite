@@ -73,6 +73,12 @@ int Bear::GetSave(const SaveType saveType){
   return save;
 }
 
+void Bear::FeedFish(int fishSize){
+  int eatingSpeed = std::max(1, GetAbil(int(Abil::CON)) / 10);
+  eatingTime += fishSize / eatingSpeed;
+  eatingTime = std::max(1, eatingTime);
+}
+
 int Bear::GetAbil(int index, bool isCheckingDeath){
   int ab = abil.at(index);
   if(index = int(Abil::STR)){
@@ -108,6 +114,8 @@ void Bear::TimerTick(){
   slowedTime = std::max(0, slowedTime - 1);
   paralyzedTime = std::max(0, paralyzedTime - 1);
   cryingTime = std::max(0, cryingTime - 1);
+  //Eating time is reduced in "TakeTurn" instead. This means that paralyzed
+  //bears don't eat, and slowed/hasted bears eat faster/slower, which I like
 }
 
 int Bear::DrainAbil(const int ability, int drain, const bool canKill){
@@ -169,7 +177,26 @@ void Bear::TakeTurn(Player& target){
   bool done = false;
   while(!done){
     if(!(IsParalyzed() || (IsSlowed() && Roll(1,2) == 1) )){
-      Bash(target);
+      if(IsEating()){
+        eatingTime = std::max(0, eatingTime - 1);
+        if(IsEating()){
+          Messages -> Update(sf::String("Bear is munching"));
+        }
+        else{
+          Messages -> Update(sf::String("BRUP! Fish over"));
+        }
+      }
+      else if(target.IsSafe()){
+        if(isAngry || (GetAbil(int(Abil::WIS)) < 10)){
+          Messages -> Update(sf::String("GRRRAAAAAH!"),sf::String("BOING!"));
+        }
+        else{
+          Messages -> Update(sf::String("Bear is watching..."));
+        }
+      }
+      else{//Not eating and target isn't safe
+        Bash(target);
+      }
     }
     if(!IsHasted() || Roll(1,2) == 1){
       TimerTick();

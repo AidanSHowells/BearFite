@@ -82,6 +82,14 @@ bool Player::IsDead(){
 }
 
 TurnOf Player::TakeAction(Action theAction, Bear& theBear){
+  if(IsSafe() &&
+    (theAction == Action::leg ||
+    theAction == Action::eye ||
+    theAction == Action::john_hopkins))
+  {
+    Messages -> Update(sf::String("Don't be naughty"));
+    return TurnOf::player;
+  }
   if(theAction == Action::leg){
     return LegPunch(theBear);
   }
@@ -113,10 +121,14 @@ TurnOf Player::Cast(const int index, BattleHUD& environment){
   int spellIndex = index % 3;
   SpellID spellToCast = spellList.at(spellTreeIndex).spellIDList.at(spellIndex);
 
-  spellList.at(spellTreeIndex).numSpells.at(spellIndex) --;
-  Spell(spellToCast).Cast(*this, environment);
-
-  return TurnOf::bear;
+  if(IsSafe() && Spell(spellToCast).IsOffensive()){
+    Messages -> Update(sf::String("Don't be naughty"));
+    return TurnOf::player;
+  }
+  else{
+    spellList.at(spellTreeIndex).numSpells.at(spellIndex) --;
+    return Spell(spellToCast).Cast(*this, environment);
+  }
 }
 
 int Player::GetSpellSchoolBonus(const SpellSchool school){
@@ -205,6 +217,7 @@ void Player::TimerTick(){
   ragingTime = std::max(0, ragingTime - 1);
   warCryingTime = std::max(0, warCryingTime - 1);
   bigFistTime = std::max(0, bigFistTime - 1);
+  santuaryTime = std::max(0, santuaryTime -1);
 }
 
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){

@@ -4,9 +4,12 @@
 #include <array>//For std::array
 #include <SFML/System/String.hpp>
 #include "Abilities.h"
+#include "Messages.h" //Only for "enum class TurnOf". So this should be changed
+                      //once "TurnOf" gets moved to a more sensible location
 
 enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
-                   inferno, blizzard, storm, rage, warCry, bigFist, NUM_SPELLS};
+                   inferno, blizzard, storm, rage, warCry, bigFist,
+                   santuary, fish, refuge, NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 
@@ -19,13 +22,16 @@ class Player;
 class Spell{
   public:
     Spell(const SpellID spellID = SpellID::none);
-    void Cast(Player& player, BattleHUD& battleHUD);
+    TurnOf Cast(Player& player, BattleHUD& battleHUD);
     sf::String GetName(){return name;}
+    bool IsOffensive(){return spellIsOffensive;}
   private:
     SpellID identifier;
     sf::String name;
     SpellSchool school;
     bool affectsAllBears = false;
+    bool spellEndsBattle = false;
+    bool spellIsOffensive = true;//if true, cannot be used during santuary
 
     //Messages to print
     sf::String alwaysText = sf::String("");

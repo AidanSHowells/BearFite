@@ -49,6 +49,7 @@ class Player{
     void Rage(int time){ragingTime = std::max(time, ragingTime);}
     void WarCry(int time){warCryingTime = std::max(time, warCryingTime);}
     void BigFist(int time){bigFistTime = std::max(time, bigFistTime);}
+    void EnterSantuary(int time){santuaryTime = std::max(time, santuaryTime);}
 
     bool IsHasted(){return (hastedTime > 0);}
     bool IsSlowed(){return (slowedTime > 0);}
@@ -56,6 +57,7 @@ class Player{
     bool IsRaging(){return (ragingTime > 0);}
     bool IsWarCrying(){return (warCryingTime > 0);}
     bool HasBigFist(){return (bigFistTime > 0);}
+    bool IsSafe(){return (santuaryTime > 0);}
 
     //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP
@@ -89,6 +91,7 @@ class Player{
     int ragingTime = 0;
     int warCryingTime = 0;
     int bigFistTime = 0;
+    int santuaryTime = 0;
 
     int LegAttackBonus(); //Calculates attack bonus with abilities etc.
     int LegDamageBonus(); // Same for damage

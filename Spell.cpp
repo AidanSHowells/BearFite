@@ -3,9 +3,9 @@
 #include "Bear.h"
 #include "Player.h"
 
-void Spell::Cast(Player& player, BattleHUD& battleHUD){
+TurnOf Spell::Cast(Player& player, BattleHUD& battleHUD){
   if(identifier == SpellID::none){
-    return;
+    return TurnOf::player;
   }
 
   bool saveMade;
@@ -39,6 +39,10 @@ void Spell::Cast(Player& player, BattleHUD& battleHUD){
   if(alwaysText != sf::String("")){
     battleHUD.messages.Update(alwaysText);
   }
+  if(spellEndsBattle){
+    return TurnOf::neither;
+  }
+  return TurnOf::bear;
 }
 
 

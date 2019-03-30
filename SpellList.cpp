@@ -45,6 +45,14 @@ SpellTree::SpellTree(const SpellID spellID){
     spellIDList.at(1) = SpellID::warCry;
     spellIDList.at(2) = SpellID::bigFist;
   }
+  else if(spellID == SpellID::santuary ||
+          spellID == SpellID::fish ||
+          spellID == SpellID::refuge)
+  {
+    spellIDList.at(0) = SpellID::santuary;
+    spellIDList.at(1) = SpellID::fish;
+    spellIDList.at(2) = SpellID::refuge;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in SpellTree constructor.\n\n";
@@ -185,9 +193,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Rage");
     school = SpellSchool::INT;
     successText = sf::String("yoU fEeL ARGER!");
-
-    //Set saves
-    allowsSave = false;
+    spellIsOffensive = false;
   }
   else if(spellID == SpellID::warCry){
     name = sf::String("War Cry");
@@ -208,9 +214,34 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Big Fist");
     school = SpellSchool::INT;
     successText = sf::String("Fist is Big");
+    spellIsOffensive = false;
+  }
+  else if(spellID == SpellID::santuary){
+    name = sf::String("Santuary");
+    school = SpellSchool::WIS;
+    successText = sf::String("You are safe");
+    spellIsOffensive = false;
+  }
+  else if(spellID == SpellID::fish){
+    name = sf::String("Fish");
+    school = SpellSchool::WIS;
+    successText = sf::String("Bear Lik Dis Fish");
 
     //Set saves
-    allowsSave = false;
+    allowsSave = true;
+    saveType = SaveType::will;
+    saveText = sf::String("Fish is Bad");
+    saveBaseDC = -30;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::refuge){
+    name = sf::String("Refuge");
+    school = SpellSchool::WIS;
+    successText = sf::String("Goodbye");
+
+    spellEndsBattle = true;
+    spellIsOffensive = false;
   }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
@@ -306,6 +337,19 @@ void Spell::ApplyEffects(Player& player, Bear& targetBear, bool saveMade){
   }
   else if(SpellID::bigFist == identifier){
     player.BigFist(20);
+  }
+  else if(SpellID::santuary == identifier){
+    player.EnterSantuary(4);
+  }
+  else if(SpellID::fish == identifier){
+    if(!saveMade){
+      int numFish = 1 + player.GetSpellcastingLevel() / 10;
+      int fishSize = Roll(numFish, 6) + player.GetSpellSchoolBonus(school) / 10;
+      targetBear.FeedFish(fishSize);
+    }
+  }
+  else if(SpellID::refuge == identifier){
+    player.Hurt(-50);
   }
   else if(SpellID::NUM_SPELLS == identifier){
     std::cerr << "Warning! Attempted use of ";

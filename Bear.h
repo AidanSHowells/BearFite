@@ -37,6 +37,7 @@ class Bear{
     void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
+    void FeedFish(int fishSize);
 
     bool CanBeFought(){return canBeFought;}
     std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
@@ -62,16 +63,19 @@ class Bear{
     int AttackBonus();
     int DamageBonus();
     bool isLove = false;
+    bool isAngry = false;
 
     int slowedTime = 0;
     int paralyzedTime = 0;
     int hastedTime = 0;
     int cryingTime = 0;
+    int eatingTime = 0;
 
     bool IsSlowed(){return (slowedTime > 0);}
     bool IsParalyzed(){return (paralyzedTime > 0);}
     bool IsHasted(){return (hastedTime > 0);}
     bool IsCrying(){return (cryingTime > 0);}
+    bool IsEating(){return (eatingTime > 0);}
     void Bash(Player& thePlayer);
     void TimerTick();
 
