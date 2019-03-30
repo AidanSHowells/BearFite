@@ -9,21 +9,11 @@ Thoughts on player spellcasting:
 * Any given PC won't get access to all spells
 
 ### Already Implemented
-* Vampirism (STR & CHA)
+* Vampirism (STR & CHA) (As implemented, this doesn't acutally use STR) 
 * Elements (INT)
 * Transformation (INT)
 * Life (CHA)
-
-### Safety (WIS)
-* Sanctuary
-  * Fixed duration
-  * Bears can't do anything to you
-  * You can't do anything to bears
-* Fish (Will Save)
-  * Works like in the calculator version
-  * If we end up giving individual bears an "attitude" toward you, this spell should improve it
-* Refuge
-  * Teleports you away and heals you
+* Safety (WIS)
 
 ### Metamagic (INT)
 * Maximize Spell
