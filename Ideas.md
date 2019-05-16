@@ -14,14 +14,19 @@ Thoughts on player spellcasting:
 * Transformation (INT)
 * Life (CHA)
 * Safety (WIS)
+* Speed (DEX & INT)
 
-### Metamagic (INT)
-* Maximize Spell
-  * Next (couple?) spells have maximized effects
-* Contingency
+### Old Ideas
+* Contingency (this was going to be part of Metamagic, but I don't think it would be worth the pain to implement)
   * Works similarly to D&D
   * Can only be cast outside of battle
   * Player can only have one in effect at a time
+
+### Metamagic (INT)
+* Broaden
+  * Next spell (or few spells?) targets all bears if it would only target one
+* Maximize Spell
+  * Next (couple?) spell(s) has maximized effects
 * Free Spell
   * The turn after casting this spell, the player can cast any spell they know for free
 
@@ -40,14 +45,6 @@ Thoughts on player spellcasting:
     * The long bears make love and leave the fight
     * Your CHA is permanently increased by 1 point ("You feel sexually enlightened")
     * You have to fight any remaining enemy bears (e.g. homology bears, if the enemy long bear wasn't exact)
-
-### Speed (DEX & INT)
-* Slow (Will Save)
-  * Slowes the bear
-* Haste
-  * Speeds the player
-* Time stop
-  * Player can attack bear while time is stopped
 
 ### Restoration (INT & WIS)
 * Divination (Will Save)
