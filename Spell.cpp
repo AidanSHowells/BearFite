@@ -22,8 +22,10 @@ TurnOf Spell::Cast(Player& player, BattleHUD& battleHUD){
 
     saveMade = false;
     if(allowsSave){
-      if(targetBear -> GetSave(saveType) >= GetSaveDC(player)){
-
+      if(player.HasStoppedTime() && SaveType::reflex == saveType){
+        saveMade = false;
+      }
+      else if(targetBear -> GetSave(saveType) >= GetSaveDC(player)){
         battleHUD.messages.Update(saveText, displayLine);
         saveMade = true;
       }

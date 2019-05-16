@@ -9,7 +9,8 @@
 
 enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
                    inferno, blizzard, storm, rage, warCry, bigFist,
-                   santuary, fish, refuge, NUM_SPELLS};
+                   santuary, fish, refuge, slow, haste, timeStop,
+                   NUM_SPELLS};
 
 enum class SaveType{reflex, fort, will, COUNT};
 

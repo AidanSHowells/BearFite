@@ -53,6 +53,14 @@ SpellTree::SpellTree(const SpellID spellID){
     spellIDList.at(1) = SpellID::fish;
     spellIDList.at(2) = SpellID::refuge;
   }
+  else if(spellID == SpellID::slow ||
+          spellID == SpellID::haste ||
+          spellID == SpellID::timeStop)
+  {
+    spellIDList.at(0) = SpellID::slow;
+    spellIDList.at(1) = SpellID::haste;
+    spellIDList.at(2) = SpellID::timeStop;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in SpellTree constructor.\n\n";
@@ -243,6 +251,31 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     spellEndsBattle = true;
     spellIsOffensive = false;
   }
+  else if(spellID == SpellID::slow){
+    name = sf::String("Slow");
+    school = SpellSchool::DEX;
+    successText = sf::String("Bear flows like honey");
+
+    //Set Saves
+    allowsSave = true;
+    saveType = SaveType::will;
+    saveText = sf::String("Bear flows like milk");
+    saveBaseDC = -20;
+    saveLevelFactor = 1;
+    saveSchoolFactor = 1;
+  }
+  else if(spellID == SpellID::haste){
+    name = sf::String("Haste");
+    school = SpellSchool::DEX;
+    successText = sf::String("\"Zoom\"");
+    spellIsOffensive = false;
+  }
+  else if(spellID == SpellID::timeStop){
+    name = sf::String("Time Stop");
+    school = SpellSchool::DEX;
+    successText = sf::String("Time is become stop");
+    spellIsOffensive = false;
+  }
   else if(spellID == SpellID::NUM_SPELLS){
     std::cerr << "Warning! Attempted use of ";
     std::cerr << "SpellID::NUM_SPELLS in Spell constructor.\n\n";
@@ -350,6 +383,20 @@ void Spell::ApplyEffects(Player& player, Bear& targetBear, bool saveMade){
   }
   else if(SpellID::refuge == identifier){
     player.Hurt(-50);
+  }
+  else if(SpellID::slow == identifier){
+    //Compare with blizzard before changing
+    int numDice = 1 + player.GetSpellcastingLevel() / 3;
+    int bonusTurns = 6 + player.GetSpellSchoolBonus(school) / 10;
+    targetBear.Slow(bonusTurns + Roll(numDice,4));
+  }
+  else if(SpellID::haste == identifier){
+    int numDice = 1 + player.GetSpellcastingLevel() / 3;
+    int bonusTurns = 6 + player.GetSpellSchoolBonus(school) / 10;
+    player.Haste(bonusTurns + Roll(numDice,4));
+  }
+  else if(SpellID::timeStop == identifier){
+    player.StopTime(4);
   }
   else if(SpellID::NUM_SPELLS == identifier){
     std::cerr << "Warning! Attempted use of ";

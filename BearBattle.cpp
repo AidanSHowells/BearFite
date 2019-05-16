@@ -46,7 +46,9 @@ TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear){
       {
         turn = theHUD.TakeAction(event);
         if(turn == TurnOf::bear){
-          if(player.IsHasted() && Roll(1,2) == 2) turn = TurnOf::bear;
+          if(player.IsHasted() && Roll(1,2) == 2){
+            turn = TurnOf::player;
+          }
           else player.TimerTick();
         }
       }

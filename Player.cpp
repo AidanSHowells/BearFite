@@ -86,53 +86,74 @@ bool Player::IsDead(){
 }
 
 TurnOf Player::TakeAction(const Action theAction, Bear& theBear){
+  TurnOf nextTurn;
   if(IsSafe() &&
     (theAction == Action::leg ||
     theAction == Action::eye ||
     theAction == Action::john_hopkins))
   {
     Messages -> Update(sf::String("Don't be naughty"));
-    return TurnOf::player;
+    nextTurn = TurnOf::player;
   }
-  if(theAction == Action::leg){
-    return LegPunch(theBear);
+  else if(theAction == Action::leg){
+    nextTurn = LegPunch(theBear);
   }
   else if(theAction == Action::eye){
-    return EyePunch(theBear);
+    nextTurn = EyePunch(theBear);
   }
   else if(theAction == Action::john_hopkins){
     Messages -> Update(sf::String("John Hopkins punching"),
                        sf::String("is unsupported."));//TEMP
-    return TurnOf::player;//TEMP
+    nextTurn = TurnOf::player;//TEMP
   }
   else if(theAction == Action::quaff){
-    return Quaff();
+    nextTurn = Quaff();
   }
   else if(theAction == Action::cast){
     Messages -> Update(sf::String("Whoops!"), sf::String("Spellcasting Error"));
-    return TurnOf::player;
+    nextTurn = TurnOf::player;
   }
   else if(theAction == Action::flee){
-    return Flee(theBear);
+    nextTurn = Flee(theBear);
+  }
+  else if(theAction == Action::nothing){
+    nextTurn = TurnOf::player;
   }
   else{
-    return TurnOf::player;
+    std::cerr << "Warning! ";
+    std::cerr << "Use of Action unknown to Player::TakeAction.\n";
+    nextTurn = TurnOf::player;
   }
+
+  if(timeStopTime > 0 && TurnOf::bear == nextTurn){
+    timeStopTime--;
+    nextTurn = TurnOf::player;
+  }
+
+  return nextTurn;
 }
 
 TurnOf Player::Cast(const int index, BattleHUD& environment){
   int spellTreeIndex = index / 3;
   int spellIndex = index % 3;
   SpellID spellToCast = spellList.at(spellTreeIndex).spellIDList.at(spellIndex);
+  TurnOf nextTurn;
 
   if(IsSafe() && Spell(spellToCast).IsOffensive()){
     Messages -> Update(sf::String("Don't be naughty"));
-    return TurnOf::player;
+    nextTurn = TurnOf::player;
   }
   else{
     spellList.at(spellTreeIndex).numSpells.at(spellIndex) --;
-    return Spell(spellToCast).Cast(*this, environment);
+    nextTurn = Spell(spellToCast).Cast(*this, environment);
   }
+
+  if(timeStopTime > 0 && TurnOf::bear == nextTurn){
+    timeStopTime--;
+    nextTurn = TurnOf::player;
+  }
+
+  return nextTurn;
 }
 
 int Player::GetSpellSchoolBonus(const SpellSchool school){
@@ -218,10 +239,24 @@ void Player::MakeSweetLove(){
 
 void Player::TimerTick(){
   hastedTime = std::max(0, hastedTime - 1);
+  slowedTime = std::max(0, slowedTime - 1);
+  paralyzedTime = std::max(0, paralyzedTime - 1);
   ragingTime = std::max(0, ragingTime - 1);
   warCryingTime = std::max(0, warCryingTime - 1);
   bigFistTime = std::max(0, bigFistTime - 1);
   santuaryTime = std::max(0, santuaryTime -1);
+  timeStopTime = std::max(0, timeStopTime -1);
+}
+
+void Player::PostBattleReset(){
+  hastedTime = 0;
+  slowedTime = 0;
+  paralyzedTime = 0;
+  ragingTime = 0;
+  warCryingTime = 0;
+  bigFistTime = 0;
+  santuaryTime = 0;
+  timeStopTime = 0;
 }
 
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
@@ -253,7 +288,8 @@ TurnOf Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //keeps track of roll for handling criticals
 
-  if(roll + GetLegAttackBonus() >= bear.GetAC(Action::leg) || roll == 60){
+  if(roll == 60 ||  timeStopTime > 0
+                || roll + GetLegAttackBonus() >= bear.GetAC(Action::leg)){
     if(roll > 60 - legCritThreat){
       dmg = Roll(2,8) + 2 * GetLegDamageBonus();
       Messages -> Update("You CRIT bear for:", dmg, true);
@@ -272,7 +308,8 @@ TurnOf Player::LegPunch(Bear& bear){
 TurnOf Player::EyePunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //keeps track fo roll for handling criticals
-  if(roll + GetEyeAttackBonus() >= bear.GetAC(Action::eye) || roll == 60){
+  if(roll == 60 ||  timeStopTime > 0
+                ||  roll + GetEyeAttackBonus() >= bear.GetAC(Action::eye)){
     if(roll > 60 - eyeCritThreat){
       dmg = Roll(4,12) + 2 * GetEyeDamageBonus();
       Messages -> Update("You CRIT bear for:", std::max(1,dmg), true);

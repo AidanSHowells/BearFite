@@ -42,6 +42,7 @@ class Player{
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
+    void PostBattleReset();
 
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -50,6 +51,7 @@ class Player{
     void WarCry(int time){warCryingTime = std::max(time, warCryingTime);}
     void BigFist(int time){bigFistTime = std::max(time, bigFistTime);}
     void EnterSantuary(int time){santuaryTime = std::max(time, santuaryTime);}
+    void StopTime(int time){timeStopTime = std::max(time, timeStopTime);}
 
     bool IsHasted() const {return (hastedTime > 0);}
     bool IsSlowed() const {return (slowedTime > 0);}
@@ -58,6 +60,7 @@ class Player{
     bool IsWarCrying() const {return (warCryingTime > 0);}
     bool HasBigFist() const {return (bigFistTime > 0);}
     bool IsSafe() const {return (santuaryTime > 0);}
+    bool HasStoppedTime() const {return (timeStopTime > 0);}
 
     //Temporary? methods used in BattleTest.cpp
     void Heal(){Quaff();}//TEMP
@@ -92,6 +95,7 @@ class Player{
     int warCryingTime = 0;
     int bigFistTime = 0;
     int santuaryTime = 0;
+    int timeStopTime = 0;
 
     int GetLegAttackBonus() const; //Calculates attack bonus with abilities etc.
     int GetLegDamageBonus() const; // Same for damage
