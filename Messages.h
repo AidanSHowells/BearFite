@@ -16,6 +16,7 @@ class Bear;
 //TEMP: These belong ... somewhere else. No sure where, honestly
 enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 enum class TurnOf {player, bear, neither};
+enum class Winner {player, bear, neither};
 
 //Note that if the message box has a width of 200, one can fit 22 characters
 class MessageBox{

@@ -4,13 +4,13 @@
 #include "HUD.h"
 #include "Bear.h"
 
-//Currently returns TurnOf::player if the player wins, and similarly for the
-//bear. Returns TurnOf::neither if neither wins. Will eventually
+//Currently returns Winner::player if the player wins, and similarly for the
+//bear. Returns Winner::neither if neither wins. Will eventually
 //handle the effects of player or bear winning by calling helper functions
 
 
 //Parameter fakeBear is currently here only so that BattleTest.cpp can display
 //information about the bear that you just killed.
-TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear);
+Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear);
 
 #endif

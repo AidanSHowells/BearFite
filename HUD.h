@@ -184,7 +184,7 @@ class BattleHUD : public HUD{
     std::vector<Bear*> GetAllEnemyBears();
     int GetNumBears();//The number of bears that exist
     void AddEnemyBears(Bear bear[], int numBears);
-    bool RemoveDeadCombatants();//Returns true if fight is over
+    void RemoveDeadCombatants(Winner& theWinner);//Updates theWinner
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);
     void draw();

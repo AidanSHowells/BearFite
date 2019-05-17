@@ -74,12 +74,12 @@ int main(){
           Bear fakeBear;
           BattleHUD battleHUD(window,courierNewBd,courierNew,player,fakeBear);
           if(FindBear(event.key.code, battleHUD, specialBearID, specialModID)){
-            TurnOf winner = BearBattle(battleHUD, fakeBear);
+            Winner winner = BearBattle(battleHUD, fakeBear);
             player.PostBattleReset();
-            if(TurnOf::player == winner){
+            if(Winner::player == winner){
               scoreArray.at(2 * int(fakeBear.GetID()))++;
             }
-            else if(TurnOf::bear == winner){
+            else if(Winner::bear == winner){
               scoreArray.at(2 * int(fakeBear.GetID()) + 1)++;
             }
             player.SetMessageBox(messages);

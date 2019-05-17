@@ -727,11 +727,10 @@ void BattleHUD::AddEnemyBears(Bear bear[], int numBears){
 }
 
 
-bool BattleHUD::RemoveDeadCombatants(){
-  if(player -> IsDead()){
-    return true;
-  }
-  //FriendBear stuff here. (No return statement)
+void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
+
+  //FriendBear stuff here.
+
   for(int i = GetNumBears() - 1; i >= 0; i--){
     if(bearStats[i].GetBearPtr() -> IsDead() ||
        bearStats[i].GetBearPtr() -> IsLove())
@@ -748,8 +747,16 @@ bool BattleHUD::RemoveDeadCombatants(){
     }
   }
 
-  //The battle is over iff the top bear is dead:
-  return(!bearStats[0].GetShouldAppear());
+  if(player -> IsDead()){
+    theWinner = Winner::bear;
+  }
+  //The player has won if they're alive and the top bear is dead
+  else if(!bearStats[0].GetShouldAppear()){
+    theWinner = Winner::player;
+  }
+  else{
+    theWinner = Winner::neither;
+  }
 }
 
 TurnOf BattleHUD::TakeAction(sf::Event theEvent){

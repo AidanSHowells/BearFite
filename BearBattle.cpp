@@ -6,8 +6,9 @@
 void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
 void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
 
-TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear){
+Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear){
   Player& player = *(theHUD.GetPlayerPtr());
+  Winner theWinner = Winner::neither;
 
   //Keep track of turns
   TurnOf turn = TurnOf::player;
@@ -30,10 +31,11 @@ TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear){
       }
       turn = TurnOf::player;
     }
-    if(theHUD.RemoveDeadCombatants()){
+
+    theHUD.RemoveDeadCombatants(theWinner);
+    if(theWinner != Winner::neither){
       WaitForEnter(theHUD, background);
-      return TurnOf::bear;//The bear just went and now the battle is over, so
-                          //we assume that the bear won
+      return theWinner;
     }
 
     sf::Event event;
@@ -54,21 +56,22 @@ TurnOf BearBattle(BattleHUD& theHUD, Bear& fakeBear){
       }
     }
     fakeBear = *(theHUD.GetBearPtr() );//TEMP
-    if(theHUD.RemoveDeadCombatants()){
+
+    theHUD.RemoveDeadCombatants(theWinner);
+    if(theWinner != Winner::neither){
       WaitForEnter(theHUD, background);
-      return TurnOf::player;//The player just went and now the battle is over,
-                            //so we assume that the player won
+      return theWinner;
     }
 
     if(TurnOf::neither == turn){
       WaitForEnter(theHUD, background);
-      return turn;//If it's ever no one's turn, that means the battle ended
-                  //(Presumably because the player fled)
+      return Winner::neither; //If it's ever no one's turn, it means the battle
+                              //ended. (Presumably because the player fled)
     }
 
     DrawStuff(theHUD, background);
   }
-  return TurnOf::neither; //This should only execute if the player closes the
+  return Winner::neither; //This should only execute if the player closes the
                           //game in the middle of a battle
 }
 
