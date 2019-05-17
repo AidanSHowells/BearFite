@@ -16,19 +16,29 @@ Thoughts on player spellcasting:
 * Safety (WIS)
 * Speed (DEX & INT)
 
-### Old Ideas
-* Contingency (this was going to be part of Metamagic, but I don't think it would be worth the pain to implement)
-  * Works similarly to D&D
-  * Can only be cast outside of battle
-  * Player can only have one in effect at a time
-
-### Metamagic (INT)
+### Metamagic I (INT)
 * Broaden
   * Next spell (or few spells?) targets all bears if it would only target one
+  * Ends once the player casts a non-metamagic spell, even if that spell is unaffected by Broaden
 * Maximize Spell
   * Next (couple?) spell(s) has maximized effects
+  * Ends once the player casts a non-metamagic spell, even if that spell is unaffected by Maximize
+* Contingency
+  * Works similarly to D&D
+  * ?Can only be cast outside of battle?
+  * Player can only have one in effect at a time
+  
+### Metamagic II (INT) (Requires the player to have Metamagic I)
+* Instant Spell
+  * Casting this spell does not use the player's turn.
+  * Furthermore, if the player's next action is to cast another spell, casting that spell doesn't use the player's turn either
+  * ?Cannot be cast via inself?
 * Free Spell
   * The turn after casting this spell, the player can cast any spell they know for free
+* Unleash Magic
+  * Does not use the player's turn
+  * Functions as if casting Broaden, Maximize spell, and Free spell simultanuously 
+  * ?Cannot be cast via "Instant Spell"?
 
 ### Conjuration (INT & CON)
 * Call
