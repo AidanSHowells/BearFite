@@ -1,7 +1,7 @@
 #ifndef ROLLDICE_H
 #define ROLLDICE_H
 
-enum class RollMod{none, wild, consistant};
+enum class RollMod{none, wild, consistant, maximized, advantage, disadvantage};
 
 int Roll(const int diceNumber,
          const int diceType,

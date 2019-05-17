@@ -1,6 +1,6 @@
 #include <cstdlib>//include random number generator
 #include <array>//for std::array
-#include <algorithm>//for std::sort
+#include <algorithm>//for std::sort, for std::max, and std::min
 #include <iostream>//for std::cout in debug mode
 #include "RollDice.h"
 
@@ -43,6 +43,15 @@ int Roll(const int diceNumber, const int diceType, const RollMod modifier){
     std::sort(numList.begin(), numList.end());
     total = numList.at(consistantNum / 2);
   }
+  else if(RollMod::maximized == modifier){
+    total = diceNumber * diceType;
+  }
+  else if(RollMod::advantage == modifier){
+    total = std::max(Roll(diceNumber,diceType),Roll(diceNumber,diceType));
+  }
+  else if(RollMod::disadvantage == modifier){
+    total = std::min(Roll(diceNumber,diceType),Roll(diceNumber,diceType));
+  }
   if(inDebugMode){
     std::cout << "Roll(" << diceNumber << ", " << diceType << ") = " << total;
 
@@ -51,6 +60,15 @@ int Roll(const int diceNumber, const int diceType, const RollMod modifier){
     }
     else if(modifier == RollMod::consistant){
       std::cout << "  Note: Using modifier \"consistant\"";
+    }
+    else if(modifier == RollMod::maximized){
+      std::cout << "  Note: Using modifier \"maximized\"";
+    }
+    else if(modifier == RollMod::advantage){
+      std::cout << "  Note: Using modifier \"advantage\"";
+    }
+    else if(modifier == RollMod::disadvantage){
+      std::cout << "  Note: Using modifier \"disadvantage\"";
     }
 
     std::cout << "\n";
