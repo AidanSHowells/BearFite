@@ -18,29 +18,32 @@ class Bear{
   public:
     Bear(){canBeFought = false;}
     Bear(const BearID bearID);
+
+    std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
     void SetMessageBox(MessageBox& theMessages);
+
     int GetAC(const Action attackType) const;
     sf::String GetName() const;
     BearID GetID(){return identifier;}
     sf::String GetModifier();
-    void TakeTurn(Player& target);
-    void Hurt(int); //how the player lowers the bear's health
     int GetHealth();
     int GetSave(const SaveType saveType);
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
+
+    void TakeTurn(Player& target);
+    void Hurt(int); //how the player lowers the bear's health
     int DrainAbil(const int ability, int drain, const bool canKill = false);
     void MakeSweetLove(){isLove = true;}
+
     bool IsLove(){return isLove;}
     bool IsDead();
+    bool CanBeFought(){return canBeFought;}
 
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
     void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
     void FeedFish(int fishSize);
-
-    bool CanBeFought(){return canBeFought;}
-    std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
   protected:
     MessageBox* Messages; //So damage statements know where to print
     sf::String name = sf::String("Klepto");

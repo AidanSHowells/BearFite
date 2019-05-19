@@ -6,16 +6,11 @@
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr
 
+//Constructor in BearList.cpp
+//ApplyModifier in Modifier.cpp
+
 void Bear::SetMessageBox(MessageBox& theMessages){
   Messages = &theMessages;
-}
-
-int Bear::GetAttackBonus() const {
-  return GetAbil(int(Abil::STR)) - 10 + 2*(GetAbil(int(Abil::DEX)) - 10);
-}
-
-int Bear::GetDamageBonus() const {
-  return (GetAbil(int(Abil::STR)) - 10)/2;
 }
 
 int Bear::GetAC(const Action attackType) const {
@@ -36,15 +31,13 @@ int Bear::GetAC(const Action attackType) const {
   }
 }
 
-sf::String Bear::GetName() const {return name;}
-
-sf::String Bear::GetModifier(){return modifier.name;}
-
-
-void Bear::SetHealth(){
-  health = body.UpdateHealth(body.baseHealth, level, abil[int(Abil::CON)]);
+sf::String Bear::GetName() const {
+  return name;
 }
 
+sf::String Bear::GetModifier(){
+  return modifier.name;
+}
 
 int Bear::GetHealth(){
   health = body.UpdateHealth(health, level, abil[int(Abil::CON)]);
@@ -73,12 +66,6 @@ int Bear::GetSave(const SaveType saveType){
     std::cerr << int(save) << ".\n\n";
   }
   return save;
-}
-
-void Bear::FeedFish(int fishSize){
-  int eatingSpeed = std::max(1, GetAbil(int(Abil::CON)) / 10);
-  eatingTime += fishSize / eatingSpeed;
-  eatingTime = std::max(1, eatingTime);
 }
 
 int Bear::GetAbil(const int index, const bool isCheckingDeath) const {
@@ -110,70 +97,6 @@ int Bear::GetAbil(const int index, const bool isCheckingDeath) const {
   }
   return ab;
 }
-
-void Bear::TimerTick(){
-  hastedTime = std::max(0, hastedTime - 1);
-  slowedTime = std::max(0, slowedTime - 1);
-  paralyzedTime = std::max(0, paralyzedTime - 1);
-  cryingTime = std::max(0, cryingTime - 1);
-  //Eating time is reduced in "TakeTurn" instead. This means that paralyzed
-  //bears don't eat, and slowed/hasted bears eat faster/slower, which I like
-}
-
-int Bear::DrainAbil(const int ability, int drain, const bool canKill){
-  if(!canKill && abil.at(ability) - drain < 1){
-    drain = std::max(0, abil.at(ability) - 1);
-  }
-  abil.at(ability) -= drain;
-
-  return drain;
-}
-
-bool Bear::IsDead(){
-  if(GetHealth() <= 0){
-    return true;
-  }
-  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
-    if(GetAbil(i, true) < 1){
-      return true;
-    }
-  }
-  return false;
-}
-
-std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
-  if(isDerived){
-    modifier2 = mod;
-  }
-  else{
-    modifier = mod;
-  }
-  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
-    abil.at(i) = std::max(abil.at(i) + mod.abilAdd[i], 1);//Don't kill the bear
-  }
-  level += mod.levelAdd;
-
-  critThreat *= mod.critThreatMult;
-  critThreat += mod.critThreatAdd;
-  critMult *= mod.critMultMult;
-  critMult += mod.critMultAdd;
-
-
-  //NOTE: Twins and companians stuff should come last
-  //Make an array whose first bear is this bear:
-  std::array<Bear, 4> theBears = {*this};
-  //Add any twins to the array:
-  for(int i = 1; i <= mod.numTwins; i++){
-    theBears.at(i) = theBears.at(0);
-  }
-
-  if(!isDerived && mod.derivedModifier != nullptr){
-    return ApplyModifier(*(mod.derivedModifier), true);
-  }
-  return theBears;//Return that array
-}
-
-void Bear::Hurt(int dmg){health -= dmg;}
 
 void Bear::TakeTurn(Player& target){
   bool done = false;
@@ -207,6 +130,49 @@ void Bear::TakeTurn(Player& target){
   }
 }
 
+void Bear::Hurt(int dmg){
+  health -= dmg;
+}
+
+int Bear::DrainAbil(const int ability, int drain, const bool canKill){
+  if(!canKill && abil.at(ability) - drain < 1){
+    drain = std::max(0, abil.at(ability) - 1);
+  }
+  abil.at(ability) -= drain;
+
+  return drain;
+}
+
+bool Bear::IsDead(){
+  if(GetHealth() <= 0){
+    return true;
+  }
+  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
+    if(GetAbil(i, true) < 1){
+      return true;
+    }
+  }
+  return false;
+}
+
+void Bear::FeedFish(int fishSize){
+  int eatingSpeed = std::max(1, GetAbil(int(Abil::CON)) / 10);
+  eatingTime += fishSize / eatingSpeed;
+  eatingTime = std::max(1, eatingTime);
+}
+
+void Bear::SetHealth(){
+  health = body.UpdateHealth(body.baseHealth, level, abil[int(Abil::CON)]);
+}
+
+int Bear::GetAttackBonus() const {
+  return GetAbil(int(Abil::STR)) - 10 + 2*(GetAbil(int(Abil::DEX)) - 10);
+}
+
+int Bear::GetDamageBonus() const {
+  return (GetAbil(int(Abil::STR)) - 10)/2;
+}
+
 void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //tracks bear attack roll for determining criticals
@@ -225,6 +191,15 @@ void Bear::Bash(Player& thePlayer){
   else{
     Messages -> Update("Bear Spare You");
   }
+}
+
+void Bear::TimerTick(){
+  hastedTime = std::max(0, hastedTime - 1);
+  slowedTime = std::max(0, slowedTime - 1);
+  paralyzedTime = std::max(0, paralyzedTime - 1);
+  cryingTime = std::max(0, cryingTime - 1);
+  //Eating time is reduced in "TakeTurn" instead. This means that paralyzed
+  //bears don't eat, and slowed/hasted bears eat faster/slower, which I like
 }
 
 void Bear::SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA){
