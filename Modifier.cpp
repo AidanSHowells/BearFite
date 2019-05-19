@@ -51,8 +51,8 @@ Modifier::Modifier(ModifierID modID){
   }
   else if(ModifierID::crictal == modID){
     name = sf::String("Crictal");
-    int critMultMult = 2;
-    int critMultAdd = 1;
+    critMultMult = 2;
+    critMultAdd = 1;
   }
   else if(ModifierID::NUM_MODIFIERS == modID){
     std::cerr << "Warning! ";
