@@ -3,6 +3,7 @@
 #include <iostream>//For std::cerr
 #include "Player.h"
 #include "Bear.h"
+#include "BearBattle.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to

@@ -4,8 +4,8 @@
 #include <array>//For std::array
 #include <SFML/System/String.hpp>
 #include "Abilities.h"
-#include "Messages.h" //Only for "enum class TurnOf". So this should be changed
-                      //once "TurnOf" gets moved to a more sensible location
+
+enum class TurnOf;
 
 enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
                    inferno, blizzard, storm, rage, warCry, bigFist,

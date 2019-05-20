@@ -7,6 +7,8 @@
 #include "Bear.h"
 
 class Player;
+enum class TurnOf;
+enum class Winner;
 
 /*The main class here (defined last for dependency reasons) is class HUD.
  *An object of this class contains one object corresponding to each piece of the

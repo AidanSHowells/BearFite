@@ -2,6 +2,7 @@
 #include "HUD.h"
 #include "Bear.h"
 #include "Player.h"
+#include "BearBattle.h"
 
 TurnOf Spell::Cast(Player& player, BattleHUD& battleHUD){
   if(identifier == SpellID::none){

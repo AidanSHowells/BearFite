@@ -10,6 +10,9 @@
 class Bear;
 enum class SpellID;
 enum class SpellSchool;
+enum class TurnOf;
+
+enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 
 struct SpellTree{
   SpellTree(const SpellID spellID);//NOTE: See SpellList.cpp for definition

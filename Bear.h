@@ -14,6 +14,7 @@ class Player;
 enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};
 
 enum class SaveType;
+enum class Action;  //Actions the player can take. Defined in player.h
 
 class Bear{
   public:

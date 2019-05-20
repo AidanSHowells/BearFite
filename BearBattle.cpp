@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"
+#include "BearBattle.h"
 
 void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
 void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
