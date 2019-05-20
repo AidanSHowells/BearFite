@@ -2,100 +2,122 @@
 #include "Modifier.h"
 #include "Bear.h"
 
-Modifier::Modifier(ModifierID modID){
+sf::String ModifierName(const ModifierID modID){
+  sf::String name;
+
+  if(ModifierID::none == modID){
+    name = sf::String("None");
+  }
+  else if(ModifierID::beefy == modID){
+    name = sf::String("Beefy");
+  }
+  else if(ModifierID::exact == modID){
+    name = sf::String("Exact");
+  }
+  else if(ModifierID::sturdy == modID){
+    name = sf::String("Sturdy");
+  }
+  else if(ModifierID::genious == modID){
+    name = sf::String("Genious");
+  }
+  else if(ModifierID::socrates == modID){
+    name = sf::String("Socrates");
+  }
+  else if(ModifierID::handsome == modID){
+    name = sf::String("Handsome");
+  }
+  else if(ModifierID::numerous == modID){
+    name = sf::String("Numerous");
+  }
+  else if(ModifierID::experienced == modID){
+    name = sf::String("Experienced");
+  }
+  else if(ModifierID::elite == modID){
+    name = sf::String("Elite");
+  }
+  else if(ModifierID::keen == modID){
+    name = sf::String("Keen");
+  }
+  else if(ModifierID::crictal == modID){
+    name = sf::String("Crictal");
+  }
+  else if(ModifierID::NUM_MODIFIERS == modID){
+    std::cerr << "Warning! Attempted use of ModifierID::NUM_MODIFIERS in ";
+    std::cerr << "ModifierName.\n\n";
+  }
+  else{
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of modifier unknown to ModifierName.\n";
+    std::cerr << "The number corresponding to the invalid modifier was ";
+    std::cerr << int(modID) << ".\n\n";
+  }
+  return name;
+}
+
+
+std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
+  modifier = modID;
+
+  std::vector<Bear> theBears(1);
+
   if(ModifierID::none == modID){
     //Do nothing
   }
   else if(ModifierID::beefy == modID){
-    name = sf::String("Beefy");
-    abilAdd[int(Abil::STR)] = 10;
+    abil.at(int(Abil::STR)) += 10;
   }
   else if(ModifierID::exact == modID){
-    name = sf::String("Exact");
-    abilAdd[int(Abil::DEX)] = 10;
+    abil.at(int(Abil::DEX)) += 10;
   }
   else if(ModifierID::sturdy == modID){
-    name = sf::String("Sturdy");
-    abilAdd[int(Abil::CON)] = 10;
+    abil.at(int(Abil::CON)) += 10;
   }
   else if(ModifierID::genious == modID){
-    name = sf::String("Genious");
-    abilAdd[int(Abil::INT)] = 10;
+    abil.at(int(Abil::INT)) += 10;
   }
   else if(ModifierID::socrates == modID){
-    name = sf::String("Socrates");
-    abilAdd[int(Abil::WIS)] = 10;
+    abil.at(int(Abil::WIS)) += 10;
   }
   else if(ModifierID::handsome == modID){
-    name = sf::String("Handsome");
-    abilAdd[int(Abil::CHA)] = 10;
+    abil.at(int(Abil::CHA)) += 10;
   }
   else if(ModifierID::numerous == modID){
-    name = sf::String("Numerous");
-    numTwins = 2;
+    theBears.push_back(*this);
+    theBears.push_back(*this);
   }
   else if(ModifierID::experienced == modID){
-    name = sf::String("Experienced");
-    levelAdd = 5;
+    level += 5;
   }
   else if(ModifierID::elite == modID){
-    name = sf::String("Elite");
     for(int i = 0; i < int(Abil::NUM_ABIL); i++){
-      abilAdd[i] = 5;
+      abil.at(i) += 5;
     }
-    levelAdd = 5;
+    level += 5;
   }
   else if(ModifierID::keen == modID){
-    name = sf::String("Keen");
-    critThreatMult = 2;
-    critThreatAdd = 3;
+    critThreat = 2 * critThreat + 3;
   }
   else if(ModifierID::crictal == modID){
-    name = sf::String("Crictal");
-    critMultMult = 2;
-    critMultAdd = 1;
+    critMult = 2 * critMult + 3;
   }
   else if(ModifierID::NUM_MODIFIERS == modID){
-    std::cerr << "Warning! ";
-    std::cerr << "Attempted use of ModifierID::NUM_MODIFIERS in constructor.\n";
-    std::cerr << "\n";
+    std::cerr << "Warning! Attempted use of ModifierID::NUM_MODIFIERS in ";
+    std::cerr << "ApplyModifier.\n\n";
   }
   else{
-    std::cerr << "Warning! Attempted use of modifier unknown to constructor.\n";
+    std::cerr << "Warning! ";
+    std::cerr << "Attempted use of modifier unknown to ApplyModifier.\n";
     std::cerr << "The number corresponding to the invalid modifier was ";
     std::cerr << int(modID) << ".\n\n";
   }
-}
 
+  theBears.at(0) = *this;
 
-std::array<Bear, 4> Bear::ApplyModifier(Modifier mod, bool isDerived){
-  if(isDerived){
-    modifier2 = mod;
-  }
-  else{
-    modifier = mod;
-  }
-  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
-    abil.at(i) = std::max(abil.at(i) + mod.abilAdd[i], 1);//Don't kill the bear
-  }
-  level += mod.levelAdd;
-
-  critThreat *= mod.critThreatMult;
-  critThreat += mod.critThreatAdd;
-  critMult *= mod.critMultMult;
-  critMult += mod.critMultAdd;
-
-
-  //NOTE: Twins and companians stuff should come last
-  //Make an array whose first bear is this bear:
-  std::array<Bear, 4> theBears = {*this};
-  //Add any twins to the array:
-  for(int i = 1; i <= mod.numTwins; i++){
-    theBears.at(i) = theBears.at(0);
+  if(theBears.size() > 4){
+    std::cerr << "Warning! Too many extra bears when applying modifier ";
+    std::cerr << std::string(ModifierName(modID)) << ".\n\n";
+    theBears.resize(4);
   }
 
-  if(!isDerived && mod.derivedModifier != nullptr){
-    return ApplyModifier(*(mod.derivedModifier), true);
-  }
-  return theBears;//Return that array
+  return theBears;
 }

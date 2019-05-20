@@ -2,6 +2,7 @@
 #define BEAR_H
 
 #include <array>//For std::array
+#include <vector>//For std::vector
 #include "Messages.h"
 #include "Modifier.h"
 #include "Abilities.h"
@@ -19,7 +20,7 @@ class Bear{
     Bear(){canBeFought = false;}
     Bear(const BearID bearID);
 
-    std::array<Bear, 4> ApplyModifier(Modifier mod, bool isDerived = false);
+    std::vector<Bear> ApplyModifier(const ModifierID modID);
     void SetMessageBox(MessageBox& theMessages);
 
     int GetAC(const Action attackType) const;
@@ -48,8 +49,7 @@ class Bear{
     MessageBox* Messages; //So damage statements know where to print
     sf::String name = sf::String("Klepto");
     BearID identifier;
-    Modifier modifier;
-    Modifier modifier2;
+    ModifierID modifier;
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
 
     int health;

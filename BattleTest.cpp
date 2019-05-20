@@ -44,8 +44,7 @@ int main(){
   std::array<int, 2 * int(BearID::NUM_BEARS)> scoreArray = {};//All zeros
 
   MessageBox messages(window,courierNewBd,courierNew,"Messages:");
-  messages.Update("Q:Fight Babby Party.",
-                  "A/S/G:Get Abilities,",
+  messages.Update("A/S/G:Get Abilities,",
                   "Bear, or Spells.",
                   "F:Fight Special Bear.",
                   "Z:Fight Random Bear.");
@@ -67,8 +66,7 @@ int main(){
         window.close();
       }
       if (event.type == sf::Event::KeyPressed){
-        if(event.key.code == sf::Keyboard::Q ||
-           event.key.code == sf::Keyboard::F ||
+        if(event.key.code == sf::Keyboard::F ||
            event.key.code == sf::Keyboard::Z)
         {
           Bear fakeBear;
@@ -89,8 +87,7 @@ int main(){
             messages.Update("Bear's Final Health:", fakeBear.GetHealth());
             messages.Update("Last Bear Was:", fakeBear);
 
-            messages.Update("Q:Fight Babby Party.",
-                            "A/S/G:Get Abilities,",
+            messages.Update("A/S/G:Get Abilities,",
                             "Bear, or Spells.",
                             "F:Fight Special Bear.",
                             "Z:Fight Random Bear.",
@@ -166,7 +163,7 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
       messages.Update(sf::String("Modifier is Random"), true);
     }
     else{
-      messages.Update(sf::String("Bear is ") + Modifier(modID).name, true);
+      messages.Update(sf::String("Bear is ") + ModifierName(modID), true);
     }
   }
 
@@ -312,41 +309,33 @@ bool FindBear(const sf::Keyboard::Key theKey,
               const BearID bearID,
               const ModifierID modID)
 {
-  Bear theBear[4];
-  Modifier theModifier = Modifier(ModifierID::none);
+  Bear tempBear;
+  ModifierID theModifier = ModifierID::none;
 
   if(sf::Keyboard::Z == theKey){//Random Bear
     int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
-    theBear[0] = Bear(BearID(randInt));
+    tempBear = Bear(BearID(randInt));
 
     randInt = Roll(1, int(ModifierID::NUM_MODIFIERS)) - 1;
     if(1 == Roll(1,3)){
       randInt = 0;
     }
-    theModifier = Modifier(ModifierID(randInt));
-  }
-  else if(sf::Keyboard::Q == theKey){//Babby Party
-    for(int i = 0; i < 4; i++){
-      Bear bear(BearID::Babby);
-      theBear[i] = bear;
-    }
-    theHUD.AddEnemyBears(theBear, 4);
-    return true;//This is gross, but this part of the function is temporary
+    theModifier = ModifierID(randInt);
   }
   else if(sf::Keyboard::F == theKey){//Special Bear
     if(bearID == BearID::NUM_BEARS){//Random bear in this case
       int randInt = Roll(1, int(BearID::NUM_BEARS)) - 1;
-      theBear[0] = Bear(BearID(randInt));
+      tempBear = Bear(BearID(randInt));
     }
     else{
-      theBear[0] = Bear(bearID);
+      tempBear = Bear(bearID);
     }
     if(modID == ModifierID::NUM_MODIFIERS){//Random Modifier in this case
       int randInt = Roll(1, int(ModifierID::NUM_MODIFIERS)) - 1;
-      theModifier = Modifier(ModifierID(randInt));
+      theModifier = ModifierID(randInt);
     }
     else{
-      theModifier = Modifier(modID);
+      theModifier = modID;
     }
   }
   else{
@@ -355,15 +344,9 @@ bool FindBear(const sf::Keyboard::Key theKey,
     return false;//Failure
   }
 
-  //Functions can't return C-style arrays, so we have to get "creative":
-  std::array<Bear, 4> bears = theBear[0].ApplyModifier(theModifier);
-  for(int i = 0; i < 4; i++){
-    theBear[i] = bears.at(i);
-  }
 
-  int numBears = 1 + theModifier.numTwins;//To be replaced with the next line
-  //int numBears = 1 + theModifier.numCompanians + theModifier.numTwins;
-  theHUD.AddEnemyBears(theBear, numBears);
+  std::vector<Bear> bears = tempBear.ApplyModifier(theModifier);
+  theHUD.AddEnemyBears(bears);
   return true;//Success
 }
 //Eventual Algorithm:

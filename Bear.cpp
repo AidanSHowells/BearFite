@@ -36,7 +36,7 @@ sf::String Bear::GetName() const {
 }
 
 sf::String Bear::GetModifier(){
-  return modifier.name;
+  return ModifierName(modifier);
 }
 
 int Bear::GetHealth(){

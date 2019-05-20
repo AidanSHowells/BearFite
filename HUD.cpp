@@ -22,7 +22,7 @@ sf::Color ClearYellow = sf::Color(255,255,0,153);
 //Helper Functions:
 sf::String AddSpacing(const sf::String& inputString, int totalLength){
   sf::String spacing = "";
-  for(int i = 0; i < totalLength - inputString.getSize(); i++){
+  for(size_t i = 0; i < totalLength - inputString.getSize(); i++){
     spacing += sf::String(" ");
   }
   if(totalLength - inputString.getSize() < 0){
@@ -718,9 +718,14 @@ int BattleHUD::GetNumBears(){
 }
 
 
-void BattleHUD::AddEnemyBears(Bear bear[], int numBears){
-  for(int i = 0; i < numBears; i++){
-    bearStats[i].SetBear(bear[i]);
+void BattleHUD::AddEnemyBears(std::vector<Bear>& bears){
+  if(bears.size() > 4){
+    std::cerr << "Warning! ";
+    std::cerr << "AddEnemyBears was told to add too many bears.";
+    bears.resize(4);
+  }
+  for(size_t i = 0; i < bears.size(); i++){
+    bearStats[i].SetBear(bears.at(i));
     bearStats[i].GetBearPtr() -> SetMessageBox(messages);
     bearStats[i].SetShouldAppear(true);
   }
