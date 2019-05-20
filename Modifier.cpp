@@ -1,6 +1,7 @@
 #include <iostream> //for std::cerr
 #include "Modifier.h"
 #include "Bear.h"
+#include "RollDice.h"
 
 sf::String ModifierName(const ModifierID modID){
   sf::String name;
@@ -40,6 +41,18 @@ sf::String ModifierName(const ModifierID modID){
   }
   else if(ModifierID::crictal == modID){
     name = sf::String("Crictal");
+  }
+  else if(ModifierID::large == modID){
+    name = sf::String("Large");
+  }
+  else if(ModifierID::hungry == modID){
+    name = sf::String("Hungry");
+  }
+  else if(ModifierID::mother == modID){
+    name = sf::String("Mother");
+  }
+  else if(ModifierID::life_saving == modID){
+    name = sf::String("Undying");
   }
   else if(ModifierID::NUM_MODIFIERS == modID){
     std::cerr << "Warning! Attempted use of ModifierID::NUM_MODIFIERS in ";
@@ -99,6 +112,26 @@ std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
   }
   else if(ModifierID::crictal == modID){
     critMult = 2 * critMult + 3;
+  }
+  else if(ModifierID::large == modID){
+    abil.at(int(Abil::STR)) += 10;
+    abil.at(int(Abil::DEX)) = std::max(abil.at(int(Abil::DEX)) - 5, 1);
+    abil.at(int(Abil::CON)) += 5;
+  }
+  else if(ModifierID::hungry == modID){
+    abil.at(int(Abil::CON)) = std::max(abil.at(int(Abil::CON)) - 5, 1);
+    //Also make the bear perma-argry: See Bear::IsAngry
+    //Also make the bear love fish: See Bear::FeedFish
+  }
+  else if(ModifierID::mother == modID){
+    int numBabbies = Roll(1,2);
+    for(int i = 0; i < numBabbies; i++){
+      theBears.push_back(Bear(BearID::Babby));
+    }
+  }
+  else if(ModifierID::life_saving == modID){
+    modifierNameVisible = false;
+    //The real meat of this one is in Bear::IsDead()
   }
   else if(ModifierID::NUM_MODIFIERS == modID){
     std::cerr << "Warning! Attempted use of ModifierID::NUM_MODIFIERS in ";

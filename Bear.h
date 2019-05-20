@@ -38,6 +38,7 @@ class Bear{
 
     bool IsLove(){return isLove;}
     bool IsDead();
+    bool IsAngry();
     bool CanBeFought(){return canBeFought;}
 
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -49,7 +50,8 @@ class Bear{
     MessageBox* Messages; //So damage statements know where to print
     sf::String name = sf::String("Klepto");
     BearID identifier;
-    ModifierID modifier;
+    ModifierID modifier = ModifierID::none;
+    bool modifierNameVisible = true;
     std::array<int, int(Abil::NUM_ABIL)> abil = {10,10,10,10,10,10};
 
     int health;

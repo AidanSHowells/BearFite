@@ -36,7 +36,11 @@ sf::String Bear::GetName() const {
 }
 
 sf::String Bear::GetModifier(){
-  return ModifierName(modifier);
+  sf::String name = "None";
+  if(modifierNameVisible){
+    name = ModifierName(modifier);
+  }
+  return name;
 }
 
 int Bear::GetHealth(){
@@ -112,7 +116,7 @@ void Bear::TakeTurn(Player& target){
         }
       }
       else if(target.IsSafe()){
-        if(isAngry || (GetAbil(int(Abil::WIS)) < 10)){
+        if(IsAngry() || (GetAbil(int(Abil::WIS)) < 10)){
           Messages -> Update(sf::String("GRRRAAAAAH!"),sf::String("BOING!"));
         }
         else{
@@ -145,7 +149,18 @@ int Bear::DrainAbil(const int ability, int drain, const bool canKill){
 
 bool Bear::IsDead(){
   if(GetHealth() <= 0){
-    return true;
+    if(ModifierID::life_saving == modifier && !modifierNameVisible){
+      health = std::max(1,GetAbil(int(Abil::CON)));
+      modifierNameVisible = true;
+      Messages -> Update("Bear won\'t die");
+    }
+    else if(ModifierID::life_saving == modifier && Roll(1,3) != 1){
+      health = std::max(1,GetAbil(int(Abil::CON)));
+      Messages -> Update("Bear won\'t die");
+    }
+    else{
+      return true;
+    }
   }
   for(int i = 0; i < int(Abil::NUM_ABIL); i++){
     if(GetAbil(i, true) < 1){
@@ -155,7 +170,17 @@ bool Bear::IsDead(){
   return false;
 }
 
+bool Bear::IsAngry(){
+  if(ModifierID::hungry == modifier){
+    isAngry = true;
+  }
+  return isAngry;
+}
+
 void Bear::FeedFish(int fishSize){
+  if(ModifierID::hungry == modifier){
+    MakeSweetLove();
+  }
   int eatingSpeed = std::max(1, GetAbil(int(Abil::CON)) / 10);
   eatingTime += fishSize / eatingSpeed;
   eatingTime = std::max(1, eatingTime);
