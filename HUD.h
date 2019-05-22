@@ -122,7 +122,7 @@ class PlayerStats{
               sf::Font& mainFont,
               Player& thePlayer,
               sf::Vector2f thePosition = sf::Vector2f(600, 0),
-              sf::Vector2f theSize = sf::Vector2f(200, 600) );
+              sf::Vector2f theSize = sf::Vector2f(200, 580) );
     void Update();
     bool SpellChoiceProcessStarted(MessageBox& messages);
     int GetSpell(const sf::Event theEvent);
@@ -135,9 +135,12 @@ class PlayerStats{
     const sf::Vector2f position;
     const sf::Vector2f size;
     sf::RectangleShape background;
+    sf::RectangleShape moreBackground;
     int selectedSpellIndex;
+    bool onMainMenu = true;
+    int numReservedSpellTrees = 4;
 
-    static const int numHealth = 6;
+    static const int numHealth = 4;
     static const int numAbility = 13;
     static const int maxSpells = 22;
     static const int numDivLine = 7;
@@ -145,9 +148,12 @@ class PlayerStats{
     sf::Text header;
     sf::Text health[numHealth];
     sf::Text ability[numAbility];
+    sf::Text featsHeader;
     sf::Text spell[maxSpells];
+    float baseSpellHeight[maxSpells];
     sf::FloatRect highlightBox[maxSpells];
     sf::RectangleShape divLine[numDivLine];
+    sf::Text moreStats;
 };
 
 

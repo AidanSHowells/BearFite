@@ -424,24 +424,28 @@ PlayerStats::PlayerStats(
   sf::Font& mainFont,
   Player& thePlayer,
   sf::Vector2f thePosition, //Default is sf::Vector2f(600, 0)
-  sf::Vector2f theSize      //Default is sf::Vector2f(200, 600)
+  sf::Vector2f theSize      //Default is sf::Vector2f(200, 580)
 ):
 window(&theWindow),
 player(&thePlayer),
 position(thePosition),
 size(theSize)
 {
-  //Make the background rectangle
+  //Make the background rectangles
   background.setSize(size);
   background.setFillColor(Gray);
   background.setPosition(position.x, position.y);
+
+  moreBackground.setSize(sf::Vector2f(size.x, 600 + 1 - size.y));
+  moreBackground.setFillColor(Gray);
+  moreBackground.setPosition(position.x, size.y + 1);
 
   //Make the header
   header.setFont(titleFont);
   header.setString("   YOUR STATUS");
   header.setCharacterSize(20);
   header.setFillColor(sf::Color::Black);
-  header.setPosition(position.x, position.y);
+  header.setPosition(position.x, position.y - 5);
 
   //Make the health and drank info
   health[0].setFont(titleFont);
@@ -452,21 +456,18 @@ size(theSize)
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
   //no need to set numDranks here, since Update is called by HUD::draw
-  health[4].setFont(titleFont);
-  health[4].setString("SpellCasting Level:");
-  health[5].setFont(mainFont);
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
-    health[i].setPosition(position.x, position.y + float(20 + 20 * (i/2)));
+    health[i].setPosition(position.x, position.y + float(15 + 20 * (i/2)));
   }
 
   //Make the ability score header
   ability[0].setFont(titleFont);
   ability[0].setCharacterSize(15);
   ability[0].setFillColor(sf::Color::Black);
-  ability[0].setString("Ablilities:");
-  ability[0].setPosition(position.x, position.y + 80);
+  ability[0].setString("Ablilities:");//Calc. version reference: Do not "fix"
+  ability[0].setPosition(position.x, position.y + 55);
 
   //Make the ability score info
   for(int i = 1; i < numAbility; i += 2){
@@ -474,13 +475,13 @@ size(theSize)
     ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
     ability[i].setPosition(position.x + float(100 * ( i / 6) ),
-                           position.y + float(87 + (i % 6) * 10) );
+                           position.y + float(62 + (i % 6) * 10) );
 
     ability[i+1].setFont(mainFont);
     ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
     ability[i+1].setPosition(position.x + float(100 * (i / 6) ),
-                             position.y + float(87 + (i % 6) * 10) );
+                             position.y + float(62 + (i % 6) * 10) );
   }
   ability[1].setString("STR:");
   ability[3].setString("DEX:");
@@ -494,22 +495,36 @@ size(theSize)
   spell[0].setCharacterSize(15);
   spell[0].setFillColor(sf::Color::Black);
   spell[0].setString("Spells:");
-  spell[0].setPosition(position.x, position.y + 155);
+  baseSpellHeight[0] = position.y + 130;
+  spell[0].setPosition(position.x, baseSpellHeight[0]);
 
-  //Make the spells info
+  //Make the feats header
+  featsHeader.setFont(titleFont);
+  featsHeader.setCharacterSize(15);
+  featsHeader.setFillColor(sf::Color::Black);
+  featsHeader.setString("9:Feats:");
+
+  //Make the spells/feats info
   for(int i = 1; i < maxSpells; i++){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
-    spell[i].setPosition(position.x, position.y + float(153 + 20 * i) );
+    baseSpellHeight[i] = position.y + float(128 + 20 * i);
   }
 
   //Divide up the spells
   for(int i = 0; i < numDivLine; i++){
     divLine[i].setSize(sf::Vector2f(200,1));
     divLine[i].setFillColor(sf::Color::Black);
-    divLine[i].setPosition(position.x, position.y + float(162 + 10 + i * 60) );
+    divLine[i].setPosition(position.x, position.y + float(137 + 10 + i * 60) );
   }
+
+  moreStats.setFont(titleFont);
+  moreStats.setCharacterSize(15);
+  moreStats.setFillColor(sf::Color::Black);
+  moreStats.setPosition(moreBackground.getPosition());
+  moreStats.move(0,-2);
+  moreStats.setString("        0:More");
 }
 
 void PlayerStats::Update(){
@@ -523,8 +538,8 @@ void PlayerStats::Update(){
   health[3].setString(AddSpacing(std::to_string(player -> GetNumDranks()), 22));
 
   //Spellcasting Level
-  sf::String level = std::to_string(player -> GetSpellcastingLevel());
-  health[5].setString(AddSpacing(level, 22));
+  //sf::String level = std::to_string(player -> GetSpellcastingLevel());
+  //health[5].setString(AddSpacing(level, 22));
 
   //Ability scores
   for(int i = 1; i <= 6; i++){
@@ -532,11 +547,14 @@ void PlayerStats::Update(){
   }
 
   //Spells
+  int numPlayerSpells = 0;
   for(int i = 1; i < maxSpells; i++){
+    spell[i].setPosition(position.x, baseSpellHeight[i]);
     if(player -> GetMaxNumSpell(i - 1) == 0){
       spell[i].setString(sf::String(""));
     }
     else{
+      numPlayerSpells = i;
       sf::String name = player -> GetSpellName(i - 1);
       sf::String count = std::to_string(player -> GetNumSpell(i - 1));
       std::size_t spaceToAdd;
@@ -553,6 +571,25 @@ void PlayerStats::Update(){
 
       spell[i].setString(name + count + sf::String("/") + max);
     }
+  }
+
+  if(numPlayerSpells <= 3){
+    numReservedSpellTrees = 1;
+  }
+  else if(numPlayerSpells <= 12){
+    numReservedSpellTrees = 4;
+  }
+  else{
+    numReservedSpellTrees = 7;
+  }
+
+  featsHeader.setPosition(position.x,
+                          position.y + float(145 + numReservedSpellTrees * 60));
+
+  for(int i = 3 * numReservedSpellTrees + 1; i < maxSpells; i++){
+    spell[i].move(0,10);
+    sf::String name = "Feat " + std::to_string(i-3*numReservedSpellTrees);//TEMP
+    spell[i].setString(name);
   }
 }
 
@@ -664,6 +701,7 @@ void PlayerStats::HighlightSpells(bool isPickingSpell){
 void PlayerStats::draw(){
   //Recall that a->b is equivalent to (*a).b
   window -> draw(background);
+  window -> draw(moreBackground);
   window -> draw(header);
   for(int i = 0; i < numHealth; i++){
     window -> draw(health[i]);
@@ -671,12 +709,19 @@ void PlayerStats::draw(){
   for(int i = 0; i < numAbility; i++){
     window -> draw(ability[i]);
   }
+  if(7 != numReservedSpellTrees){
+    window -> draw(featsHeader);
+  }
   for(int i = 0; i < maxSpells; i++){
     window -> draw(spell[i]);
   }
-  for(int i = 0; i < numDivLine; i++){
+  for(int i = 0; i < numReservedSpellTrees; i++){
     window -> draw(divLine[i]);
   }
+  if(7 != numReservedSpellTrees){
+    window -> draw(divLine[numReservedSpellTrees]);
+  }
+  window -> draw(moreStats);
 }
 
 
