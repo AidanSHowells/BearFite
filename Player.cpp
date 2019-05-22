@@ -36,8 +36,6 @@ int Player::GetMaxHealth(){
   return maxHealth;
 }
 
-int Player::GetNumDranks(){return numDranks;}
-
 int Player::GetAbil(const int index, const bool isCheckingDeath) const {
   int abil = baseAbil.at(index) + abilBuff.at(index);
   if(index == int(Abil::STR)){

@@ -125,8 +125,10 @@ class PlayerStats{
               sf::Vector2f theSize = sf::Vector2f(200, 580) );
     void Update();
     bool SpellChoiceProcessStarted(MessageBox& messages);
+    bool OverMoreHighlightBox(const sf::Vector2f mousePos) const;
+    void toggleMenu(){onMainMenu = !onMainMenu;}
     int GetSpell(const sf::Event theEvent);
-    void HighlightSpells(bool isPickingSpell);
+    void Highlight(bool isPickingSpell);
     void draw();//See comment in MessageBox
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
@@ -140,20 +142,24 @@ class PlayerStats{
     bool onMainMenu = true;
     int numReservedSpellTrees = 4;
 
-    static const int numHealth = 4;
+    static const int numHealth = 14;
     static const int numAbility = 13;
     static const int maxSpells = 22;
+    static const int numExtraFeats = 4;
     static const int numDivLine = 7;
 
     sf::Text header;
     sf::Text health[numHealth];
     sf::Text ability[numAbility];
+    float baseAbilityHeight[numAbility];
     sf::Text featsHeader;
     sf::Text spell[maxSpells];
+    sf::Text feats[numExtraFeats];
     float baseSpellHeight[maxSpells];
     sf::FloatRect highlightBox[maxSpells];
     sf::RectangleShape divLine[numDivLine];
     sf::Text moreStats;
+    sf::FloatRect moreHighlightBox;
 };
 
 

@@ -456,6 +456,22 @@ size(theSize)
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
   //no need to set numDranks here, since Update is called by HUD::draw
+  health[4].setFont(titleFont);
+  health[4].setString("Exp. Needed:");
+  health[5].setFont(mainFont);
+  health[5].setString("                   N/A");//TEMP
+  health[6].setFont(titleFont);
+  health[6].setString("Level:");
+  health[7].setFont(mainFont);
+  health[8].setFont(titleFont);
+  health[8].setString("Spellcasting Level:");
+  health[9].setFont(mainFont);
+  health[10].setFont(titleFont);
+  health[10].setString("Body Count:");
+  health[11].setFont(mainFont);
+  health[12].setFont(titleFont);
+  health[12].setString("Virginities:");
+  health[13].setFont(mainFont);
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
@@ -467,21 +483,24 @@ size(theSize)
   ability[0].setCharacterSize(15);
   ability[0].setFillColor(sf::Color::Black);
   ability[0].setString("Ablilities:");//Calc. version reference: Do not "fix"
-  ability[0].setPosition(position.x, position.y + 55);
+  baseAbilityHeight[0] = position.y + 55;
+  ability[0].setPosition(position.x, baseAbilityHeight[0]);
 
   //Make the ability score info
   for(int i = 1; i < numAbility; i += 2){
     ability[i].setFont(mainFont);
     ability[i].setCharacterSize(15);
     ability[i].setFillColor(sf::Color::Black);
+    baseAbilityHeight[i] = position.y + float(62 + (i % 6) * 10);
     ability[i].setPosition(position.x + float(100 * ( i / 6) ),
-                           position.y + float(62 + (i % 6) * 10) );
+                           baseAbilityHeight[i]);
 
     ability[i+1].setFont(mainFont);
     ability[i+1].setCharacterSize(15);
     ability[i+1].setFillColor(sf::Color::Black);
+    baseAbilityHeight[i+1] = position.y + float(62 + (i % 6) * 10);
     ability[i+1].setPosition(position.x + float(100 * (i / 6) ),
-                             position.y + float(62 + (i % 6) * 10) );
+                             baseAbilityHeight[i+1]);
   }
   ability[1].setString("STR:");
   ability[3].setString("DEX:");
@@ -519,12 +538,29 @@ size(theSize)
     divLine[i].setPosition(position.x, position.y + float(137 + 10 + i * 60) );
   }
 
+  //Make the feats header than shows on the second page
+  feats[0].setFont(titleFont);
+  feats[0].setCharacterSize(15);
+  feats[0].setFillColor(sf::Color::Black);
+  feats[0].setString("Extra Feats:");
+  feats[0].setPosition(position.x, position.y + 230);
+
+  //Make the second-page-feat info
+  for(int i = 1; i < numExtraFeats; i++){
+    feats[i].setFont(mainFont);
+    feats[i].setCharacterSize(15);
+    feats[i].setFillColor(sf::Color::Black);
+    feats[i].setPosition(position.x, position.y + 228 + 20 * i);
+  }
+
+  //Make the button that changes which page you're on
   moreStats.setFont(titleFont);
   moreStats.setCharacterSize(15);
   moreStats.setFillColor(sf::Color::Black);
   moreStats.setPosition(moreBackground.getPosition());
-  moreStats.move(0,-2);
-  moreStats.setString("        0:More");
+  moreStats.move(75,-2);
+  moreStats.setString("0:More");
+  moreHighlightBox = moreStats.getGlobalBounds();
 }
 
 void PlayerStats::Update(){
@@ -537,13 +573,29 @@ void PlayerStats::Update(){
   //Dranks
   health[3].setString(AddSpacing(std::to_string(player -> GetNumDranks()), 22));
 
+  //Level
+  sf::String level = std::to_string(player -> GetLevel());
+  health[7].setString(AddSpacing(level, 22));
+
   //Spellcasting Level
-  //sf::String level = std::to_string(player -> GetSpellcastingLevel());
-  //health[5].setString(AddSpacing(level, 22));
+  sf::String spellLevel = std::to_string(player -> GetSpellcastingLevel());
+  health[9].setString(AddSpacing(spellLevel, 22));
+
+  //Body Count
+  sf::String bodyCount = std::to_string(player -> GetBodyCount());
+  health[11].setString(AddSpacing(bodyCount, 22));
+
+  //Virginities
+  sf::String numVirginities = std::to_string(player -> GetNumVirginities());
+  health[13].setString(AddSpacing(numVirginities, 22));
 
   //Ability scores
   for(int i = 1; i <= 6; i++){
     ability[2*i].setString(AddSpacing(std::to_string(player->GetAbil(i-1)),10));
+  }
+  for(int i = 0; i < numAbility; i++){
+    ability[i].setPosition( ability[i].getPosition().x,
+                            baseAbilityHeight[i] + 100 * (!onMainMenu) );
   }
 
   //Spells
@@ -591,9 +643,20 @@ void PlayerStats::Update(){
     sf::String name = "Feat " + std::to_string(i-3*numReservedSpellTrees);//TEMP
     spell[i].setString(name);
   }
+
+  for(int i = 1; i < numExtraFeats; i++){
+    feats[i].setString("Extra Feat " + std::to_string(i));//TEMP
+  }
+
 }
 
 bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
+  if(!onMainMenu){
+    messages.Update(sf::String("Cannot cast from here"),
+                    sf::String("(press 0 for spells)") );
+    return false;
+  }
+
   bool playerHasSpells = false;
   for(int i = 0; i < maxSpells && !playerHasSpells; i++){
     playerHasSpells = (player -> GetNumSpell(i) > 0 );
@@ -614,6 +677,10 @@ bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
   }
 
   return playerHasSpells;
+}
+
+bool PlayerStats::OverMoreHighlightBox(const sf::Vector2f mousePos) const {
+  return(moreHighlightBox.contains(mousePos));
 }
 
 int PlayerStats::GetSpell(const sf::Event theEvent){
@@ -669,31 +736,44 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
   return noChoice;
 }
 
-void PlayerStats::HighlightSpells(bool isPickingSpell){
-  bool isHoveringOverSpell = false;
+void PlayerStats::Highlight(bool isPickingSpell){
+  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
 
-  //Make sure the highlight boxes are the right size
-  for(int i = 0; i < maxSpells - 1; i++){
-    highlightBox[i] = spell[i + 1].getGlobalBounds();
-  }
+  if(onMainMenu){
+    bool isHoveringOverSpell = false;
 
-  //If they're hovering over a valid spell, jump to it
-  sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(*window));
-  for(int i = 0; i < maxSpells - 1; i++){
-    if(highlightBox[i].contains(mousePosition) && player -> GetNumSpell(i) > 0){
-      selectedSpellIndex = i;
-      isHoveringOverSpell = true;
+    //Make sure the highlight boxes are the right size
+    for(int i = 0; i < maxSpells - 1; i++){
+      highlightBox[i] = spell[i + 1].getGlobalBounds();
+    }
+
+    //If they're hovering over a valid spell, jump to it
+    for(int i = 0; i < maxSpells - 1; i++){
+      if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
+        selectedSpellIndex = i;
+        isHoveringOverSpell = true;
+      }
+    }
+
+    //Highlight the selected spell
+    if(isPickingSpell || isHoveringOverSpell){
+      sf::RectangleShape highlight;
+      highlight.setFillColor(ClearYellow);
+      highlight.setSize(sf::Vector2f( highlightBox[selectedSpellIndex].width,
+                                      highlightBox[selectedSpellIndex].height));
+      highlight.setPosition(highlightBox[selectedSpellIndex].left,
+                            highlightBox[selectedSpellIndex].top);
+      window -> draw(highlight);
     }
   }
 
-  //Highlight the selected spell
-  if(isPickingSpell || isHoveringOverSpell){
+  //This function also highlights the "More" button:
+  if(!isPickingSpell && moreHighlightBox.contains(mousePos)){
     sf::RectangleShape highlight;
     highlight.setFillColor(ClearYellow);
-    highlight.setSize(sf::Vector2f(highlightBox[selectedSpellIndex].width,
-                                   highlightBox[selectedSpellIndex].height));
-    highlight.setPosition(highlightBox[selectedSpellIndex].left,
-                          highlightBox[selectedSpellIndex].top);
+    highlight.setSize(sf::Vector2f(moreHighlightBox.width,
+                                   moreHighlightBox.height));
+    highlight.setPosition(moreHighlightBox.left, moreHighlightBox.top);
     window -> draw(highlight);
   }
 }
@@ -703,23 +783,37 @@ void PlayerStats::draw(){
   window -> draw(background);
   window -> draw(moreBackground);
   window -> draw(header);
-  for(int i = 0; i < numHealth; i++){
-    window -> draw(health[i]);
+  if(onMainMenu){
+    for(int i = 0; i < 4; i++){
+      window -> draw(health[i]);
+    }
+  }
+  else{
+    for(int i = 0; i < numHealth; i++){
+      window -> draw(health[i]);
+    }
   }
   for(int i = 0; i < numAbility; i++){
     window -> draw(ability[i]);
   }
-  if(7 != numReservedSpellTrees){
-    window -> draw(featsHeader);
+  if(onMainMenu){
+    if(7 != numReservedSpellTrees){
+      window -> draw(featsHeader);
+    }
+    for(int i = 0; i < maxSpells; i++){
+      window -> draw(spell[i]);
+    }
+    for(int i = 0; i < numReservedSpellTrees; i++){
+      window -> draw(divLine[i]);
+    }
+    if(7 != numReservedSpellTrees){
+      window -> draw(divLine[numReservedSpellTrees]);
+    }
   }
-  for(int i = 0; i < maxSpells; i++){
-    window -> draw(spell[i]);
-  }
-  for(int i = 0; i < numReservedSpellTrees; i++){
-    window -> draw(divLine[i]);
-  }
-  if(7 != numReservedSpellTrees){
-    window -> draw(divLine[numReservedSpellTrees]);
+  else{
+    for(int i = 0; i < numExtraFeats; i++){
+      window -> draw(feats[i]);
+    }
   }
   window -> draw(moreStats);
 }
@@ -851,6 +945,18 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
           bear = bearStats[targetBearIndex + 1].GetBearPtr();
         }
       }
+      else if( theEvent.key.code == sf::Keyboard::Num0 ||
+          theEvent.key.code == sf::Keyboard::Numpad0)
+      {
+        playerStats.toggleMenu();
+      }
+    }
+    else if(theEvent.type == sf::Event::MouseButtonPressed){
+      sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
+                                 float(theEvent.mouseButton.y) );
+      if(playerStats.OverMoreHighlightBox(clickLocation)){
+        playerStats.toggleMenu();
+      }
     }
     Action theAction = Action(options.GetChoice(theEvent));
     if (theAction == Action::cast){
@@ -883,7 +989,7 @@ void BattleHUD::draw(){
 }
 
 void BattleHUD::Highlight(){
-  playerStats.HighlightSpells(isPickingSpell);
+  playerStats.Highlight(isPickingSpell);
   if(!isPickingSpell){
     options.Highlight();
   }

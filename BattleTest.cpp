@@ -65,7 +65,7 @@ int main(){
       if (event.type == sf::Event::Closed){
         window.close();
       }
-      if (event.type == sf::Event::KeyPressed){
+      else if (event.type == sf::Event::KeyPressed){
         if(event.key.code == sf::Keyboard::F ||
            event.key.code == sf::Keyboard::Z)
         {
@@ -113,13 +113,26 @@ int main(){
         {
           player.Heal();
         }
+        else if(event.key.code == sf::Keyboard::Num0 ||
+                event.key.code == sf::Keyboard::Numpad0)
+        {
+          status.toggleMenu();
+        }
       }//endif keypress
+      else if(event.type == sf::Event::MouseButtonPressed){
+        sf::Vector2f clickLocation(float(event.mouseButton.x),
+                                   float(event.mouseButton.y) );
+        if(status.OverMoreHighlightBox(clickLocation)){
+          status.toggleMenu();
+        }
+      }
     }
 
     window.clear();
     messages.draw();
     status.Update();
     status.draw();
+    status.Highlight(false);
     window.display();
   }//end while(window.isOpen())
 

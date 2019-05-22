@@ -27,7 +27,10 @@ class Player{
     void SetMessageBox(MessageBox& theMessages);
     int GetHealth();
     int GetMaxHealth();
-    int GetNumDranks();
+    int GetNumDranks() const {return numDranks;}
+    int GetLevel() const {return level;}
+    int GetBodyCount() const {return bodyCount;}
+    int GetNumVirginities() const {return numVirginities;}
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
     void BuffAbil(const int index, const int buff);
     int GetAC() const; //Combines all AC-affecting factors
@@ -83,6 +86,7 @@ class Player{
 
     int numDranks = 5;
     int level = 0;
+    int bodyCount = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based
     int baseAC = 30; //This will be level-based
