@@ -48,7 +48,10 @@ class Bear{
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
     void FeedFish(int fishSize);
   protected:
-    MessageBox* Messages; //So damage statements know where to print
+    MessageBox* messageBox = nullptr;
+    void printMessage(const sf::String& message1,
+                      const sf::String& message2 = sf::String("")) const;
+    void printMessage(const sf::String& message1, const int message2) const;
     sf::String name = sf::String("Klepto");
     BearID identifier;
     ModifierID modifier = ModifierID::none;

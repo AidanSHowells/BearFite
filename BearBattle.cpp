@@ -7,7 +7,7 @@
 void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
 void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
 
-Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear){
+Winner BearBattle(BattleHUD& theHUD){
   Player& player = *(theHUD.GetPlayerPtr());
   Winner theWinner = Winner::neither;
 
@@ -26,8 +26,8 @@ Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear){
 
     if(TurnOf::bear == turn){
       sf::sleep(sf::milliseconds(250));//This # felt okay... feel free to change
-      int numBears = theHUD.GetNumBears();
-      for(int i = 0; i < numBears; i++){
+      int numEnemyBears = theHUD.GetNumEnemyBears();
+      for(int i = 0; i < numEnemyBears; i++){
         theHUD.bearStats[i].GetBearPtr() -> TakeTurn(*theHUD.GetPlayerPtr());
       }
       turn = TurnOf::player;
@@ -56,7 +56,6 @@ Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear){
         }
       }
     }
-    fakeBear = *(theHUD.GetBearPtr() );//TEMP
 
     theHUD.RemoveDeadCombatants(theWinner);
     if(theWinner != Winner::neither){

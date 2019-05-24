@@ -12,8 +12,6 @@ enum class Winner {player, bear, neither};
 //handle the effects of player or bear winning by calling helper functions
 
 
-//Parameter fakeBear is currently here only so that BattleTest.cpp can display
-//information about the bear that you just killed.
-Winner BearBattle(BattleHUD& theHUD, Bear& fakeBear);
+Winner BearBattle(BattleHUD& theHUD);
 
 #endif

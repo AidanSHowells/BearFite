@@ -472,6 +472,9 @@ size(theSize)
   health[12].setFont(titleFont);
   health[12].setString("Virginities:");
   health[13].setFont(mainFont);
+  health[14].setFont(titleFont);
+  health[14].setString("Bear:");
+  health[15].setFont(mainFont);
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(sf::Color::Black);
@@ -543,14 +546,14 @@ size(theSize)
   feats[0].setCharacterSize(15);
   feats[0].setFillColor(sf::Color::Black);
   feats[0].setString("Extra Feats:");
-  feats[0].setPosition(position.x, position.y + 230);
+  feats[0].setPosition(position.x, position.y + 250);
 
   //Make the second-page-feat info
   for(int i = 1; i < numExtraFeats; i++){
     feats[i].setFont(mainFont);
     feats[i].setCharacterSize(15);
     feats[i].setFillColor(sf::Color::Black);
-    feats[i].setPosition(position.x, position.y + 228 + 20 * i);
+    feats[i].setPosition(position.x, position.y + 248 + 20 * i);
   }
 
   //Make the button that changes which page you're on
@@ -589,13 +592,16 @@ void PlayerStats::Update(){
   sf::String numVirginities = std::to_string(player -> GetNumVirginities());
   health[13].setString(AddSpacing(numVirginities, 22));
 
+  //Bear
+  health[15].setString(AddSpacing(player -> GetLastBear(), 23));
+
   //Ability scores
   for(int i = 1; i <= 6; i++){
     ability[2*i].setString(AddSpacing(std::to_string(player->GetAbil(i-1)),10));
   }
   for(int i = 0; i < numAbility; i++){
     ability[i].setPosition( ability[i].getPosition().x,
-                            baseAbilityHeight[i] + 100 * (!onMainMenu) );
+                            baseAbilityHeight[i] + 120 * (!onMainMenu) );
   }
 
   //Spells
@@ -837,28 +843,34 @@ BattleHUD::BattleHUD(sf::RenderWindow& theWindow,
         sf::Font& titleFont,
         sf::Font& mainFont,
         Player& thePlayer,
-        const Bear& theBear
+        const std::array<Bear,4>& bears
 ):
 HUD(theWindow, titleFont, mainFont, thePlayer),
-bearStats{BearStats(theWindow,titleFont,mainFont,theBear,true),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,50)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,75)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),false,sf::Vector2f(205,100)),
-  BearStats(theWindow,titleFont,mainFont,Bear(),true)}
+bearStats{
+BearStats(theWindow,titleFont,mainFont,bears.at(0),true),
+BearStats(theWindow,titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),
+BearStats(theWindow,titleFont,mainFont,bears.at(2),false,sf::Vector2f(205,75)),
+BearStats(theWindow,titleFont,mainFont,bears.at(3),false,sf::Vector2f(205,100))
+},
+friendBearStats(theWindow,titleFont,mainFont,Bear(),true)
 {
   bear = bearStats[0].GetBearPtr();
-  bear -> SetMessageBox(messages);
+  for(int i = 0; i < 4; i++){
+    bearStats[i].GetBearPtr() -> SetMessageBox(messages);
+  }
+  friendBearStats.GetBearPtr() -> SetMessageBox(messages);
+  player -> SetLastBear(bear -> GetName());
 }
 
 std::vector<Bear*> BattleHUD::GetAllEnemyBears(){
   std::vector<Bear*> bearVec;
-  for(int i = 0; i < GetNumBears(); i++){
+  for(int i = 0; i < GetNumEnemyBears(); i++){
     bearVec.push_back(bearStats[i].GetBearPtr());
   }
   return bearVec;
 }
 
-int BattleHUD::GetNumBears(){
+int BattleHUD::GetNumEnemyBears(){
   int numBears = 4;
   for(int i = 3; i >= 0; i--){
     if(!bearStats[i].GetShouldAppear()){
@@ -868,26 +880,11 @@ int BattleHUD::GetNumBears(){
   return numBears;
 }
 
-
-void BattleHUD::AddEnemyBears(std::vector<Bear>& bears){
-  if(bears.size() > 4){
-    std::cerr << "Warning! ";
-    std::cerr << "AddEnemyBears was told to add too many bears.";
-    bears.resize(4);
-  }
-  for(size_t i = 0; i < bears.size(); i++){
-    bearStats[i].SetBear(bears.at(i));
-    bearStats[i].GetBearPtr() -> SetMessageBox(messages);
-    bearStats[i].SetShouldAppear(true);
-  }
-}
-
-
 void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
 
   //FriendBear stuff here.
 
-  for(int i = GetNumBears() - 1; i >= 0; i--){
+  for(int i = GetNumEnemyBears() - 1; i >= 0; i--){
     if(bearStats[i].GetBearPtr() -> IsDead() ||
        bearStats[i].GetBearPtr() -> IsLove())
     {
@@ -899,7 +896,13 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
       bearStats[3].SetBear(tempBear);
       bearStats[3].SetShouldAppear(false);
 
-      bear = bearStats[0].GetBearPtr();//Now targeting the top bear
+      if(bearStats[0].GetShouldAppear()){
+        bear = bearStats[0].GetBearPtr();//Now targeting the top bear
+      }
+      else{
+        //If we just killed the last remaining bear, its stats will be in slot 3
+        bear = bearStats[3].GetBearPtr();
+      }
     }
   }
 
@@ -930,7 +933,7 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
       if(theEvent.key.code == sf::Keyboard::Up){
         const int targetBearIndex = TargetBearIndex();
         if(0 == targetBearIndex){
-          bear = bearStats[GetNumBears() - 1].GetBearPtr();
+          bear = bearStats[GetNumEnemyBears() - 1].GetBearPtr();
         }
         else{
           bear = bearStats[targetBearIndex - 1].GetBearPtr();
@@ -938,7 +941,7 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
       }
       else if(theEvent.key.code == sf::Keyboard::Down){
         const int targetBearIndex = TargetBearIndex();
-        if(GetNumBears() - 1 == targetBearIndex){
+        if(GetNumEnemyBears() - 1 == targetBearIndex){
           bear = bearStats[0].GetBearPtr();
         }
         else{
@@ -979,11 +982,11 @@ void BattleHUD::draw(){
   playerStats.Update();
   playerStats.draw();
 
-  for(int i = 0; i < GetNumBears(); i++){
+  for(int i = 0; i < GetNumEnemyBears(); i++){
     bearStats[i].Update();
     bearStats[i].draw();
   }
-  //If friend bear is present, call bearStats[4] Update() and draw() here
+  //If friend bear is present, call friendBearStats Update() and draw() here
 
   Highlight();
 }

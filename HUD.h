@@ -142,7 +142,7 @@ class PlayerStats{
     bool onMainMenu = true;
     int numReservedSpellTrees = 4;
 
-    static const int numHealth = 14;
+    static const int numHealth = 16;
     static const int numAbility = 13;
     static const int maxSpells = 22;
     static const int numExtraFeats = 4;
@@ -192,11 +192,12 @@ class BattleHUD : public HUD{
               sf::Font& titleFont,
               sf::Font& mainFont,
               Player& thePlayer,
-              const Bear& theBear);
-    BearStats bearStats[5];
+              const std::array<Bear,4>& bears);
+    BearStats bearStats[4];
+    BearStats friendBearStats;
     Bear* GetBearPtr(){return bear;}
     std::vector<Bear*> GetAllEnemyBears();
-    int GetNumBears();//The number of bears that exist
+    int GetNumEnemyBears();
     void AddEnemyBears(std::vector<Bear>& bears);
     void RemoveDeadCombatants(Winner& theWinner);//Updates theWinner
     //void AddFriendBear(Bear* friendBearPtr);

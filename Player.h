@@ -31,6 +31,8 @@ class Player{
     int GetLevel() const {return level;}
     int GetBodyCount() const {return bodyCount;}
     int GetNumVirginities() const {return numVirginities;}
+    sf::String GetLastBear() const {return lastBear;}
+    void SetLastBear(const sf::String bearName){lastBear = bearName;}
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
     void BuffAbil(const int index, const int buff);
     int GetAC() const; //Combines all AC-affecting factors
@@ -113,6 +115,8 @@ class Player{
     TurnOf EyePunch(Bear& bear);
     TurnOf Quaff();
     TurnOf Flee(Bear& bear);
+
+    sf::String lastBear = sf::String("None ");
 };
 
 #endif

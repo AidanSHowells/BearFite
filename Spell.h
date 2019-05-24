@@ -30,7 +30,7 @@ class Spell{
     SpellID identifier;
     sf::String name;
     SpellSchool school;
-    bool affectsAllBears = false;
+    bool affectsAllEnemyBears = false;
     bool spellEndsBattle = false;
     bool spellIsOffensive = true;//if true, cannot be used during santuary
 
