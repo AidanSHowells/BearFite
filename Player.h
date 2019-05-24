@@ -30,6 +30,7 @@ class Player{
     int GetNumDranks() const {return numDranks;}
     int GetLevel() const {return level;}
     int GetBodyCount() const {return bodyCount;}
+    void IncrementBodyCount() {bodyCount++;}
     int GetNumVirginities() const {return numVirginities;}
     sf::String GetLastBear() const {return lastBear;}
     void SetLastBear(const sf::String bearName){lastBear = bearName;}
@@ -74,6 +75,7 @@ class Player{
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
+    void SetLevel(int newLevel){level = newLevel;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
