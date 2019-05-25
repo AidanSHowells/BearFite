@@ -685,8 +685,21 @@ bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
   return playerHasSpells;
 }
 
-bool PlayerStats::OverMoreHighlightBox(const sf::Vector2f mousePos) const {
-  return(moreHighlightBox.contains(mousePos));
+void PlayerStats::toggleMenu(const sf::Event event){
+  if(event.type == sf::Event::KeyPressed){
+    if( event.key.code == sf::Keyboard::Num0 ||
+        event.key.code == sf::Keyboard::Numpad0)
+    {
+      onMainMenu = !onMainMenu;
+    }
+  }
+  else if(event.type == sf::Event::MouseButtonPressed){
+    sf::Vector2f clickLocation(float(event.mouseButton.x),
+                               float(event.mouseButton.y) );
+    if(moreHighlightBox.contains(clickLocation)){
+      onMainMenu = !onMainMenu;
+    }
+  }
 }
 
 int PlayerStats::GetSpell(const sf::Event theEvent){
@@ -951,19 +964,9 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
           bear = bearStats[targetBearIndex + 1].GetBearPtr();
         }
       }
-      else if( theEvent.key.code == sf::Keyboard::Num0 ||
-          theEvent.key.code == sf::Keyboard::Numpad0)
-      {
-        playerStats.toggleMenu();
-      }
     }
-    else if(theEvent.type == sf::Event::MouseButtonPressed){
-      sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
-                                 float(theEvent.mouseButton.y) );
-      if(playerStats.OverMoreHighlightBox(clickLocation)){
-        playerStats.toggleMenu();
-      }
-    }
+    playerStats.toggleMenu(theEvent);
+
     Action theAction = Action(options.GetChoice(theEvent));
     if (theAction == Action::cast){
       if(playerStats.SpellChoiceProcessStarted(messages)){
@@ -973,11 +976,11 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
     else{
       return player -> TakeAction(theAction, *bear);
     }
-  }
+  }//Endif not picking spell
   return TurnOf::player;
 }
 
-void BattleHUD::draw(){
+void BattleHUD::draw(const bool canPickFromOptions){//Defaults to true
   messages.draw();
 
   options.draw();
@@ -991,12 +994,12 @@ void BattleHUD::draw(){
   }
   //If friend bear is present, call friendBearStats Update() and draw() here
 
-  Highlight();
+  Highlight(canPickFromOptions);
 }
 
-void BattleHUD::Highlight(){
+void BattleHUD::Highlight(const bool canPickFromOptions){
   playerStats.Highlight(isPickingSpell);
-  if(!isPickingSpell){
+  if(!isPickingSpell && canPickFromOptions){
     options.Highlight();
   }
 

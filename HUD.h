@@ -125,8 +125,7 @@ class PlayerStats{
               sf::Vector2f theSize = sf::Vector2f(200, 580) );
     void Update();
     bool SpellChoiceProcessStarted(MessageBox& messages);
-    bool OverMoreHighlightBox(const sf::Vector2f mousePos) const;
-    void toggleMenu(){onMainMenu = !onMainMenu;}
+    void toggleMenu(const sf::Event event);
     int GetSpell(const sf::Event theEvent);
     void Highlight(bool isPickingSpell);
     void draw();//See comment in MessageBox
@@ -202,11 +201,11 @@ class BattleHUD : public HUD{
     void RemoveDeadCombatants(Winner& theWinner);//Updates theWinner
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);
-    void draw();
+    void draw(const bool canPickFromOptions = true);
 
   private:
     Bear* bear;//A pointer to the bear currently being targeted
-    void Highlight();
+    void Highlight(const bool canPickFromOptions);
     int TargetBearIndex();
     bool isPickingSpell = false;//The behavior of Hightlight changes based on
                                 //whether the user is picking spells or not

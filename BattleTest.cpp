@@ -62,6 +62,7 @@ int main(){
 
     sf::Event event;
     while (window.pollEvent(event)){
+      status.toggleMenu(event);
       if (event.type == sf::Event::Closed){
         window.close();
       }
@@ -123,19 +124,7 @@ int main(){
         {
           player.Heal();
         }
-        else if(event.key.code == sf::Keyboard::Num0 ||
-                event.key.code == sf::Keyboard::Numpad0)
-        {
-          status.toggleMenu();
-        }
       }//endif keypress
-      else if(event.type == sf::Event::MouseButtonPressed){
-        sf::Vector2f clickLocation(float(event.mouseButton.x),
-                                   float(event.mouseButton.y) );
-        if(status.OverMoreHighlightBox(clickLocation)){
-          status.toggleMenu();
-        }
-      }
     }
 
     window.clear();

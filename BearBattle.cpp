@@ -4,8 +4,10 @@
 #include "RollDice.h"
 #include "BearBattle.h"
 
-void DrawStuff(BattleHUD& theHUD, sf::Sprite background);
-void WaitForEnter(BattleHUD& theHUD, sf::Sprite background);
+void DrawStuff( BattleHUD& theHUD,
+                const sf::Sprite& background,
+                const bool canPickFromOptions = true);
+void WaitForEnter(BattleHUD& theHUD, const sf::Sprite& background);
 
 Winner BearBattle(BattleHUD& theHUD){
   Player& player = *(theHUD.GetPlayerPtr());
@@ -75,18 +77,22 @@ Winner BearBattle(BattleHUD& theHUD){
                           //game in the middle of a battle
 }
 
-void DrawStuff(BattleHUD& theHUD, sf::Sprite background){
+void DrawStuff( BattleHUD& theHUD,
+                const sf::Sprite& background,
+                const bool canPickFromOptions)//Default is true
+{
   theHUD.GetWindowPtr() -> clear();
-  theHUD.draw();
+  theHUD.draw(canPickFromOptions);
   theHUD.GetWindowPtr() -> draw(background);
   theHUD.GetWindowPtr() -> display();
 }
 
-void WaitForEnter(BattleHUD& theHUD, sf::Sprite background){
+void WaitForEnter(BattleHUD& theHUD, const sf::Sprite& background){
   theHUD.messages.Update(sf::String("Press Enter"), true);
   while (theHUD.GetWindowPtr() -> isOpen()){
     sf::Event event;
     while(theHUD.GetWindowPtr() -> pollEvent(event)){
+      theHUD.playerStats.toggleMenu(event);
       if (event.type == sf::Event::Closed){
         theHUD.GetWindowPtr() -> close();
       }
@@ -97,6 +103,6 @@ void WaitForEnter(BattleHUD& theHUD, sf::Sprite background){
         }
       }
     }
-    DrawStuff(theHUD, background);
+    DrawStuff(theHUD, background, false);
   }
 }
