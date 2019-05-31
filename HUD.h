@@ -83,8 +83,7 @@ class OptionsBox : public sf::Drawable{
 class BearStats : public sf::Drawable{
   public:
     BearStats();
-    BearStats(sf::RenderWindow& theWindow,
-              sf::Font& titleFont,
+    BearStats(sf::Font& titleFont,
               sf::Font& mainFont,
               Bear theBear,
               bool titleBar = true,
@@ -98,7 +97,6 @@ class BearStats : public sf::Drawable{
     sf::Vector2f GetNameBoxPosition() const;
     sf::Vector2f GetNameBoxSize() const;
   private:
-    sf::RenderWindow* window;
     Bear bear;
     const sf::Vector2f position;
     const sf::Vector2f size;
@@ -127,7 +125,7 @@ class PlayerStats : public sf::Drawable{
     bool SpellChoiceProcessStarted(MessageBox& messages);
     void toggleMenu(const sf::Event event);
     int GetSpell(const sf::Event theEvent);
-    void Highlight(bool isPickingSpell) const;
+    void Highlight(bool isPickingSpell, bool canCastSpells) const;
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
     sf::RenderWindow* window;

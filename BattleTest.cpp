@@ -131,7 +131,7 @@ int main(){
     window.draw(messages);
     status.Update();
     window.draw(status);
-    status.Highlight(false);
+    status.Highlight(false, false);
     window.display();
   }//end while(window.isOpen())
 

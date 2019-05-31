@@ -298,7 +298,6 @@ void OptionsBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 }
 
 BearStats::BearStats(
-  sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
   Bear theBear,
@@ -306,7 +305,6 @@ BearStats::BearStats(
   sf::Vector2f thePosition, //Default is sf::Vector2f(205, 0)
   sf::Vector2f theSize      //Default is sf::Vector2f(390, 23)
 ):
-window(&theWindow),
 bear(theBear),
 position(thePosition),
 size(theSize + sf::Vector2f(0, float(25 * int(titleBar)) ) ),
@@ -334,7 +332,7 @@ shouldAppear(theBear.CanBeFought())
     bearInfo[i].setPosition(bearInfo[i-1].getPosition().x,
                             position.y - float(3 - 23 * int(hasTitleBar)) );
   }
-  //no need to set dynamic text here, since Update is called by BattleHUD::draw
+  //No need to set the dynamic strings here, because Update() handles them
 
   //Make the background rectangles
   background[0].setPosition(bearInfo[0].getPosition().x, position.y);
@@ -435,14 +433,13 @@ size(theSize)
   header.setPosition(position.x, position.y - 5);
 
   //Make the health and drank info
+  //Note: There's no point setting dynamic strings here; Update() handles them
   health[0].setFont(titleFont);
   health[0].setString("Health:");
   health[1].setFont(mainFont);
-  //no need to set health here, since Update is called by HUD::draw
   health[2].setFont(titleFont);
   health[2].setString("Dranks:");
   health[3].setFont(mainFont);
-  //no need to set numDranks here, since Update is called by HUD::draw
   health[4].setFont(titleFont);
   health[4].setString("Exp. Needed:");
   health[5].setFont(mainFont);
@@ -754,10 +751,10 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
   return noChoice;
 }
 
-void PlayerStats::Highlight(bool isPickingSpell) const{
+void PlayerStats::Highlight(bool isPickingSpell, bool canCastSpells) const{
   const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
 
-  if(onMainMenu){
+  if(onMainMenu && canCastSpells){
     bool isHoveringOverSpell = false;
 
     for(int i = 0; i < maxSpells - 1; i++){
@@ -851,12 +848,11 @@ BattleHUD::BattleHUD(sf::RenderWindow& theWindow,
 ):
 HUD(theWindow, titleFont, mainFont, thePlayer),
 bearStats{
-BearStats(theWindow,titleFont,mainFont,bears.at(0),true),
-BearStats(theWindow,titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),
-BearStats(theWindow,titleFont,mainFont,bears.at(2),false,sf::Vector2f(205,75)),
-BearStats(theWindow,titleFont,mainFont,bears.at(3),false,sf::Vector2f(205,100))
-},
-friendBearStats(theWindow,titleFont,mainFont,Bear(),true)
+  BearStats(titleFont,mainFont,bears.at(0),true),
+  BearStats(titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),
+  BearStats(titleFont,mainFont,bears.at(2),false,sf::Vector2f(205,75)),
+  BearStats(titleFont,mainFont,bears.at(3),false,sf::Vector2f(205,100))},
+friendBearStats(titleFont,mainFont,Bear(),true)
 {
   for(int i = 0; i < 4; i++){
     bearStats[i].GetBearPtr() -> SetMessageBox(messages);
@@ -975,7 +971,7 @@ void BattleHUD::Update(const bool optionsAvailable){
 }
 
 void BattleHUD::Highlight() const{
-  playerStats.Highlight(isPickingSpell);
+  playerStats.Highlight(isPickingSpell, canPickFromOptions);
   if(!isPickingSpell && canPickFromOptions){
     options.Highlight();
   }
