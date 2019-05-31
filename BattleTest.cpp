@@ -62,7 +62,8 @@ int main(){
 
     sf::Event event;
     while (window.pollEvent(event)){
-      status.toggleMenu(event);
+      status.ToggleMenu(event);
+      status.ToggleFeats(event);
       if (event.type == sf::Event::Closed){
         window.close();
       }

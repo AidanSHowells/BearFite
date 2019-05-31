@@ -21,7 +21,10 @@ sf::Color Gray = sf::Color(192,192,192);
 sf::Color ClearYellow = sf::Color(255,255,0,153);
 
 //Helper Functions:
-sf::String AddSpacing(const sf::String& inputString, size_t totalLength){
+sf::String AddSpacing(const sf::String& inputString,
+                      size_t totalLength,
+                      bool addToFront = true)
+{
   sf::String spacing = "";
   if(totalLength < inputString.getSize()){
     std::cerr << "Warning! ";
@@ -34,7 +37,12 @@ sf::String AddSpacing(const sf::String& inputString, size_t totalLength){
       spacing += sf::String(" ");
     }
   }
-  return(spacing + inputString);
+  if(addToFront){
+    return(spacing + inputString);
+  }
+  else{
+    return(inputString + spacing);
+  }
 }
 
 
@@ -508,7 +516,7 @@ size(theSize)
   featsHeader.setFont(titleFont);
   featsHeader.setCharacterSize(15);
   featsHeader.setFillColor(sf::Color::Black);
-  featsHeader.setString("9:Feats:");
+  featsHeader.setString("Feats:");
 
   //Make the spells/feats info
   for(int i = 1; i < maxSpells; i++){
@@ -551,6 +559,7 @@ size(theSize)
 }
 
 void PlayerStats::Update(){
+  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
   //Health
   sf::String playerHealth = std::to_string(player -> GetHealth());
   playerHealth += "/";
@@ -628,10 +637,19 @@ void PlayerStats::Update(){
   featsHeader.setPosition(position.x,
                           position.y + float(145 + numReservedSpellTrees * 60));
 
-  for(int i = 3 * numReservedSpellTrees + 1; i < maxSpells; i++){
+  for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
     spell[i].move(0,10);
     sf::String name = "Feat " + std::to_string(i-3*numReservedSpellTrees);//TEMP
-    spell[i].setString(name);
+    spell[i].setString(AddSpacing(name,19,false));
+  }
+
+  for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
+    if(true){//TEMP:Want player->getFeat(i-3*numReservedSpellTrees).IsToggleable
+      button[i].SetText(spell[i]);
+      if(onMainMenu){
+        button[i].UpdateHighlighting(mousePos);
+      }
+    }
   }
 
   for(int i = 1; i < numExtraFeats; i++){
@@ -644,7 +662,6 @@ void PlayerStats::Update(){
   }
 
   //If they're hovering over a valid spell, update selectedSpellIndex
-  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
   for(int i = 0; i < maxSpells - 1; i++){
     if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
       selectedSpellIndex = i;
@@ -681,7 +698,7 @@ bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
   return playerHasSpells;
 }
 
-void PlayerStats::toggleMenu(const sf::Event event){
+void PlayerStats::ToggleMenu(const sf::Event event){
   if(event.type == sf::Event::KeyPressed){
     if( event.key.code == sf::Keyboard::Num0 ||
         event.key.code == sf::Keyboard::Numpad0)
@@ -694,6 +711,16 @@ void PlayerStats::toggleMenu(const sf::Event event){
                                float(event.mouseButton.y) );
     if(moreHighlightBox.contains(clickLocation)){
       onMainMenu = !onMainMenu;
+    }
+  }
+}
+
+void PlayerStats::ToggleFeats(const sf::Event event){
+  if(onMainMenu && event.type == sf::Event::MouseButtonPressed){
+    sf::Vector2f clickLocation(float(event.mouseButton.x),
+                               float(event.mouseButton.y) );
+    for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
+      button[i].ToggleIfContains(clickLocation);
     }
   }
 }
@@ -810,6 +837,9 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     for(int i = 0; i < maxSpells; i++){
       target.draw(spell[i], states);
     }
+    for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
+      target.draw(button[i], states);
+    }
     for(int i = 0; i < numReservedSpellTrees; i++){
       target.draw(divLine[i], states);
     }
@@ -921,6 +951,7 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
 }
 
 TurnOf BattleHUD::TakeAction(sf::Event theEvent){
+  playerStats.ToggleFeats(theEvent);
   if(isPickingSpell || theEvent.type == sf::Event::MouseButtonPressed){
     int spellIndex = playerStats.GetSpell(theEvent);
     if(spellIndex != PlayerStats::noChoice){
@@ -947,7 +978,7 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
         targetBearIndex = (targetBearIndex + 1) % GetNumEnemyBears();
       }
     }
-    playerStats.toggleMenu(theEvent);
+    playerStats.ToggleMenu(theEvent);
 
     Action theAction = Action(options.GetChoice(theEvent));
     if (theAction == Action::cast){

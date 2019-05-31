@@ -103,7 +103,7 @@ void WaitForEnter(sf::RenderWindow& window,
   while (window.isOpen()){
     sf::Event event;
     while(window.pollEvent(event)){
-      theHUD.playerStats.toggleMenu(event);
+      theHUD.playerStats.ToggleMenu(event);
       if (event.type == sf::Event::Closed){
         window.close();
       }

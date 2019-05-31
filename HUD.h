@@ -5,6 +5,8 @@
 #include <array>//For std::array
 #include "Messages.h"
 #include "Bear.h"
+#include "Highlight.h"
+#include "Button.h"
 
 class Player;
 enum class TurnOf;
@@ -123,7 +125,8 @@ class PlayerStats : public sf::Drawable{
               sf::Vector2f theSize = sf::Vector2f(200, 580) );
     void Update();
     bool SpellChoiceProcessStarted(MessageBox& messages);
-    void toggleMenu(const sf::Event event);
+    void ToggleMenu(const sf::Event event);
+    void ToggleFeats(const sf::Event event);
     int GetSpell(const sf::Event theEvent);
     void Highlight(bool isPickingSpell, bool canCastSpells) const;
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
@@ -150,6 +153,7 @@ class PlayerStats : public sf::Drawable{
     float baseAbilityHeight[numAbility];
     sf::Text featsHeader;
     sf::Text spell[maxSpells];
+    Button button[maxSpells];
     sf::Text feats[numExtraFeats];
     float baseSpellHeight[maxSpells];
     sf::FloatRect highlightBox[maxSpells];
@@ -157,6 +161,7 @@ class PlayerStats : public sf::Drawable{
     sf::Text moreStats;
     sf::FloatRect moreHighlightBox;
 
+    int GetFeatStartingIndex() const {return(3 * numReservedSpellTrees + 1);}
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
@@ -191,7 +196,6 @@ class BattleHUD : public HUD{
     Bear* GetBearPtr(){return bearStats[targetBearIndex].GetBearPtr();}
     std::vector<Bear*> GetAllEnemyBears();
     int GetNumEnemyBears() const;
-    void AddEnemyBears(std::vector<Bear>& bears);
     void RemoveDeadCombatants(Winner& theWinner);//Updates theWinner
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);
