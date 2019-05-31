@@ -39,20 +39,14 @@ sf::String AddSpacing(const sf::String& inputString, size_t totalLength){
 
 
 MessageBox::MessageBox(
-  sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
   sf::String theTitle,
   sf::Vector2f thePosition, //Default is sf::Vector2f(0, 0)
   sf::Vector2f theSize      //Default is sf::Vector2f(200, 460)
 ):
-  window(&theWindow),
   position(thePosition),
   size(theSize)
-  //numLines(int(theSize.y / 20))//My guess is that the number of lines of text
-  //displayed should be the integer part of size.y/20. Change it if you disagree
-  //NOTE: numLines currently isn't dynamic because I'm not convinced I
-  //      understand "new" and "delete[]" well enough to safely use them.
 {
   //Make the background rectangle
   background.setSize(size);
@@ -80,9 +74,6 @@ MessageBox::MessageBox(
     displayDivLine[i] = false;
   }
 }
-
-//Destructor removed since line[] is no longer dynamically allocated
-//MessageBox::~MessageBox(){delete[] line;}
 
 void MessageBox::Update(const sf::String& inputString, bool makeLine){
   //Note: makeLine defaults to false
@@ -151,15 +142,14 @@ void MessageBox::Update(const sf::String& inputString, const Bear& inputBear){
   Update(inputString);
 }
 
-void MessageBox::draw(){
-  //Recall that a->b is equivalent to (*a).b
-  window -> draw(background);
+void MessageBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(background, states);
   for(int i = 0; i < numLines; i++){
-    window -> draw(line[i]);
+    target.draw(line[i], states);
   }
   for(int i = 0; i < numDivLines; i++){
     if(displayDivLine[i]){
-      window -> draw(divLine[i]);
+      target.draw(divLine[i], states);
     }
   }
 }
@@ -256,17 +246,6 @@ OptionsBox::OptionsBox(
   }
 }
 
-void OptionsBox::draw(){
-  //Recall that a->b is equivalent to (*a).b
-  window -> draw(background);
-  if(hasTwoTitles){
-    window -> draw(divLine);
-  }
-  for(int  i = 0; i < numOptions; i++){
-    window -> draw(optionsText[i]);
-  }
-}
-
 int OptionsBox::GetChoice(const sf::Event theEvent){
   int playerChoice = 0;//Zero if they didn't choose anything
 
@@ -293,7 +272,7 @@ int OptionsBox::GetChoice(const sf::Event theEvent){
   return playerChoice;
 }
 
-void OptionsBox::Highlight(){
+void OptionsBox::Highlight() const{
   sf::RectangleShape highlight;
   highlight.setFillColor(ClearYellow);
 
@@ -308,6 +287,15 @@ void OptionsBox::Highlight(){
 
 }
 
+void OptionsBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(background, states);
+  if(hasTwoTitles){
+    target.draw(divLine, states);
+  }
+  for(int  i = 0; i < numOptions; i++){
+    target.draw(optionsText[i], states);
+  }
+}
 
 BearStats::BearStats(
   sf::RenderWindow& theWindow,
@@ -382,7 +370,7 @@ Bear* BearStats::GetBearPtr(){
   return &bear;
 }
 
-bool BearStats::GetShouldAppear(){
+bool BearStats::GetShouldAppear() const{
   return shouldAppear;
 }
 
@@ -390,29 +378,28 @@ void BearStats::SetShouldAppear(bool shouldBearAppear){
   shouldAppear = shouldBearAppear;
 }
 
-sf::Vector2f BearStats::GetNameBoxPosition(){
+sf::Vector2f BearStats::GetNameBoxPosition() const{
   sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
   return sf::Vector2f(nameBox.left, nameBox.top);
 }
 
-sf::Vector2f BearStats::GetNameBoxSize(){
+sf::Vector2f BearStats::GetNameBoxSize() const{
   sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
   return sf::Vector2f(nameBox.width, nameBox.height);
 }
 
-void BearStats::draw(){
+void BearStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   if(shouldAppear){
-    //Recall that a->b is equivalent to (*a).b
     for(int i = 0; i < numBackground; i++){
-      window -> draw(background[i]);
+      target.draw(background[i], states);
     }
     if(hasTitleBar){
       for(int i = 0; i < numBearInfo; i += 2){
-        window -> draw(bearInfo[i]);
+        target.draw(bearInfo[i], states);
       }
     }
     for(int i = 1; i < numBearInfo; i += 2){
-      window -> draw(bearInfo[i]);
+      target.draw(bearInfo[i], states);
     }
   }
 }
@@ -654,6 +641,18 @@ void PlayerStats::Update(){
     feats[i].setString("Extra Feat " + std::to_string(i));//TEMP
   }
 
+  //Make sure the highlight boxes are the right size
+  for(int i = 0; i < maxSpells - 1; i++){
+    highlightBox[i] = spell[i + 1].getGlobalBounds();
+  }
+
+  //If they're hovering over a valid spell, update selectedSpellIndex
+  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
+  for(int i = 0; i < maxSpells - 1; i++){
+    if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
+      selectedSpellIndex = i;
+    }
+  }
 }
 
 bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
@@ -755,21 +754,14 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
   return noChoice;
 }
 
-void PlayerStats::Highlight(bool isPickingSpell){
+void PlayerStats::Highlight(bool isPickingSpell) const{
   const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
 
   if(onMainMenu){
     bool isHoveringOverSpell = false;
 
-    //Make sure the highlight boxes are the right size
-    for(int i = 0; i < maxSpells - 1; i++){
-      highlightBox[i] = spell[i + 1].getGlobalBounds();
-    }
-
-    //If they're hovering over a valid spell, jump to it
     for(int i = 0; i < maxSpells - 1; i++){
       if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
-        selectedSpellIndex = i;
         isHoveringOverSpell = true;
       }
     }
@@ -797,44 +789,43 @@ void PlayerStats::Highlight(bool isPickingSpell){
   }
 }
 
-void PlayerStats::draw(){
-  //Recall that a->b is equivalent to (*a).b
-  window -> draw(background);
-  window -> draw(moreBackground);
-  window -> draw(header);
+void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(background, states);
+  target.draw(moreBackground, states);
+  target.draw(header, states);
   if(onMainMenu){
     for(int i = 0; i < 4; i++){
-      window -> draw(health[i]);
+      target.draw(health[i], states);
     }
   }
   else{
     for(int i = 0; i < numHealth; i++){
-      window -> draw(health[i]);
+      target.draw(health[i], states);
     }
   }
   for(int i = 0; i < numAbility; i++){
-    window -> draw(ability[i]);
+    target.draw(ability[i], states);
   }
   if(onMainMenu){
     if(7 != numReservedSpellTrees){
-      window -> draw(featsHeader);
+      target.draw(featsHeader, states);
     }
     for(int i = 0; i < maxSpells; i++){
-      window -> draw(spell[i]);
+      target.draw(spell[i], states);
     }
     for(int i = 0; i < numReservedSpellTrees; i++){
-      window -> draw(divLine[i]);
+      target.draw(divLine[i], states);
     }
     if(7 != numReservedSpellTrees){
-      window -> draw(divLine[numReservedSpellTrees]);
+      target.draw(divLine[numReservedSpellTrees], states);
     }
   }
   else{
     for(int i = 0; i < numExtraFeats; i++){
-      window -> draw(feats[i]);
+      target.draw(feats[i], states);
     }
   }
-  window -> draw(moreStats);
+  target.draw(moreStats, states);
 }
 
 
@@ -843,7 +834,7 @@ HUD::HUD(sf::RenderWindow& theWindow,
         sf::Font& mainFont,
         Player& thePlayer
 ):
-messages(theWindow,titleFont,mainFont,"Messages:"),
+messages(titleFont,mainFont,"Messages:"),
 options(theWindow,titleFont,mainFont),
 playerStats(theWindow,titleFont,mainFont,thePlayer),
 window(&theWindow),
@@ -867,12 +858,11 @@ BearStats(theWindow,titleFont,mainFont,bears.at(3),false,sf::Vector2f(205,100))
 },
 friendBearStats(theWindow,titleFont,mainFont,Bear(),true)
 {
-  bear = bearStats[0].GetBearPtr();
   for(int i = 0; i < 4; i++){
     bearStats[i].GetBearPtr() -> SetMessageBox(messages);
   }
   friendBearStats.GetBearPtr() -> SetMessageBox(messages);
-  player -> SetLastBear(bear -> GetName());
+  player -> SetLastBear(bears.at(0).GetName());
 }
 
 std::vector<Bear*> BattleHUD::GetAllEnemyBears(){
@@ -883,7 +873,7 @@ std::vector<Bear*> BattleHUD::GetAllEnemyBears(){
   return bearVec;
 }
 
-int BattleHUD::GetNumEnemyBears(){
+int BattleHUD::GetNumEnemyBears() const{
   int numBears = 4;
   for(int i = 3; i >= 0; i--){
     if(!bearStats[i].GetShouldAppear()){
@@ -913,11 +903,11 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
       bearStats[3].SetShouldAppear(false);
 
       if(bearStats[0].GetShouldAppear()){
-        bear = bearStats[0].GetBearPtr();//Now targeting the top bear
+        targetBearIndex = 0;//Now targeting the top bear
       }
       else{
         //If we just killed the last remaining bear, its stats will be in slot 3
-        bear = bearStats[3].GetBearPtr();
+        targetBearIndex = 3;
       }
     }
   }
@@ -947,22 +937,18 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
   if(!isPickingSpell){
     if(theEvent.type == sf::Event::KeyPressed){
       if(theEvent.key.code == sf::Keyboard::Up){
-        const int targetBearIndex = TargetBearIndex();
+        //targetBearIndex = (targetBearIndex - 1) % GetNumEnemyBears();
+        //The above doesn't work because the idiots who wrote the C++ standard
+        //defined % wrong, so we need something like:
         if(0 == targetBearIndex){
-          bear = bearStats[GetNumEnemyBears() - 1].GetBearPtr();
+          targetBearIndex = GetNumEnemyBears() - 1;
         }
         else{
-          bear = bearStats[targetBearIndex - 1].GetBearPtr();
+          targetBearIndex = targetBearIndex - 1;
         }
       }
       else if(theEvent.key.code == sf::Keyboard::Down){
-        const int targetBearIndex = TargetBearIndex();
-        if(GetNumEnemyBears() - 1 == targetBearIndex){
-          bear = bearStats[0].GetBearPtr();
-        }
-        else{
-          bear = bearStats[targetBearIndex + 1].GetBearPtr();
-        }
+        targetBearIndex = (targetBearIndex + 1) % GetNumEnemyBears();
       }
     }
     playerStats.toggleMenu(theEvent);
@@ -974,56 +960,46 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
       }
     }
     else{
-      return player -> TakeAction(theAction, *bear);
+      return player -> TakeAction(theAction, *GetBearPtr());
     }
   }//Endif not picking spell
   return TurnOf::player;
 }
 
-void BattleHUD::draw(const bool canPickFromOptions){//Defaults to true
-  messages.draw();
-
-  options.draw();
-
+void BattleHUD::Update(const bool optionsAvailable){
+  canPickFromOptions = optionsAvailable;
   playerStats.Update();
-  playerStats.draw();
-
   for(int i = 0; i < GetNumEnemyBears(); i++){
     bearStats[i].Update();
-    bearStats[i].draw();
   }
-  //If friend bear is present, call friendBearStats Update() and draw() here
-
-  Highlight(canPickFromOptions);
 }
 
-void BattleHUD::Highlight(const bool canPickFromOptions){
+void BattleHUD::Highlight() const{
   playerStats.Highlight(isPickingSpell);
   if(!isPickingSpell && canPickFromOptions){
     options.Highlight();
   }
 
-  sf::RectangleShape bearHighlight;
-  bearHighlight.setFillColor(ClearYellow);
-
   if( bearStats[1].GetShouldAppear() ){
-    for(int i = 0; i < 4; i++){
-      if(bearStats[i].GetBearPtr() == bear){
-        bearHighlight.setSize(bearStats[i].GetNameBoxSize());
-        bearHighlight.setPosition(bearStats[i].GetNameBoxPosition());
-        window -> draw(bearHighlight);
-      }
-    }
+    sf::RectangleShape bearHighlight;
+
+    bearHighlight.setFillColor(ClearYellow);
+    bearHighlight.setSize(bearStats[targetBearIndex].GetNameBoxSize());
+    bearHighlight.setPosition(bearStats[targetBearIndex].GetNameBoxPosition());
+
+    window -> draw(bearHighlight);
   }
 
 }
 
-int BattleHUD::TargetBearIndex(){
-  int targetBearIndex = 0;
-  for(int i = 0; i < 4; i++){
-    if(bearStats[i].GetBearPtr() == bear){
-      targetBearIndex = i;
-    }
+void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(messages, states);
+  target.draw(options, states);
+  target.draw(playerStats, states);
+
+  for(int i = 0; i < GetNumEnemyBears(); i++){
+    target.draw(bearStats[i], states);
   }
-  return targetBearIndex;
+
+  Highlight();
 }

@@ -43,7 +43,7 @@ int main(){
   //Keep track of wins
   std::array<int, 2 * int(BearID::NUM_BEARS)> scoreArray = {};//All zeros
 
-  MessageBox messages(window,courierNewBd,courierNew,"Messages:");
+  MessageBox messages(courierNewBd,courierNew,"Messages:");
   messages.Update("A/S/G:Get Abilities,",
                   "Bear, or Spells.",
                   "F:Fight Special Bear.",
@@ -128,9 +128,9 @@ int main(){
     }
 
     window.clear();
-    messages.draw();
+    window.draw(messages);
     status.Update();
-    status.draw();
+    window.draw(status);
     status.Highlight(false);
     window.display();
   }//end while(window.isOpen())
