@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Bear.h"
 #include "BearBattle.h"
+#include "Feats.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to
@@ -19,6 +20,7 @@
 //Color definitions. I use upper case to be consistant with SFML
 sf::Color Gray = sf::Color(192,192,192);
 sf::Color ClearYellow = sf::Color(255,255,0,153);
+sf::Color PowerPoolColor = sf::Color(235,0,0);
 
 //Helper Functions:
 sf::String AddSpacing(const sf::String& inputString,
@@ -513,16 +515,25 @@ size(theSize)
   spell[0].setPosition(position.x, baseSpellHeight[0]);
 
   //Make the feats header
-  featsHeader.setFont(titleFont);
-  featsHeader.setCharacterSize(15);
-  featsHeader.setFillColor(sf::Color::Black);
-  featsHeader.setString("Feats:");
+  featsHeader[0].setFont(titleFont);
+  featsHeader[0].setCharacterSize(15);
+  featsHeader[0].setFillColor(sf::Color::Black);
+  featsHeader[0].setString("Feats:");
+
+  featsHeader[1].setFont(mainFont);
+  featsHeader[1].setCharacterSize(15);
+  featsHeader[1].setFillColor(PowerPoolColor);
 
   //Make the spells/feats info
   for(int i = 1; i < maxSpells; i++){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
     spell[i].setFillColor(sf::Color::Black);
+
+    spellCount[i].setFont(mainFont);
+    spellCount[i].setCharacterSize(15);
+    spellCount[i].setFillColor(sf::Color::Black);
+
     baseSpellHeight[i] = position.y + float(128 + 20 * i);
   }
 
@@ -601,26 +612,18 @@ void PlayerStats::Update(){
   int numPlayerSpells = 0;
   for(int i = 1; i < maxSpells; i++){
     spell[i].setPosition(position.x, baseSpellHeight[i]);
+    spellCount[i].setPosition(position.x, baseSpellHeight[i]);
     if(player -> GetMaxNumSpell(i - 1) == 0){
       spell[i].setString(sf::String(""));
+      spellCount[i].setString(sf::String(""));
     }
     else{
       numPlayerSpells = i;
-      sf::String name = player -> GetSpellName(i - 1);
+      spell[i].setString(player -> GetSpellName(i - 1));
       sf::String count = std::to_string(player -> GetNumSpell(i - 1));
-      std::size_t spaceToAdd;
-      if(name.getSize() <= 18){
-        spaceToAdd = 18 - name.getSize();
-      }
-      else{
-        spaceToAdd = 0;
-        std::cerr << "Warning! The spell name \"" << std::string(name);
-        std::cerr << "\" is too long to display properly\n\n";
-      }
-      count = AddSpacing(count, spaceToAdd);
       sf::String max = std::to_string(player -> GetMaxNumSpell(i - 1));
-
-      spell[i].setString(name + count + sf::String("/") + max);
+      spellCount[i].setString(AddSpacing(count, 18) + sf::String("/") + max);
+      spellCount[i].setFillColor(sf::Color::Black);
     }
   }
 
@@ -634,20 +637,35 @@ void PlayerStats::Update(){
     numReservedSpellTrees = 7;
   }
 
-  featsHeader.setPosition(position.x,
-                          position.y + float(145 + numReservedSpellTrees * 60));
+  const float featHeight = position.y + float(145 + numReservedSpellTrees * 60);
+  featsHeader[0].setPosition(position.x, featHeight);
+  featsHeader[1].setPosition(position.x, featHeight);
 
-  for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
-    spell[i].move(0,10);
-    sf::String name = "Feat " + std::to_string(i-3*numReservedSpellTrees);//TEMP
-    spell[i].setString(AddSpacing(name,19,false));
-  }
+  sf::String count = std::to_string(player -> GetPower());
+  sf::String max = std::to_string(player -> GetPowerPoolSize());
+  featsHeader[1].setString(AddSpacing(count + sf::String("/") + max, 21));
 
-  for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
-    if(true){//TEMP:Want player->getFeat(i-3*numReservedSpellTrees).IsToggleable
-      button[i].SetText(spell[i]);
-      if(onMainMenu){
-        button[i].UpdateHighlighting(mousePos);
+  for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
+    int spellIndex = GetFeatStartingIndex() + featIndex;
+
+    spell[spellIndex].move(0,12);
+    spellCount[spellIndex].move(0,12);
+
+    sf::String name = FeatName(player -> GetFeat(featIndex));
+    spell[spellIndex].setString(AddSpacing(name,19,false));
+
+    if((player -> FeatCost(featIndex)) > 0){
+      sf::String cost = "-" + std::to_string(player -> FeatCost(featIndex));
+      spellCount[spellIndex].setString(AddSpacing(cost, 21));
+      spellCount[spellIndex].setFillColor(PowerPoolColor);
+    }
+    else{
+      spellCount[spellIndex].setString(sf::String(""));
+      if(player -> FeatIsToggleable(featIndex)){
+        button[spellIndex].SetText(spell[spellIndex]);
+        if(onMainMenu){
+          button[spellIndex].UpdateHighlighting(mousePos);
+        }
       }
     }
   }
@@ -659,11 +677,15 @@ void PlayerStats::Update(){
   //Make sure the highlight boxes are the right size
   for(int i = 0; i < maxSpells - 1; i++){
     highlightBox[i] = spell[i + 1].getGlobalBounds();
+    sf::FloatRect box = spellCount[i + 1].getGlobalBounds();
+    highlightBox[i].width = box.left + box.width - highlightBox[i].left;
+    highlightBox[i].top--;
+    highlightBox[i].height += 2;
   }
 
   //If they're hovering over a valid spell, update selectedSpellIndex
   for(int i = 0; i < maxSpells - 1; i++){
-    if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
+    if(highlightBox[i].contains(mousePos) && IsValidSpellIndex(i)){
       selectedSpellIndex = i;
     }
   }
@@ -678,7 +700,7 @@ bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
 
   bool playerHasSpells = false;
   for(int i = 0; i < maxSpells && !playerHasSpells; i++){
-    playerHasSpells = (player -> GetNumSpell(i) > 0 );
+    playerHasSpells = IsValidSpellIndex(i);
   }
 
   if(playerHasSpells){
@@ -689,7 +711,8 @@ bool PlayerStats::SpellChoiceProcessStarted(MessageBox& messages){
     sf::Event scrollDown;
     scrollDown.type = sf::Event::KeyPressed;
     scrollDown.key.code = sf::Keyboard::Down;
-    GetSpell(scrollDown);
+    int dummyInt = 420;
+    GetSpell(scrollDown, dummyInt);
   }
   else{
     messages.Update("No Spells To Cast");
@@ -719,47 +742,62 @@ void PlayerStats::ToggleFeats(const sf::Event event){
   if(onMainMenu && event.type == sf::Event::MouseButtonPressed){
     sf::Vector2f clickLocation(float(event.mouseButton.x),
                                float(event.mouseButton.y) );
-    for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
-      button[i].ToggleIfContains(clickLocation);
+    for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
+      if(player -> FeatIsToggleable(featIndex)){
+        int spellIndex = GetFeatStartingIndex() + featIndex;
+        button[spellIndex].ToggleIfContains(clickLocation);
+      }
     }
   }
 }
 
-int PlayerStats::GetSpell(const sf::Event theEvent){
+bool PlayerStats::GetSpell(const sf::Event theEvent, int& index){
   if(theEvent.type == sf::Event::KeyPressed){
     if(theEvent.key.code == sf::Keyboard::Escape){
-      return changedMindAboutCasting;
+      index = changedMindAboutCasting;
+      return true;
     }
     if(theEvent.key.code == sf::Keyboard::Up){
       selectedSpellIndex--;
-      while(player -> GetNumSpell(selectedSpellIndex) <= 0 &&
-            selectedSpellIndex >= 0)
-      {
+      while(!IsValidSpellIndex(selectedSpellIndex) && selectedSpellIndex >= 0){
         selectedSpellIndex--;
       }
       if(selectedSpellIndex < 0){
         selectedSpellIndex = maxSpells;
-        while(player -> GetNumSpell(selectedSpellIndex) <= 0){
+        while(!IsValidSpellIndex(selectedSpellIndex)){
           selectedSpellIndex--;
         }
       }
     }
     else if(theEvent.key.code == sf::Keyboard::Down){
       selectedSpellIndex++;
-      while(player -> GetNumSpell(selectedSpellIndex) <= 0 &&
+      while(!IsValidSpellIndex(selectedSpellIndex) &&
             selectedSpellIndex < maxSpells)
       {
         selectedSpellIndex++;
       }
       if(selectedSpellIndex >= maxSpells){
         selectedSpellIndex = 0;
-        while(player -> GetNumSpell(selectedSpellIndex) <= 0){
+        while(!IsValidSpellIndex(selectedSpellIndex)){
           selectedSpellIndex++;
         }
       }
     }
     else if(theEvent.key.code == sf::Keyboard::Return){
-      return selectedSpellIndex;
+      if(!IsValidSpellIndex(selectedSpellIndex)){
+        std::cerr << "Warning! GetSpell tried to select the invalid spellIndex";
+        std::cerr << " " << selectedSpellIndex << "\n\n";
+        index = noChoice;
+        return true;
+      }
+      else if(player -> GetNumSpell(selectedSpellIndex) > 0){
+        index = selectedSpellIndex;
+        return true;
+      }
+      else{
+        index = selectedSpellIndex - GetFeatStartingIndex() + 1;
+        return false;
+      }
     }
   }
 
@@ -767,15 +805,21 @@ int PlayerStats::GetSpell(const sf::Event theEvent){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
     for(int i = 0; i < maxSpells - 1; i++){
-      if(highlightBox[i].contains(clickLocation) &&
-         player -> GetNumSpell(i) > 0)
-      {
-        return i;
+      if(highlightBox[i].contains(clickLocation) && IsValidSpellIndex(i)){
+        if(player -> GetNumSpell(i) > 0){
+          index = i;
+          return true;
+        }
+        else{
+          index = i - GetFeatStartingIndex() + 1;
+          return false;
+        }
       }
     }
   }
 
-  return noChoice;
+  index = noChoice;
+  return true;
 }
 
 void PlayerStats::Highlight(bool isPickingSpell, bool canCastSpells) const{
@@ -785,7 +829,7 @@ void PlayerStats::Highlight(bool isPickingSpell, bool canCastSpells) const{
     bool isHoveringOverSpell = false;
 
     for(int i = 0; i < maxSpells - 1; i++){
-      if(highlightBox[i].contains(mousePos) && player -> GetNumSpell(i) > 0){
+      if(highlightBox[i].contains(mousePos) && IsValidSpellIndex(i)){
         isHoveringOverSpell = true;
       }
     }
@@ -813,6 +857,22 @@ void PlayerStats::Highlight(bool isPickingSpell, bool canCastSpells) const{
   }
 }
 
+bool PlayerStats::IsValidSpellIndex(const int spellIndex) const{
+  int featIndex = spellIndex - GetFeatStartingIndex() + 1;
+  if(featIndex < 0 || featIndex >= player -> GetNumFeats()){
+    return(player -> GetNumSpell(spellIndex) > 0);
+  }
+  else{
+    int cost = player -> FeatCost(featIndex);
+    bool canActivateFeat = (cost > 0 && (player -> GetPower() >= cost));
+    return(player -> GetNumSpell(spellIndex) > 0 || canActivateFeat);
+  }
+}
+
+int PlayerStats::GetNumFeats() const {
+  return(std::min(maxSpells - GetFeatStartingIndex(),player -> GetNumFeats()));
+}
+
 void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   target.draw(background, states);
   target.draw(moreBackground, states);
@@ -832,13 +892,18 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   }
   if(onMainMenu){
     if(7 != numReservedSpellTrees){
-      target.draw(featsHeader, states);
+      target.draw(featsHeader[0], states);
+      target.draw(featsHeader[1], states);
     }
     for(int i = 0; i < maxSpells; i++){
       target.draw(spell[i], states);
+      target.draw(spellCount[i], states);
     }
-    for(int i = GetFeatStartingIndex(); i < maxSpells; i++){
-      target.draw(button[i], states);
+    for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
+      if(player -> FeatIsToggleable(featIndex)){
+        int spellIndex = GetFeatStartingIndex() + featIndex;
+        target.draw(button[spellIndex], states);
+      }
     }
     for(int i = 0; i < numReservedSpellTrees; i++){
       target.draw(divLine[i], states);
@@ -953,11 +1018,18 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
 TurnOf BattleHUD::TakeAction(sf::Event theEvent){
   playerStats.ToggleFeats(theEvent);
   if(isPickingSpell || theEvent.type == sf::Event::MouseButtonPressed){
-    int spellIndex = playerStats.GetSpell(theEvent);
+    int spellIndex = 0;
+    bool choseSpell;//Spell, as opposed to Feat
+    choseSpell = playerStats.GetSpell(theEvent, spellIndex);
     if(spellIndex != PlayerStats::noChoice){
       isPickingSpell = false;
       if(spellIndex != PlayerStats::changedMindAboutCasting){
-        return player -> Cast(spellIndex, *this);
+        if(choseSpell){
+          return player -> Cast(spellIndex, *this);
+        }
+        else{
+          return player -> ActivateFeat(spellIndex);
+        }
       }
     }
   }

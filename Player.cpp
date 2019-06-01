@@ -2,6 +2,7 @@
 #include "Bear.h"
 #include "RollDice.h"
 #include "Spell.h"
+#include "Feats.h"
 #include "BearBattle.h"
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr
@@ -17,6 +18,29 @@ Player::Player(){
                                 numVirginities);
 
   health = maxHealth;
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempToggle1);
+  featList.push_back(FeatID::tempToggle2);
+
+  featList.push_back(FeatID::tempPool1);
+  featList.push_back(FeatID::tempPool2);
+  featList.push_back(FeatID::tempPool1);
+
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPool1);
+
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPool1);
+
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPool1);
+
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempPerm);
+  featList.push_back(FeatID::tempToggle1);
 }
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
@@ -256,6 +280,27 @@ void Player::PostBattleReset(){
   bigFistTime = 0;
   santuaryTime = 0;
   timeStopTime = 0;
+  power = powerPoolSize;//TEMP
+}
+
+bool Player::FeatIsToggleable(const int index) const {
+  const Feat theFeat = featList.at(index);
+  return (!(theFeat.permanent) && (0 == theFeat.cost));
+}
+
+TurnOf Player::ActivateFeat(const int index){
+  Feat& theFeat = featList.at(index);
+  if(theFeat.permanent){
+    std::cerr << "Warning! Cannot activate permanent feats like \"";
+    std::cerr << std::string(FeatName(theFeat.featID)) << "\"\n";
+    std::cerr << "(The index of this feat in the player\'s feat list is ";
+    std::cerr << index << ", if that helps)\n\n";
+  }
+  else{
+    power -= theFeat.cost;
+    theFeat.active = true;
+  }
+  return TurnOf::player;
 }
 
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){

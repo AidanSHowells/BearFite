@@ -11,6 +11,7 @@ class Bear;
 enum class SpellID;
 enum class SpellSchool;
 enum class TurnOf;
+enum class FeatID;
 
 enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 
@@ -19,6 +20,14 @@ struct SpellTree{
   std::array<SpellID, 3> spellIDList;
   std::array<int, 3> numSpells = {3,0,0};
   std::array<int, 3> maxSpells = {3,0,0};
+};
+
+struct Feat{
+  Feat(const FeatID feat);//Defined in Feats.cpp
+  FeatID featID;
+  bool permanent = true;
+  bool active = false;
+  int cost = 0;
 };
 
 class Player{
@@ -53,6 +62,14 @@ class Player{
     void TimerTick();
     void PostBattleReset();
 
+    int GetNumFeats() const {return featList.size();}
+    FeatID GetFeat(const int index) const {return featList.at(index).featID;}
+    bool FeatIsToggleable(const int index) const;
+    int FeatCost(const int index) const {return featList.at(index).cost;}
+    int GetPower() const {return power;}
+    int GetPowerPoolSize() const {return powerPoolSize;}
+    TurnOf ActivateFeat(const int index);
+
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
     void Paralyze(int time){paralyzedTime = std::max(time, paralyzedTime);}
@@ -83,6 +100,7 @@ class Player{
     std::array<int, int(Abil::NUM_ABIL)> baseAbil = {10,10,10,10,10,10};
     std::array<int, int(Abil::NUM_ABIL)> abilBuff = {0,0,0,0,0,0};
     std::vector<SpellTree> spellList;
+    std::vector<Feat> featList;
 
     Body body;
     int maxHealth;
@@ -98,6 +116,8 @@ class Player{
     int legCritThreat = 1;
     int eyeCritThreat = 3;
     int spellcastingLevel = 0;
+    int power = 4;
+    int powerPoolSize = 4;
 
     int hastedTime = 0;
     int slowedTime = 0;

@@ -127,7 +127,7 @@ class PlayerStats : public sf::Drawable{
     bool SpellChoiceProcessStarted(MessageBox& messages);
     void ToggleMenu(const sf::Event event);
     void ToggleFeats(const sf::Event event);
-    int GetSpell(const sf::Event theEvent);
+    bool GetSpell(const sf::Event theEvent, int& index);//true=spell, false=feat
     void Highlight(bool isPickingSpell, bool canCastSpells) const;
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
@@ -151,8 +151,9 @@ class PlayerStats : public sf::Drawable{
     sf::Text health[numHealth];
     sf::Text ability[numAbility];
     float baseAbilityHeight[numAbility];
-    sf::Text featsHeader;
+    sf::Text featsHeader[2];
     sf::Text spell[maxSpells];
+    sf::Text spellCount[maxSpells];
     Button button[maxSpells];
     sf::Text feats[numExtraFeats];
     float baseSpellHeight[maxSpells];
@@ -161,7 +162,9 @@ class PlayerStats : public sf::Drawable{
     sf::Text moreStats;
     sf::FloatRect moreHighlightBox;
 
+    bool IsValidSpellIndex(const int spellIndex) const;
     int GetFeatStartingIndex() const {return(3 * numReservedSpellTrees + 1);}
+    int GetNumFeats() const;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
