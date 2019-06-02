@@ -236,7 +236,7 @@ void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //tracks bear attack roll for determining criticals
 
-  if(roll + GetAttackBonus() >= thePlayer.GetAC() || roll == 60){
+  if(roll + GetAttackBonus() >= thePlayer.GetAC(identifier) || roll == 60){
     if(roll > 60 - critThreat){
       dmg = Roll(critMult,8) + critMult * GetDamageBonus();
       printMessage("Bear CRIT you for:", std::max(1,dmg));

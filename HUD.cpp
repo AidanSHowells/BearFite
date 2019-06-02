@@ -651,13 +651,19 @@ void PlayerStats::Update(){
     spell[spellIndex].move(0,12);
     spellCount[spellIndex].move(0,12);
 
-    sf::String name = FeatName(player -> GetFeat(featIndex));
+    sf::String name = player -> GetFeat(featIndex);
     spell[spellIndex].setString(AddSpacing(name,19,false));
 
     if((player -> FeatCost(featIndex)) > 0){
       sf::String cost = "-" + std::to_string(player -> FeatCost(featIndex));
       spellCount[spellIndex].setString(AddSpacing(cost, 21));
       spellCount[spellIndex].setFillColor(PowerPoolColor);
+      if(player -> FeatIsActive(featIndex)){
+        spell[spellIndex].setFillColor(PowerPoolColor);
+      }
+      else{
+        spell[spellIndex].setFillColor(sf::Color::Black);
+      }
     }
     else{
       spellCount[spellIndex].setString(sf::String(""));
@@ -665,6 +671,7 @@ void PlayerStats::Update(){
         button[spellIndex].SetText(spell[spellIndex]);
         if(onMainMenu){
           button[spellIndex].UpdateHighlighting(mousePos);
+          button[spellIndex].SetState(player -> FeatIsActive(featIndex));
         }
       }
     }
@@ -745,7 +752,10 @@ void PlayerStats::ToggleFeats(const sf::Event event){
     for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
       if(player -> FeatIsToggleable(featIndex)){
         int spellIndex = GetFeatStartingIndex() + featIndex;
-        button[spellIndex].ToggleIfContains(clickLocation);
+        if(button[spellIndex].Contains(clickLocation)){
+          player -> ToggleFeat(featIndex);
+          button[spellIndex].SetState(player -> FeatIsActive(featIndex));
+        }
       }
     }
   }
@@ -864,8 +874,9 @@ bool PlayerStats::IsValidSpellIndex(const int spellIndex) const{
   }
   else{
     int cost = player -> FeatCost(featIndex);
-    bool canActivateFeat = (cost > 0 && (player -> GetPower() >= cost));
-    return(player -> GetNumSpell(spellIndex) > 0 || canActivateFeat);
+    bool active = player -> FeatIsActive(featIndex);
+    bool canBeActive = (cost > 0) && (player -> GetPower() >= cost);
+    return((player -> GetNumSpell(spellIndex) > 0) || (canBeActive && !active));
   }
 }
 
@@ -1059,7 +1070,7 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
       }
     }
     else{
-      return player -> TakeAction(theAction, *GetBearPtr());
+      return player -> TakeAction(theAction, *GetBearPtr(), GetAllEnemyBears());
     }
   }//Endif not picking spell
   return TurnOf::player;

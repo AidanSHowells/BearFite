@@ -2,26 +2,47 @@
 #include "Feats.h"
 #include "Player.h"
 
-Feat::Feat(const FeatID feat){
+Feat::Feat(const FeatID feat, const BearID theBearID){
   featID = feat;
-  if(feat == FeatID::tempPerm){
+  targetBearID = theBearID;//Default is NUM_BEARS
+  if(feat == FeatID::studied_dodge){
+    active = true;
     permanent = true;
+    cost = 0;
+    if(theBearID == BearID::NUM_BEARS){
+      std::cerr << "Warning! The \"Studied Dodge\" feat must be provided a ";
+      std::cerr << "bear in order to function correctly\n\n";
+      name = "Studied Dodge";
+    }
+    else{
+      name = "Dodge " + Bear(theBearID).GetName();
+    }
   }
-  else if(feat == FeatID::tempToggle1){
+  else if(feat == FeatID::escape_artist){
+    name = "Escape Artist";
+    active = true;
+    permanent = true;
+    cost = 0;
+  }
+  else if(feat == FeatID::power_attack){
+    name = "Power Attack";
     permanent = false;
     cost = 0;
   }
-  else if(feat == FeatID::tempToggle2){
+  else if(feat == FeatID::whirlwind_attack){
+    name = "Whirlwind Attack";
     permanent = false;
     cost = 0;
   }
-  else if(feat == FeatID::tempPool1){
+  else if(feat == FeatID::gulper){
+    name = "Gulper";
     permanent = false;
     cost = 1;
   }
-  else if(feat == FeatID::tempPool2){
+  else if(feat == FeatID::cobra_strike){
+    name = "Cobra Strike";
     permanent = false;
-    cost = 2;
+    cost = 1;
   }
   else if(feat == FeatID::NUM_FEATS){
     std::cerr << "Warning! ";
@@ -33,33 +54,4 @@ Feat::Feat(const FeatID feat){
     std::cerr << "The number corresponding to the invalid feat was ";
     std::cerr << int(feat) << ".\n\n";
   }
-}
-
-sf::String FeatName(const FeatID theFeat){
-  sf::String name = "";
-  if(theFeat == FeatID::tempPerm){
-    name = "Perm Feat";
-  }
-  else if(theFeat == FeatID::tempToggle1){
-    name = "Toggle Feat Eins";
-  }
-  else if(theFeat == FeatID::tempToggle2){
-    name = "Toggle Feat Zwei";
-  }
-  else if(theFeat == FeatID::tempPool1){
-    name = "Pool Feat Eins";
-  }
-  else if(theFeat == FeatID::tempPool2){
-    name = "Pool Feat Zwei";
-  }
-  else if(theFeat == FeatID::NUM_FEATS){
-    std::cerr << "Warning! ";
-    std::cerr << "Illegal use of FeatID::NUM_FEATS in FeatName function.\n\n";
-  }
-  else{
-    std::cerr << "Warning! Attempted use of FeatID unknown to FeatName.\n";
-    std::cerr << "The number corresponding to the invalid feat was ";
-    std::cerr << int(theFeat) << ".\n\n";
-  }
-  return name;
 }

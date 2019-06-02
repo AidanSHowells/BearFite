@@ -23,10 +23,8 @@ void Button::SetText(const sf::Text& words){
   highlightBox.AdjustToFit(hitbox);
 }
 
-void Button::ToggleIfContains(const sf::Vector2f clickLocation){
-  if(hitbox.contains(clickLocation)){
-    buttonIsOn = !buttonIsOn;
-  }
+bool Button::Contains(const sf::Vector2f clickLocation) const {
+  return hitbox.contains(clickLocation);
 }
 
 void Button::UpdateHighlighting(const sf::Vector2f mouseLocation){

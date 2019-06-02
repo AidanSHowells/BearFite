@@ -8,7 +8,8 @@ class Button : public sf::Drawable{
   public:
     Button();
     void SetText(const sf::Text& theWords);
-    void ToggleIfContains(const sf::Vector2f clickLocation);
+    bool Contains(const sf::Vector2f clickLocation) const;
+    void SetState(const bool isOn){buttonIsOn = isOn;}
     bool IsOn() const {return buttonIsOn;}
     void UpdateHighlighting(const sf::Vector2f mouseLocation);
   private:

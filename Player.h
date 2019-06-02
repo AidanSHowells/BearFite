@@ -23,11 +23,14 @@ struct SpellTree{
 };
 
 struct Feat{
-  Feat(const FeatID feat);//Defined in Feats.cpp
+  //See Feat.cpp for definition of constructor
+  Feat(const FeatID feat, const BearID theBearID = BearID::NUM_BEARS);
   FeatID featID;
+  sf::String name = sf::String("");
   bool permanent = true;
   bool active = false;
   int cost = 0;
+  BearID targetBearID = BearID::NUM_BEARS;//Some feats are specific to 1 species
 };
 
 class Player{
@@ -45,10 +48,12 @@ class Player{
     void SetLastBear(const sf::String bearName){lastBear = bearName;}
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
     void BuffAbil(const int index, const int buff);
-    int GetAC() const; //Combines all AC-affecting factors
+    int GetAC(const BearID attacker) const; //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead();
-    TurnOf TakeAction(const Action theAction, Bear& theBear);
+    TurnOf TakeAction(const Action theAction,
+                      Bear& theBear,
+                      std::vector<Bear*> enemyBears);
     TurnOf Cast(const int index, BattleHUD& environment);
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
@@ -63,12 +68,16 @@ class Player{
     void PostBattleReset();
 
     int GetNumFeats() const {return featList.size();}
-    FeatID GetFeat(const int index) const {return featList.at(index).featID;}
+    sf::String GetFeat(const int index) const {return featList.at(index).name;}
     bool FeatIsToggleable(const int index) const;
     int FeatCost(const int index) const {return featList.at(index).cost;}
     int GetPower() const {return power;}
     int GetPowerPoolSize() const {return powerPoolSize;}
     TurnOf ActivateFeat(const int index);
+    void ToggleFeat(const int index);
+    bool FeatIsActive(const int index) const {return featList.at(index).active;}
+    bool HasFeatActive(const FeatID theFeat) const;
+    bool HasFeatActive(const FeatID theFeat, const BearID theBear) const;
 
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -133,10 +142,13 @@ class Player{
     int GetEyeAttackBonus() const;
     int GetEyeDamageBonus() const;
     int GetTouchAttackBonus() const;
-    TurnOf LegPunch(Bear& bear);
-    TurnOf EyePunch(Bear& bear);
+    void LegPunch(Bear& bear);
+    void EyePunch(Bear& bear);
     TurnOf Quaff();
     TurnOf Flee(Bear& bear);
+
+    void Toggle(const FeatID theFeat);
+    void Toggle(const FeatID theFeat, const BearID theBear);
 
     sf::String lastBear = sf::String("None ");
 };

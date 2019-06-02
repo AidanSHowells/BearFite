@@ -4,9 +4,9 @@
 #include <SFML/System/String.hpp>
 
 //List of all possible feats (plus NUM_FEATS, which is always last):
-enum class FeatID{tempPerm, tempToggle1, tempToggle2, tempPool1, tempPool2,
+enum class FeatID{studied_dodge, escape_artist,
+                  power_attack, whirlwind_attack,
+                  gulper, cobra_strike,
                   NUM_FEATS};
-
-sf::String FeatName(const FeatID theFeat);
 
 #endif
