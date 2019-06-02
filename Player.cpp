@@ -2,6 +2,7 @@
 #include "Bear.h"
 #include "RollDice.h"
 #include "Spell.h"
+#include "Feats.h"
 #include "BearBattle.h"
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr
@@ -36,8 +37,6 @@ int Player::GetMaxHealth(){
   return maxHealth;
 }
 
-int Player::GetNumDranks(){return numDranks;}
-
 int Player::GetAbil(const int index, const bool isCheckingDeath) const {
   int abil = baseAbil.at(index) + abilBuff.at(index);
   if(index == int(Abil::STR)){
@@ -68,8 +67,12 @@ void Player::BuffAbil(const int index, const int buff){
   abilBuff.at(index) += buff;
 }
 
-int Player::GetAC() const {
-  return baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
+int Player::GetAC(const BearID attacker) const {
+  int AC = baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
+  if(HasFeatActive(FeatID::studied_dodge, attacker)){
+    AC += 20;
+  }
+  return AC;
 }
 
 void Player::Hurt(int dmg){health -= dmg;}
@@ -86,7 +89,10 @@ bool Player::IsDead(){
   return false;
 }
 
-TurnOf Player::TakeAction(const Action theAction, Bear& theBear){
+TurnOf Player::TakeAction(const Action theAction,
+                          Bear& theBear,
+                          std::vector<Bear*> enemyBears)
+{
   TurnOf nextTurn;
   if(IsSafe() &&
     (theAction == Action::leg ||
@@ -97,10 +103,26 @@ TurnOf Player::TakeAction(const Action theAction, Bear& theBear){
     nextTurn = TurnOf::player;
   }
   else if(theAction == Action::leg){
-    nextTurn = LegPunch(theBear);
+    nextTurn = TurnOf::bear;
+    if(HasFeatActive(FeatID::whirlwind_attack)){
+      for(std::size_t i = 0; i < enemyBears.size(); i++){
+        LegPunch(*(enemyBears.at(i)));
+      }
+    }
+    else{
+      LegPunch(theBear);
+    }
   }
   else if(theAction == Action::eye){
-    nextTurn = EyePunch(theBear);
+    nextTurn = TurnOf::bear;
+    if(HasFeatActive(FeatID::whirlwind_attack)){
+      for(std::size_t i = 0; i < enemyBears.size(); i++){
+        EyePunch(*(enemyBears.at(i)));
+      }
+    }
+    else{
+      EyePunch(theBear);
+    }
   }
   else if(theAction == Action::john_hopkins){
     Messages -> Update(sf::String("John Hopkins punching"),
@@ -258,6 +280,101 @@ void Player::PostBattleReset(){
   bigFistTime = 0;
   santuaryTime = 0;
   timeStopTime = 0;
+  power = powerPoolSize;//TEMP
+  if(HasFeatActive(FeatID::cobra_strike)){
+    Toggle(FeatID::cobra_strike);
+  }
+}
+
+void Player::AddFeat(const FeatID theFeat, const BearID theBear){
+  Feat newFeat(theFeat, theBear);
+  if(newFeat.cost > 0){
+    bool done = false;
+    for(std::size_t i = 0; !done && i < featList.size(); i++){
+      if(featList.at(i).cost == 0){
+        featList.insert(featList.begin() + i, newFeat);
+        done = true;
+      }
+    }
+    if(!done){
+      featList.push_back(newFeat);
+    }
+  }
+  else if(newFeat.permanent){
+    bool done = false;
+    for(std::size_t i = 0; !done && i < featList.size(); i++){
+      if(featList.at(i).cost == 0 && !(featList.at(i).permanent)){
+        featList.insert(featList.begin() + i, newFeat);
+        done = true;
+      }
+    }
+    if(!done){
+      featList.push_back(newFeat);
+    }
+  }
+  else{
+    featList.push_back(newFeat);
+  }
+}
+
+bool Player::FeatIsToggleable(const int index) const {
+  const Feat theFeat = featList.at(index);
+  return (!(theFeat.permanent) && (0 == theFeat.cost));
+}
+
+TurnOf Player::ActivateFeat(const int index){
+  Feat& theFeat = featList.at(index);
+  if(theFeat.permanent){
+    std::cerr << "Warning! Cannot activate permanent feats like \"";
+    std::cerr << std::string(theFeat.name) << "\"\n";
+    std::cerr << "(The index of this feat in the player\'s feat list is ";
+    std::cerr << index << ", if that helps)\n\n";
+  }
+  else{
+    power -= theFeat.cost;
+    theFeat.active = true;
+    if(theFeat.featID == FeatID::gulper){
+      if(TurnOf::player == Quaff()){
+        power += theFeat.cost;//If Quaff returns TurnOf::player then quaffing
+                              //failed. We're nice and so we give a refund
+      }
+      theFeat.active = false;
+    }
+  }
+  return TurnOf::player;
+}
+
+void Player::ToggleFeat(const int index){
+  Feat& theFeat = featList.at(index);
+  if(!FeatIsToggleable(index)){
+    std::cerr << "Warning! The feat \"" << std::string(theFeat.name) << "\" ";
+    std::cerr << "is not toggleable\n\n";
+  }
+  else{
+    theFeat.active = !theFeat.active;
+  }
+}
+
+bool Player::HasFeatActive(const FeatID theFeat) const {
+  for (size_t i = 0; i < featList.size(); i++) {
+    if(featList.at(i).featID == theFeat && featList.at(i).active){
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool Player::HasFeatActive(const FeatID theFeat, const BearID theBear) const {
+  for(size_t i = 0; i < featList.size(); i++){
+    if( featList.at(i).featID == theFeat &&
+        featList.at(i).targetBearID == theBear &&
+        featList.at(i).active)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
@@ -265,19 +382,41 @@ void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
 }
 
 int Player::GetLegAttackBonus() const {
-  return GetAbil(int(Abil::STR)) - 10;
+  int attackBonus = GetAbil(int(Abil::STR)) - 10;
+  if(HasFeatActive(FeatID::power_attack)){
+    attackBonus -= 5;
+  }
+  if(HasFeatActive(FeatID::whirlwind_attack)){
+    attackBonus -= 10;
+  }
+  return attackBonus;
 }
 
 int Player::GetLegDamageBonus() const {
-  return (GetAbil(int(Abil::STR)) - 10)/2;
+  int damageBonus = (GetAbil(int(Abil::STR)) - 10)/2;
+  if(HasFeatActive(FeatID::power_attack)){
+    damageBonus += 5;
+  }
+  return damageBonus;
 }
 
 int Player::GetEyeAttackBonus() const {
-  return GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
+  int attackBonus = GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
+  if(HasFeatActive(FeatID::power_attack)){
+    attackBonus -= 5;
+  }
+  if(HasFeatActive(FeatID::whirlwind_attack)){
+    attackBonus -= 10;
+  }
+  return attackBonus;
 }
 
 int Player::GetEyeDamageBonus() const {
-  return 2*(GetAbil(int(Abil::STR)) - 10) + 5;
+  int damageBonus = 2*(GetAbil(int(Abil::STR)) - 10) + 5;
+  if(HasFeatActive(FeatID::power_attack)){
+    damageBonus += 5;
+  }
+  return damageBonus;
 }
 
 int Player::GetTouchAttackBonus() const {
@@ -285,7 +424,7 @@ int Player::GetTouchAttackBonus() const {
 }
 
 
-TurnOf Player::LegPunch(Bear& bear){
+void Player::LegPunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //keeps track of roll for handling criticals
 
@@ -293,6 +432,10 @@ TurnOf Player::LegPunch(Bear& bear){
                 || roll + GetLegAttackBonus() >= bear.GetAC(Action::leg)){
     if(roll > 60 - legCritThreat){
       dmg = Roll(2,8) + 2 * GetLegDamageBonus();
+      if(HasFeatActive(FeatID::cobra_strike)){
+        dmg = 69;
+        Toggle(FeatID::cobra_strike);
+      }
       Messages -> Update("You CRIT bear for:", dmg, true);
     }
     else{
@@ -302,17 +445,19 @@ TurnOf Player::LegPunch(Bear& bear){
     bear.Hurt(std::max(1,dmg));
   }
   else{Messages -> Update("Carp, you miss.", true);}
-
-  return TurnOf::bear;//Not the player's turn anymore
 }
 
-TurnOf Player::EyePunch(Bear& bear){
+void Player::EyePunch(Bear& bear){
   int dmg = 0; //Keeps track of the damage of this attack
-  int roll = Roll(1,60); //keeps track fo roll for handling criticals
+  int roll = Roll(1,60); //keeps track of roll for handling criticals
   if(roll == 60 ||  timeStopTime > 0
                 ||  roll + GetEyeAttackBonus() >= bear.GetAC(Action::eye)){
     if(roll > 60 - eyeCritThreat){
       dmg = Roll(4,12) + 2 * GetEyeDamageBonus();
+      if(HasFeatActive(FeatID::cobra_strike)){
+        dmg = 69;
+        Toggle(FeatID::cobra_strike);
+      }
       Messages -> Update("You CRIT bear for:", std::max(1,dmg), true);
     }
     else{
@@ -322,8 +467,6 @@ TurnOf Player::EyePunch(Bear& bear){
     bear.Hurt(std::max(1,dmg));
   }
   else{Messages -> Update("Carp, you miss.", true);}
-
-  return TurnOf::bear;//Not the player's turn anymore
 }
 
 TurnOf Player::Quaff(){
@@ -344,12 +487,50 @@ TurnOf Player::Quaff(){
 }
 
 TurnOf Player::Flee(Bear& bear){
-  if(IsHasted() ||
-    (Roll(1,60) + GetAbil(int(Abil::DEX)) >= 30 + bear.GetAbil(int(Abil::DEX))))
-  {//FIXME: The odds of successfully fleeing need to be fine-tuned
+  int fleeAttempt = Roll(1,60) + GetAbil(int(Abil::DEX));
+  if(HasFeatActive(FeatID::escape_artist)){
+    fleeAttempt += 10;
+  }
+  //FIXME: The odds of successfully fleeing need to be fine-tuned
+  if(IsHasted() || fleeAttempt >= 30 + bear.GetAbil(int(Abil::DEX))){
     Messages -> Update("You escape bear", true);
     return TurnOf::neither;
   }
   Messages -> Update("Bear still behind you", true);
   return TurnOf::bear;
+}
+
+void Player::Toggle(const FeatID theFeat){
+  size_t index = featList.size();
+  for (size_t i = 0; i < featList.size(); i++) {
+    if(featList.at(i).featID == theFeat){
+      index = i;
+    }
+  }
+  if(index == featList.size()){
+    std::cerr << "Warning! Illegal attempt to toggle the feat \"";
+    std::cerr << std::string(Feat(theFeat).name) << "\"\n\n";
+  }
+  else{
+    featList.at(index).active = !(featList.at(index).active);
+  }
+
+}
+
+void Player::Toggle(const FeatID theFeat, const BearID theBear){
+  size_t index = featList.size();
+  for (size_t i = 0; i < featList.size(); i++) {
+    if( featList.at(i).featID == theFeat &&
+        featList.at(i).targetBearID == theBear )
+    {
+      index = i;
+    }
+  }
+  if(index == featList.size()){
+    std::cerr << "Warning! Illegal attempt to toggle the feat \"";
+    std::cerr << std::string(Feat(theFeat, theBear).name) << "\"\n\n";
+  }
+  else{
+    featList.at(index).active = !(featList.at(index).active);
+  }
 }

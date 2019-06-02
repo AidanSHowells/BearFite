@@ -10,7 +10,7 @@
 //ApplyModifier in Modifier.cpp
 
 void Bear::SetMessageBox(MessageBox& theMessages){
-  Messages = &theMessages;
+  messageBox = &theMessages;
 }
 
 int Bear::GetAC(const Action attackType) const {
@@ -109,18 +109,18 @@ void Bear::TakeTurn(Player& target){
       if(IsEating()){
         eatingTime = std::max(0, eatingTime - 1);
         if(IsEating()){
-          Messages -> Update(sf::String("Bear is munching"));
+          printMessage(sf::String("Bear is munching"));
         }
         else{
-          Messages -> Update(sf::String("BRUP! Fish over"));
+          printMessage(sf::String("BRUP! Fish over"));
         }
       }
       else if(target.IsSafe()){
         if(IsAngry() || (GetAbil(int(Abil::WIS)) < 10)){
-          Messages -> Update(sf::String("GRRRAAAAAH!"),sf::String("BOING!"));
+          printMessage(sf::String("GRRRAAAAAH!"),sf::String("BOING!"));
         }
         else{
-          Messages -> Update(sf::String("Bear is watching..."));
+          printMessage(sf::String("Bear is watching..."));
         }
       }
       else{//Not eating and target isn't safe
@@ -152,11 +152,11 @@ bool Bear::IsDead(){
     if(ModifierID::life_saving == modifier && !modifierNameVisible){
       health = std::max(1,GetAbil(int(Abil::CON)));
       modifierNameVisible = true;
-      Messages -> Update("Bear won\'t die");
+      printMessage("Bear won\'t die");
     }
     else if(ModifierID::life_saving == modifier && Roll(1,3) != 1){
       health = std::max(1,GetAbil(int(Abil::CON)));
-      Messages -> Update("Bear won\'t die");
+      printMessage("Bear won\'t die");
     }
     else{
       return true;
@@ -190,6 +190,40 @@ void Bear::SetHealth(){
   health = body.UpdateHealth(body.baseHealth, level, abil[int(Abil::CON)]);
 }
 
+void Bear::printMessage(const sf::String& message1,
+                        const sf::String& message2) const
+{
+  if(nullptr == messageBox){
+    std::cerr << "Warning! A " << std::string(GetName()) << "bear was just ";
+    std::cerr << "told to print the message \"" << std::string(message1);
+    if(std::string(message2) != sf::String("")){
+      std::cerr << " " << std::string(message2);
+    }
+    std::cerr << "\", but its messageBox has never been set ";
+    std::cerr << "(or was somehow unset).\n\n";
+  }
+  else{
+    if(sf::String("") == message2){
+      messageBox -> Update(message1);
+    }
+    else{
+      messageBox -> Update(message1, message2);
+    }
+  }
+}
+
+void Bear::printMessage(const sf::String& message1, const int message2) const {
+  if(nullptr == messageBox){
+    std::cerr << "Warning! A " << std::string(GetName()) << "bear was just ";
+    std::cerr << "told to print the message \"" << std::string(message1) << " ";
+    std::cerr << message2 << "\", but its messageBox has never ";
+    std::cerr << "been set (or was somehow unset).\n\n";
+  }
+  else{
+    messageBox -> Update(message1, message2);
+  }
+}
+
 int Bear::GetAttackBonus() const {
   return GetAbil(int(Abil::STR)) - 10 + 2*(GetAbil(int(Abil::DEX)) - 10);
 }
@@ -202,19 +236,19 @@ void Bear::Bash(Player& thePlayer){
   int dmg = 0; //Keeps track of the damage of this attack
   int roll = Roll(1,60); //tracks bear attack roll for determining criticals
 
-  if(roll + GetAttackBonus() >= thePlayer.GetAC() || roll == 60){
+  if(roll + GetAttackBonus() >= thePlayer.GetAC(identifier) || roll == 60){
     if(roll > 60 - critThreat){
       dmg = Roll(critMult,8) + critMult * GetDamageBonus();
-      Messages -> Update("Bear CRIT you for:", std::max(1,dmg));
+      printMessage("Bear CRIT you for:", std::max(1,dmg));
     }
     else{
       dmg = Roll(1,8) + GetDamageBonus();
-      Messages -> Update("Bear bash you for:", std::max(1,dmg));
+      printMessage("Bear bash you for:", std::max(1,dmg));
     }
     thePlayer.Hurt(std::max(1,dmg));
   }
   else{
-    Messages -> Update("Bear Spare You");
+    printMessage("Bear Spare You");
   }
 }
 

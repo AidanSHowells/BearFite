@@ -11,6 +11,7 @@ class Bear;
 enum class SpellID;
 enum class SpellSchool;
 enum class TurnOf;
+enum class FeatID;
 
 enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 
@@ -21,19 +22,38 @@ struct SpellTree{
   std::array<int, 3> maxSpells = {3,0,0};
 };
 
+struct Feat{
+  //See Feat.cpp for definition of constructor
+  Feat(const FeatID feat, const BearID theBearID = BearID::NUM_BEARS);
+  FeatID featID;
+  sf::String name = sf::String("");
+  bool permanent = true;
+  bool active = false;
+  int cost = 0;
+  BearID targetBearID = BearID::NUM_BEARS;//Some feats are specific to 1 species
+};
+
 class Player{
   public:
     Player();
     void SetMessageBox(MessageBox& theMessages);
     int GetHealth();
     int GetMaxHealth();
-    int GetNumDranks();
+    int GetNumDranks() const {return numDranks;}
+    int GetLevel() const {return level;}
+    int GetBodyCount() const {return bodyCount;}
+    void IncrementBodyCount() {bodyCount++;}
+    int GetNumVirginities() const {return numVirginities;}
+    sf::String GetLastBear() const {return lastBear;}
+    void SetLastBear(const sf::String bearName){lastBear = bearName;}
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
     void BuffAbil(const int index, const int buff);
-    int GetAC() const; //Combines all AC-affecting factors
+    int GetAC(const BearID attacker) const; //Combines all AC-affecting factors
     void Hurt(int); //How the bear injures the player
     bool IsDead();
-    TurnOf TakeAction(const Action theAction, Bear& theBear);
+    TurnOf TakeAction(const Action theAction,
+                      Bear& theBear,
+                      std::vector<Bear*> enemyBears);
     TurnOf Cast(const int index, BattleHUD& environment);
     int GetSpellcastingLevel(){return spellcastingLevel;}
     int GetSpellSchoolBonus(const SpellSchool school);
@@ -46,6 +66,19 @@ class Player{
     void MakeSweetLove();
     void TimerTick();
     void PostBattleReset();
+
+    void AddFeat(const FeatID theFeat, const BearID theBear);
+    int GetNumFeats() const {return featList.size();}
+    sf::String GetFeat(const int index) const {return featList.at(index).name;}
+    bool FeatIsToggleable(const int index) const;
+    int FeatCost(const int index) const {return featList.at(index).cost;}
+    int GetPower() const {return power;}
+    int GetPowerPoolSize() const {return powerPoolSize;}
+    TurnOf ActivateFeat(const int index);
+    void ToggleFeat(const int index);
+    bool FeatIsActive(const int index) const {return featList.at(index).active;}
+    bool HasFeatActive(const FeatID theFeat) const;
+    bool HasFeatActive(const FeatID theFeat, const BearID theBear) const;
 
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -69,6 +102,8 @@ class Player{
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
+    void ClearFeats(){featList.clear();}//TEMP
+    void SetLevel(int newLevel){level = newLevel;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
@@ -76,6 +111,7 @@ class Player{
     std::array<int, int(Abil::NUM_ABIL)> baseAbil = {10,10,10,10,10,10};
     std::array<int, int(Abil::NUM_ABIL)> abilBuff = {0,0,0,0,0,0};
     std::vector<SpellTree> spellList;
+    std::vector<Feat> featList;
 
     Body body;
     int maxHealth;
@@ -83,6 +119,7 @@ class Player{
 
     int numDranks = 5;
     int level = 0;
+    int bodyCount = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based
     int baseAC = 30; //This will be level-based
@@ -90,6 +127,8 @@ class Player{
     int legCritThreat = 1;
     int eyeCritThreat = 3;
     int spellcastingLevel = 0;
+    int power = 4;
+    int powerPoolSize = 4;
 
     int hastedTime = 0;
     int slowedTime = 0;
@@ -105,10 +144,15 @@ class Player{
     int GetEyeAttackBonus() const;
     int GetEyeDamageBonus() const;
     int GetTouchAttackBonus() const;
-    TurnOf LegPunch(Bear& bear);
-    TurnOf EyePunch(Bear& bear);
+    void LegPunch(Bear& bear);
+    void EyePunch(Bear& bear);
     TurnOf Quaff();
     TurnOf Flee(Bear& bear);
+
+    void Toggle(const FeatID theFeat);
+    void Toggle(const FeatID theFeat, const BearID theBear);
+
+    sf::String lastBear = sf::String("None ");
 };
 
 #endif

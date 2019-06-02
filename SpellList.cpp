@@ -159,7 +159,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Inferno");
     school = SpellSchool::INT;
     successText = sf::String("Bear is cooked");
-    affectsAllBears = true;
+    affectsAllEnemyBears = true;
 
     //Set saves
     allowsSave = true;
@@ -173,7 +173,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Blizzard");
     school = SpellSchool::INT;
     successText = sf::String("Bear is freeze");
-    affectsAllBears = true;
+    affectsAllEnemyBears = true;
 
     //Set saves
     allowsSave = true;
@@ -187,7 +187,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     name = sf::String("Storm");
     school = SpellSchool::INT;
     successText = sf::String("*BZZZZZZZZZZ*");
-    affectsAllBears = true;
+    affectsAllEnemyBears = true;
 
     //Set saves
     allowsSave = true;
@@ -208,7 +208,7 @@ Spell::Spell(const SpellID spellID){//Defaults to SpellID::none
     school = SpellSchool::INT;
     alwaysText = sf::String("You are LOUD");
     successText = sf::String("Bear is crying");
-    affectsAllBears = true;
+    affectsAllEnemyBears = true;
 
     //Set saves
     allowsSave = true;

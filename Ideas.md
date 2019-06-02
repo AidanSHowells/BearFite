@@ -9,7 +9,7 @@ Thoughts on player spellcasting:
 * Any given PC won't get access to all spells
 
 ### Already Implemented
-* Vampirism (STR & CHA) (As implemented, this doesn't acutally use STR) 
+* Vampirism (STR & CHA) (As implemented, this doesn't acutally use STR)
 * Elements (INT)
 * Transformation (INT)
 * Life (CHA)
@@ -27,7 +27,7 @@ Thoughts on player spellcasting:
   * Works similarly to D&D
   * ?Can only be cast outside of battle?
   * Player can only have one in effect at a time
-  
+
 ### Metamagic II (INT) (Requires the player to have Metamagic I)
 * Instant Spell
   * Casting this spell does not use the player's turn.
@@ -37,7 +37,7 @@ Thoughts on player spellcasting:
   * The turn after casting this spell, the player can cast any spell they know for free
 * Unleash Magic
   * Does not use the player's turn
-  * Functions as if casting Broaden, Maximize spell, and Free spell simultanuously 
+  * Functions as if casting Broaden, Maximize spell, and Free spell simultanuously
   * ?Cannot be cast via "Instant Spell"?
 
 ### Conjuration (INT & CON)
@@ -70,7 +70,7 @@ Thoughts on player spellcasting:
 * Spell Ward
   * Provides protection from spells and spell-like abilities
 * Aegis
-  
+
 ## Feats
 Possible feats that the player can take
 
@@ -86,7 +86,7 @@ Possible feats that the player can take
   * The second time you take such a feat, more options are added to the toggle, which is moved into the slot below the feat (so that the feat now counts double towards the cap).
   * When taking the third level (when applicable), an extra option is added to the second line (so the feat still only counts double, not triple)
 * There should be an option outside of battle to set the defaults for toggleable feats
-* During player construction, can pick: 
+* During player construction, can pick:
   * One permanent feat (from a partial list of permanent feats?)
   * One feat or spelltree (no restrictions)
 * The player will regularly be given the option to get either new spells or new feats
@@ -98,8 +98,8 @@ Possible feats that the player can take
 * Player should occasionally be given the option to switch out old spells/feats for new spells/feats. (In theory this could make "Hidden power" broken, but in practice if getting a spellcasting-oriented  character to the point where they have 9 feats with only one spell is easy enough for it to be a sensible strategy, then we have bigger issues)
 
 ### Permanent Feats:
-* Studied dodge (INT > 12): Pick one species of bear to have (medium) AC bonus against. Can take this feat multiple times (new bear each time; INT requirement increases).
-* Prepared Escape: Improved odds of fleeing battle
+* Studied Dodge (INT > 12): Pick one species of bear to have (medium) AC bonus against. Can take this feat multiple times (new bear each time; INT requirement increases). [**ADDED**]
+* Escape Artist: Improved odds of fleeing battle [**ADDED**]
 * Eau de poisson: Medium improvement to odds of bear being love, small decrease in chance of Djinn bear
 * Honey scent: Small decrease in odds of bear being love, medium improvement to chance of Djinn bear
 * Deepen Pool: Increase power pool max size
@@ -111,21 +111,21 @@ Possible feats that the player can take
 * Zen master: All rolls from here on out are "consistent"
 
 ### Toggleable Feats:
-* Power Attack (STR > 8 + 3 / lvl): Same as D&D. Multiple levels?
-* Whirlwind Attack (DEX > 14): Regular attack targets all bears with accuracy penalty
+* Power Attack (STR > 8 + 3 / lvl): Same as D&D. Multiple levels? [**ADDED**]
+* Whirlwind Attack (DEX > 14): Regular attack targets all bears with accuracy penalty [**ADDED**]
 * Focused dodge (WIS > 11): Pick one specific bear on battlefield to have (small) AC bonus against. (Can change bear every turn)
 * Smoke Screen: Everyone on the battlefield gets an AC bonus. Multiple levels?
 * Close combat: Everyone on the battlefield gets an AC penalty. Multiple levels?
 * Training wheels: Only can be turned on during the first turn of battle. Reduces player damage, but increases experience
 
 ### Power Pool Feats:
+* Gulper: Quaffs drank without using turn [**ADDED**]
+* Cobra Strike: Next crit is for double (triple? 420?) damage. Doesn't persist between battles. [**ADDED** with damage set to 69]
 * Double Attack (STR + DEX): Two (physical) attacks in one turn
 * Multi Attack (STR + DEX + double attack): Three (physical) attacks in one turn (costs more than double attack?)
 * Hidden power (CON > 17, or CON > 11 and will now have enough feats to rule out getting more than one spell tree): +1 to current number of each spell (costs extra if player has more than one spelltree?)
 * Uncanny dodge: Medium AC bonus for some number of turns
 * All-Out Attack: Next attack guaranteed nat 60
-* Gulper: Quaffs drank without using turn
-* Cobra strike: Next crit is for double (triple? 420?) damage. Doesn't persist between battles
 * Lucky: Player d60 rolls are with advantage for the rest of the battle (roll two dice, take the larger.)
 
 

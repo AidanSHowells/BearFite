@@ -15,11 +15,11 @@ TurnOf Spell::Cast(Player& player, BattleHUD& battleHUD){
   int index = -1;
 
   do{
-    if(affectsAllBears){
+    if(affectsAllEnemyBears){
       index++;
       targetBear = bearVector.at(index);
     }
-    bool displayLine = (!affectsAllBears) || (0 == index);
+    bool displayLine = (!affectsAllEnemyBears) || (0 == index);
 
     saveMade = false;
     if(allowsSave){
@@ -37,7 +37,7 @@ TurnOf Spell::Cast(Player& player, BattleHUD& battleHUD){
     if(!saveMade){
       battleHUD.messages.Update(successText, displayLine);
     }
-  } while(affectsAllBears && index < battleHUD.GetNumBears() - 1);
+  } while(affectsAllEnemyBears && index < battleHUD.GetNumEnemyBears() - 1);
 
   if(alwaysText != sf::String("")){
     battleHUD.messages.Update(alwaysText);
