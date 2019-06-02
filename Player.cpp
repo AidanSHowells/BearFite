@@ -288,6 +288,18 @@ void Player::PostBattleReset(){
 
 void Player::AddFeat(const FeatID theFeat, const BearID theBear){
   Feat newFeat(theFeat, theBear);
+  for(std::size_t i = 0; i < featList.size(); i++){
+    //The Feat constructor ignores theBear if the feat doesn't care about it.
+    //So in that case we can have newFeat.targetBearID != theBear.
+    if( theFeat == featList.at(i).featID &&
+        newFeat.targetBearID == featList.at(i).targetBearID )
+    {
+      std::cerr << "Warning! Failed to add feat \"";
+      std::cerr << std::string(newFeat.name) << "\"\n";
+      std::cerr << "The player already has that feat\n\n";
+      return;
+    }
+  }
   if(newFeat.cost > 0){
     bool done = false;
     for(std::size_t i = 0; !done && i < featList.size(); i++){

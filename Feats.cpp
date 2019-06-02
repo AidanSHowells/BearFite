@@ -4,7 +4,6 @@
 
 Feat::Feat(const FeatID feat, const BearID theBearID){
   featID = feat;
-  targetBearID = theBearID;//Default is NUM_BEARS
   if(feat == FeatID::studied_dodge){
     active = true;
     permanent = true;
@@ -15,6 +14,7 @@ Feat::Feat(const FeatID feat, const BearID theBearID){
       name = "Studied Dodge";
     }
     else{
+      targetBearID = theBearID;
       name = "Dodge " + Bear(theBearID).GetName();
     }
   }
