@@ -18,13 +18,6 @@ Player::Player(){
                                 numVirginities);
 
   health = maxHealth;
-  featList.push_back(Feat(FeatID::studied_dodge, BearID::Polar));
-  featList.push_back(FeatID::escape_artist);
-  featList.push_back(FeatID::power_attack);
-
-  featList.push_back(FeatID::whirlwind_attack);
-  featList.push_back(FeatID::gulper);
-  featList.push_back(FeatID::cobra_strike);
 }
 
 void Player::SetMessageBox(MessageBox& theMessages){Messages = &theMessages;}
@@ -290,6 +283,37 @@ void Player::PostBattleReset(){
   power = powerPoolSize;//TEMP
   if(HasFeatActive(FeatID::cobra_strike)){
     Toggle(FeatID::cobra_strike);
+  }
+}
+
+void Player::AddFeat(const FeatID theFeat, const BearID theBear){
+  Feat newFeat(theFeat, theBear);
+  if(newFeat.cost > 0){
+    bool done = false;
+    for(std::size_t i = 0; !done && i < featList.size(); i++){
+      if(featList.at(i).cost == 0){
+        featList.insert(featList.begin() + i, newFeat);
+        done = true;
+      }
+    }
+    if(!done){
+      featList.push_back(newFeat);
+    }
+  }
+  else if(newFeat.permanent){
+    bool done = false;
+    for(std::size_t i = 0; !done && i < featList.size(); i++){
+      if(featList.at(i).cost == 0 && !(featList.at(i).permanent)){
+        featList.insert(featList.begin() + i, newFeat);
+        done = true;
+      }
+    }
+    if(!done){
+      featList.push_back(newFeat);
+    }
+  }
+  else{
+    featList.push_back(newFeat);
   }
 }
 

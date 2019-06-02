@@ -8,6 +8,7 @@
 #include "BearBattle.h"
 #include "Player.h"
 #include "Spell.h"
+#include "Feats.h"
 
 void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages);
 void UpdatePlayerAbilities(Player& player, MessageBox& messages);
@@ -242,6 +243,8 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
 void ResetPlayerSpells(Player& player, MessageBox& messages){
   int tempInt;
   int spellInt;
+  int featInt;
+  int bearInt;
   std::array<int,3> newNumSpells;
 
   //Open the input file
@@ -285,13 +288,39 @@ void ResetPlayerSpells(Player& player, MessageBox& messages){
   }
 
   //Reading only stops without failing in case of an invalid SpellID
-  if(!fin.fail()){
+  if(!fin.fail() && spellInt != 420){
     messages.Update(sf::String("SpellID must be"), sf::String("between 1 and "
                       + std::to_string(int(SpellID::NUM_SPELLS)-1)), true);
+
+    fin.close();
+    return;
   }
-  else{
-    //Spells were updated in both cases, but we don't want to bombard the user
-    messages.Update(sf::String("Spells Updated"));
+
+  messages.Update(sf::String("Spells Updated"));
+
+  player.ClearFeats();
+
+  fin >> featInt;
+  while(!fin.fail() && featInt >= 0 && featInt < int(FeatID::NUM_FEATS)){
+    fin >> bearInt;
+    if(fin.fail()){
+      messages.Update(sf::String("Invalid file format."));
+      return;
+    }
+    else if(bearInt < 0 || bearInt > int(BearID::NUM_BEARS)){
+      messages.Update(sf::String("BearID must be"), sf::String("between 0 and "
+                        + std::to_string(int(BearID::NUM_BEARS))), true);
+      return;
+    }
+    else{
+      player.AddFeat(FeatID(featInt),BearID(bearInt));
+    }
+    fin >> featInt;
+  }
+
+  if(!fin.fail()){
+    messages.Update(sf::String("FeatID must be"), sf::String("between 0 and "
+                      + std::to_string(int(FeatID::NUM_FEATS)-1)), true);
   }
 
   fin.close();

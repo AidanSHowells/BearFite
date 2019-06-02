@@ -67,6 +67,7 @@ class Player{
     void TimerTick();
     void PostBattleReset();
 
+    void AddFeat(const FeatID theFeat, const BearID theBear);
     int GetNumFeats() const {return featList.size();}
     sf::String GetFeat(const int index) const {return featList.at(index).name;}
     bool FeatIsToggleable(const int index) const;
@@ -101,6 +102,7 @@ class Player{
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
+    void ClearFeats(){featList.clear();}//TEMP
     void SetLevel(int newLevel){level = newLevel;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP

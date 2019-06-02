@@ -11,7 +11,11 @@
 10
 10
 
-1 5 5 5
+3 5 5 5
+
+420
+
+0 0
 
 This file's purpose is to hold information that you want to give the program. The program won't automatically check this file for changes; you have to tell it to check by pressing the corresponding keys when prompted before each fight. This file is structured as follows:
 
@@ -26,5 +30,9 @@ This file's purpose is to hold information that you want to give the program. Th
 *The next six integers are the ability scores you want to have.
 
 *After this, there can be zero to seven sets of four integers each. The first integer in each group corresponds to a SpellID in the same way that the first two integers in this file correspond to bears and modifiers (except that SpellID::NUM_SPELLS is invalid instead of giving you a random spell). The spell tree containing the chosen SpellID is added to the player's arsenal, where the next three integers in the group correspond to the number of castings you want to have of each spell in the tree. (For the definition of SpellID, see Spell.h.)
+
+*After the spells have been listed comes the standard sentinel value of 420.
+
+*Lastly, put pairs of integers to get the feats you want. The first integer in each pair corresponds to the FeatID; as with spells, FeatID::NUM_FEATS is invalid. The second corrisponds to a BearID. If the feat you want doesn't need a specific bear, it shouldn't matter what you put for the BearID as long as it's a valid BearID (between 0 and BearID::NUM_BEARS).
 
 Note that the program only reads in stuff until it sees something other than a number, so comments can be freely appended to the end of this file as long as the very first comment doesn't start with a number.
