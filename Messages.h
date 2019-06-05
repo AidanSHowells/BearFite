@@ -10,8 +10,6 @@
  *displayed (more details at bottom).
  */
 
-class Bear;
-
 //Note that if the message box has a width of 200, one can fit 22 characters
 class MessageBox : public sf::Drawable{
   public:
@@ -20,11 +18,13 @@ class MessageBox : public sf::Drawable{
                sf::String theTitle,
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 460) );
+    enum class Style{normal,alignLastLineRight};
     void Update(const sf::String& inputString,
                 bool makeLine = false);//Details of Update below
     void Update(const sf::String& inputString1,
                 const sf::String& inputString2,
-                bool makeLine = false);
+                bool makeLine = false,
+                const Style style = Style::normal);
     void Update(const sf::String& inputString1,
                 const sf::String& inputString2,
                 const sf::String& inputString3);
@@ -46,9 +46,6 @@ class MessageBox : public sf::Drawable{
     void Update(const sf::String& inputString,
                 int inputInt,
                 bool makeLine = false);
-    void Update(const sf::String& inputString, const Bear& inputBear);
-    //void Update(sf::String inputString, Bear inputBear, Status inputStatus);
-
   private:
     const sf::Vector2f position;
     const sf::Vector2f size;
@@ -69,8 +66,13 @@ class MessageBox : public sf::Drawable{
  *make that sf::String the first thing displayed in the message box. Given extra
  *arguments, it adds those to the dispay as well, each argument below the
  *arguments listed before it. If a later argument is a sf::String, it gets a
- *space prepended. If it is an int, it is right aligned, and if it is a object
- *of class Bear, the bear's name is displayed (right aligned).
+ *space prepended. The second argument can also be an int, in which case it is
+ *right aligned. Right aligning the second argument (of two) can also be achived
+ *by passing Style::alignLastLineRight as the Style argument. Setting the
+ *boolean argument to true adds a black line after the last string. (I agree,
+ *ideally the Style parameter would handle the black line thing. Changing this
+ *everywhere the function is called seems like more trouble than it's worth to
+ *me, but you're welcome to do it if you'd like.)
  */
 
 #endif

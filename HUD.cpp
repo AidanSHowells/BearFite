@@ -4,7 +4,6 @@
 #include "Player.h"
 #include "Bear.h"
 #include "BearBattle.h"
-#include "Feats.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to
@@ -92,10 +91,16 @@ void MessageBox::Update(const sf::String& inputString, bool makeLine){
 
 void MessageBox::Update(const sf::String& inputString1,
                         const sf::String& inputString2,
-                        bool makeLine)
+                        bool makeLine,
+                        const Style style)
 {
   //Note: makeLine defaults to false
-  SetTopString(sf::String(" ") + inputString2, makeLine);
+  if(style == Style::alignLastLineRight){
+    SetTopString(AddSpacing(inputString2, 22), makeLine);
+  }
+  else{
+    SetTopString(sf::String(" ") + inputString2, makeLine);
+  }
   Update(inputString1);
 }
 
@@ -146,11 +151,6 @@ void MessageBox::Update(const sf::String& inputString,
   Update(inputString);
 }
 
-void MessageBox::Update(const sf::String& inputString, const Bear& inputBear){
-  sf::String outputString = inputBear.GetName() + "bear";
-  SetTopString( AddSpacing(outputString, 22) );
-  Update(inputString);
-}
 
 void MessageBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   target.draw(background, states);

@@ -3,11 +3,14 @@
 
 #include <array>
 #include <vector>
-#include "HUD.h"
+#include <SFML/System/String.hpp>
 #include "Abilities.h"
 #include "Body.h"
+#include "Feats.h"
 
 class Bear;
+class BattleHUD;
+enum class BearID;
 enum class SpellID;
 enum class SpellSchool;
 enum class TurnOf;
@@ -20,17 +23,6 @@ struct SpellTree{
   std::array<SpellID, 3> spellIDList;
   std::array<int, 3> numSpells = {3,0,0};
   std::array<int, 3> maxSpells = {3,0,0};
-};
-
-struct Feat{
-  //See Feat.cpp for definition of constructor
-  Feat(const FeatID feat, const BearID theBearID = BearID::NUM_BEARS);
-  FeatID featID;
-  sf::String name = sf::String("");
-  bool permanent = true;
-  bool active = false;
-  int cost = 0;
-  BearID targetBearID = BearID::NUM_BEARS;//Some feats are specific to 1 species
 };
 
 class Player{

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Feats.h"
 #include "Player.h"
+#include "Bear.h" //For Bear::GetName()
 
 Feat::Feat(const FeatID feat, const BearID theBearID){
   featID = feat;

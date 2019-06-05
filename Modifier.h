@@ -2,7 +2,6 @@
 #define MODIFIER_H
 
 #include <SFML/System/String.hpp>
-#include "Abilities.h"
 
 //List of all possible modifiers (plus NUM_MODIFIERS, which is always last):
 enum class ModifierID{none, beefy, exact, sturdy, genious, socrates, handsome,

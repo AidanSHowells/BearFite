@@ -99,7 +99,10 @@ int main(){
           Bear lastBear = *(battleHUD.GetBearPtr());
           messages.Update("Your Final Health:", player.GetHealth(), true);
           messages.Update("Bear's Final Health:", lastBear.GetHealth());
-          messages.Update("Last Bear Living Was:", lastBear);
+
+          sf::String name = lastBear.GetName() + sf::String("bear");
+          MessageBox::Style bearStyle = MessageBox::Style::alignLastLineRight;
+          messages.Update("Last Bear Living Was:", name, false, bearStyle);
 
           messages.Update("A/S/G:Get Abilities,",
                           "Bear, or Spells.",
@@ -185,7 +188,9 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
     messages.Update(sf::String("New Special Bear"), sf::String("is Random"));
   }
   else{
-    messages.Update(sf::String("New Special Bear is"), Bear(bearID));
+    sf::String name = Bear(bearID).GetName() + sf::String("bear");
+    MessageBox::Style bearStyle = MessageBox::Style::alignLastLineRight;
+    messages.Update(sf::String("New Special Bear is:"), name, false, bearStyle);
   }
 }
 

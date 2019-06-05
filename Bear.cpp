@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"
-#include "HUD.h"
 #include "Spell.h"
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr

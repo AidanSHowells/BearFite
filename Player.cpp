@@ -2,8 +2,8 @@
 #include "Bear.h"
 #include "RollDice.h"
 #include "Spell.h"
-#include "Feats.h"
 #include "BearBattle.h"
+#include "HUD.h"
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr
 
