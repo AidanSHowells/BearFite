@@ -3,12 +3,12 @@
 
 #include <array>//For std::array
 #include <vector>//For std::vector
-#include "Messages.h"
 #include "Modifier.h"
 #include "Abilities.h"
 #include "Body.h"
 
 class Player;
+class MessageBox;
 
 //List of all bears that can appear (plus NUM_BEARS, which MUST be last):
 enum class BearID{Babby, Black, Brown, Polar, NUM_BEARS};

@@ -10,6 +10,7 @@
 
 class Bear;
 class BattleHUD;
+class MessageBox;
 enum class BearID;
 enum class SpellID;
 enum class SpellSchool;
