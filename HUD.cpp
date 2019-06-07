@@ -1,6 +1,7 @@
 #include "HUD.h"
 #include <string>//For std::to_string
 #include <iostream>//For std::cerr
+#include "Color.h"
 #include "Player.h"
 #include "Bear.h"
 #include "BearBattle.h"
@@ -16,9 +17,6 @@
  *sf::Font instance for creating a text)."
  */
 
-//Color definitions. I use upper case to be consistant with SFML
-sf::Color Gray = sf::Color(192,192,192);
-sf::Color PowerPoolColor = sf::Color(235,0,0);
 
 //Helper Functions:
 sf::String AddSpacing(const sf::String& inputString,
@@ -58,13 +56,13 @@ MessageBox::MessageBox(
 {
   //Make the background rectangle
   background.setSize(size);
-  background.setFillColor(Gray);
+  background.setFillColor(Color::HUDBackground);
 
   //Make the title
   line[0].setFont(titleFont);
   line[0].setString(theTitle);
   line[0].setCharacterSize(20);//in pixels, not points
-  line[0].setFillColor(sf::Color::Black);
+  line[0].setFillColor(Color::DefaultText);
   line[0].setPosition(position.x,position.y);
 
   //Initialize the rest of the lines
@@ -72,7 +70,7 @@ MessageBox::MessageBox(
     line[i].setFont(mainFont);
     line[i].setString("");
     line[i].setCharacterSize(15);
-    line[i].setFillColor(sf::Color::Black);
+    line[i].setFillColor(Color::DefaultText);
     line[i].setPosition(position.x, position.y + float(20 * i));
   }
   for(int i = 0; i < numDivLines; i++){
@@ -206,7 +204,7 @@ OptionsBox::OptionsBox(
 
   //Make the background rectangle
   background.setSize(size);
-  background.setFillColor(Gray);
+  background.setFillColor(Color::HUDBackground);
   background.setPosition(position.x, position.y);
 
   //Make the divider line
@@ -217,7 +215,7 @@ OptionsBox::OptionsBox(
   //Make the options
   for(int i = 0; i < numOptions; i++){
     optionsText[i].setCharacterSize(25);
-    optionsText[i].setFillColor(sf::Color::Black);
+    optionsText[i].setFillColor(Color::DefaultText);
     optionsText[i].setString(optionString.at(i));
 
     //Headings get titleFont, everything else gets mainFont
@@ -324,7 +322,7 @@ shouldAppear(theBear.CanBeFought())
   for(int i = 0; i < numBearInfo; i += 2){
     bearInfo[i].setFont(titleFont);
     bearInfo[i].setCharacterSize(20);
-    bearInfo[i].setFillColor(sf::Color::Black);
+    bearInfo[i].setFillColor(Color::DefaultText);
   }
   bearInfo[0].setString("Species:");
   bearInfo[0].setPosition(position.x, position.y);
@@ -337,7 +335,7 @@ shouldAppear(theBear.CanBeFought())
   for(int i = 1; i < numBearInfo; i += 2){
     bearInfo[i].setFont(mainFont);
     bearInfo[i].setCharacterSize(20);
-    bearInfo[i].setFillColor(sf::Color::Black);
+    bearInfo[i].setFillColor(Color::DefaultText);
     bearInfo[i].setPosition(bearInfo[i-1].getPosition().x,
                             position.y - float(3 - 23 * int(hasTitleBar)) );
   }
@@ -355,7 +353,7 @@ shouldAppear(theBear.CanBeFought())
   };
 
   for(int i = 0; i < numBackground; i++){
-    background[i].setFillColor(Gray);
+    background[i].setFillColor(Color::HUDBackground);
     background[i].setSize(sf::Vector2f(xPosition[i],size.y));
   }
 }
@@ -415,18 +413,18 @@ size(theSize)
 {
   //Make the background rectangles
   background.setSize(size);
-  background.setFillColor(Gray);
+  background.setFillColor(Color::HUDBackground);
   background.setPosition(position.x, position.y);
 
   moreBackground.setSize(sf::Vector2f(size.x, 600 + 1 - size.y));
-  moreBackground.setFillColor(Gray);
+  moreBackground.setFillColor(Color::HUDBackground);
   moreBackground.setPosition(position.x, size.y + 1);
 
   //Make the header
   header.setFont(titleFont);
   header.setString("   YOUR STATUS");
   header.setCharacterSize(20);
-  header.setFillColor(sf::Color::Black);
+  header.setFillColor(Color::DefaultText);
   header.setPosition(position.x, position.y - 5);
 
   //Make the health and drank info
@@ -458,14 +456,14 @@ size(theSize)
   health[15].setFont(mainFont);
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
-    health[i].setFillColor(sf::Color::Black);
+    health[i].setFillColor(Color::DefaultText);
     health[i].setPosition(position.x, position.y + float(15 + 20 * (i/2)));
   }
 
   //Make the ability score header
   ability[0].setFont(titleFont);
   ability[0].setCharacterSize(15);
-  ability[0].setFillColor(sf::Color::Black);
+  ability[0].setFillColor(Color::DefaultText);
   ability[0].setString("Ablilities:");//Calc. version reference: Do not "fix"
   baseAbilityHeight[0] = position.y + 55;
   ability[0].setPosition(position.x, baseAbilityHeight[0]);
@@ -474,14 +472,14 @@ size(theSize)
   for(int i = 1; i < numAbility; i += 2){
     ability[i].setFont(mainFont);
     ability[i].setCharacterSize(15);
-    ability[i].setFillColor(sf::Color::Black);
+    ability[i].setFillColor(Color::DefaultText);
     baseAbilityHeight[i] = position.y + float(62 + (i % 6) * 10);
     ability[i].setPosition(position.x + float(100 * ( i / 6) ),
                            baseAbilityHeight[i]);
 
     ability[i+1].setFont(mainFont);
     ability[i+1].setCharacterSize(15);
-    ability[i+1].setFillColor(sf::Color::Black);
+    ability[i+1].setFillColor(Color::DefaultText);
     baseAbilityHeight[i+1] = position.y + float(62 + (i % 6) * 10);
     ability[i+1].setPosition(position.x + float(100 * (i / 6) ),
                              baseAbilityHeight[i+1]);
@@ -496,7 +494,7 @@ size(theSize)
   //Make the spells header
   spell[0].setFont(titleFont);
   spell[0].setCharacterSize(15);
-  spell[0].setFillColor(sf::Color::Black);
+  spell[0].setFillColor(Color::DefaultText);
   spell[0].setString("Spells:");
   baseSpellHeight[0] = position.y + 130;
   spell[0].setPosition(position.x, baseSpellHeight[0]);
@@ -504,22 +502,22 @@ size(theSize)
   //Make the feats header
   featsHeader[0].setFont(titleFont);
   featsHeader[0].setCharacterSize(15);
-  featsHeader[0].setFillColor(sf::Color::Black);
+  featsHeader[0].setFillColor(Color::DefaultText);
   featsHeader[0].setString("Feats:");
 
   featsHeader[1].setFont(mainFont);
   featsHeader[1].setCharacterSize(15);
-  featsHeader[1].setFillColor(PowerPoolColor);
+  featsHeader[1].setFillColor(Color::PowerPool);
 
   //Make the spells/feats info
   for(int i = 1; i < maxSpells; i++){
     spell[i].setFont(mainFont);
     spell[i].setCharacterSize(15);
-    spell[i].setFillColor(sf::Color::Black);
+    spell[i].setFillColor(Color::DefaultText);
 
     spellCount[i].setFont(mainFont);
     spellCount[i].setCharacterSize(15);
-    spellCount[i].setFillColor(sf::Color::Black);
+    spellCount[i].setFillColor(Color::DefaultText);
 
     baseSpellHeight[i] = position.y + float(128 + 20 * i);
   }
@@ -534,7 +532,7 @@ size(theSize)
   //Make the feats header than shows on the second page
   feats[0].setFont(titleFont);
   feats[0].setCharacterSize(15);
-  feats[0].setFillColor(sf::Color::Black);
+  feats[0].setFillColor(Color::DefaultText);
   feats[0].setString("Extra Feats:");
   feats[0].setPosition(position.x, position.y + 250);
 
@@ -542,14 +540,14 @@ size(theSize)
   for(int i = 1; i < numExtraFeats; i++){
     feats[i].setFont(mainFont);
     feats[i].setCharacterSize(15);
-    feats[i].setFillColor(sf::Color::Black);
+    feats[i].setFillColor(Color::DefaultText);
     feats[i].setPosition(position.x, position.y + 248 + 20 * i);
   }
 
   //Make the button that changes which page you're on
   moreStats.setFont(titleFont);
   moreStats.setCharacterSize(15);
-  moreStats.setFillColor(sf::Color::Black);
+  moreStats.setFillColor(Color::DefaultText);
   moreStats.setPosition(moreBackground.getPosition());
   moreStats.move(75,-2);
   moreStats.setString("0:More");
@@ -612,7 +610,7 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
       sf::String count = std::to_string(player -> GetNumSpell(i - 1));
       sf::String max = std::to_string(player -> GetMaxNumSpell(i - 1));
       spellCount[i].setString(AddSpacing(count, 18) + sf::String("/") + max);
-      spellCount[i].setFillColor(sf::Color::Black);
+      spellCount[i].setFillColor(Color::DefaultText);
     }
   }
 
@@ -646,12 +644,12 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
     if((player -> FeatCost(featIndex)) > 0){
       sf::String cost = "-" + std::to_string(player -> FeatCost(featIndex));
       spellCount[spellIndex].setString(AddSpacing(cost, 21));
-      spellCount[spellIndex].setFillColor(PowerPoolColor);
+      spellCount[spellIndex].setFillColor(Color::PowerPool);
       if(player -> FeatIsActive(featIndex)){
-        spell[spellIndex].setFillColor(PowerPoolColor);
+        spell[spellIndex].setFillColor(Color::PowerPool);
       }
       else{
-        spell[spellIndex].setFillColor(sf::Color::Black);
+        spell[spellIndex].setFillColor(Color::DefaultText);
       }
     }
     else{

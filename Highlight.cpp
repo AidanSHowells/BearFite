@@ -1,9 +1,9 @@
 #include "Highlight.h"
-
+#include "Color.h"
 
 HighlightBox::HighlightBox(const sf::FloatRect& rectToHighlight){
   AdjustToFit(rectToHighlight);
-  box.setFillColor(sf::Color(255,255,0,153));
+  box.setFillColor(Color::Highlight);
 }
 
 void HighlightBox::AdjustToFit(const sf::FloatRect& rectToHighlight){

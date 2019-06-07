@@ -1,10 +1,9 @@
 #include "Button.h"
-
-sf::Color LightGreen = sf::Color(0,220,0);
+#include "Color.h"
 
 Button::Button(){
   indicator.setSize(sf::Vector2f(9,9));
-  indicator.setFillColor(LightGreen);
+  indicator.setFillColor(Color::ButtonIndicator);
 
   button.setSize(sf::Vector2f(13,13));
   button.setFillColor(sf::Color::Black);
