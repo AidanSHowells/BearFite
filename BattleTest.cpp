@@ -52,7 +52,7 @@ int main(){
 
   Player player;
   player.SetMessageBox(messages);
-  PlayerStats status(window,courierNewBd,courierNew,player);
+  PlayerStats status(courierNewBd,courierNew,player);
 
   BearID specialBearID;
   ModifierID specialModID;
@@ -83,9 +83,9 @@ int main(){
           std::array<Bear,4> bears;
           bears = GetBears(method,specialBearID,specialModID);
           BearID enemyBearID = bears.at(0).GetID();
-          BattleHUD battleHUD(window,courierNewBd,courierNew,player,bears);
+          BattleHUD battleHUD(courierNewBd,courierNew,player,bears);
 
-          Winner winner = BearBattle(battleHUD);
+          Winner winner = BearBattle(window, battleHUD);
           player.SetMessageBox(messages);
           player.PostBattleReset();
           if(Winner::player == winner){
@@ -134,9 +134,8 @@ int main(){
 
     window.clear();
     window.draw(messages);
-    status.Update();
+    status.Update(sf::Vector2f(sf::Mouse::getPosition(window)), false, false);
     window.draw(status);
-    status.Highlight(false, false);
     window.display();
   }//end while(window.isOpen())
 

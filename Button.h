@@ -13,7 +13,6 @@ class Button : public sf::Drawable{
     bool IsOn() const {return buttonIsOn;}
     void UpdateHighlighting(const sf::Vector2f mouseLocation);
   private:
-    sf::FloatRect hitbox;
     sf::RectangleShape button;
     sf::RectangleShape indicator;
     HighlightBox highlightBox;

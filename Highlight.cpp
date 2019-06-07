@@ -11,8 +11,12 @@ void HighlightBox::AdjustToFit(const sf::FloatRect& rectToHighlight){
   box.setPosition(rectToHighlight.left,rectToHighlight.top);
 }
 
-void HighlightBox::AppearIfContains(const sf::Vector2f mouseLocation){
+void HighlightBox::UpdateState(const sf::Vector2f mouseLocation){
   shouldAppear = box.getGlobalBounds().contains(mouseLocation);
+}
+
+bool HighlightBox::Contains(const sf::Vector2f clickLocation) const{
+  return box.getGlobalBounds().contains(clickLocation);
 }
 
 void HighlightBox::draw(sf::RenderTarget& target, sf::RenderStates states)const{

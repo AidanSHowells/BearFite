@@ -7,14 +7,13 @@
 void DrawStuff( sf::RenderWindow& window,
                 BattleHUD& theHUD,
                 const sf::Sprite& background,
-                const bool canPickFromOptions = true);
+                const bool canSelectOptions = true);
 void WaitForEnter(sf::RenderWindow& window,
                   BattleHUD& theHUD,
                   const sf::Sprite& background);
 
 
-Winner BearBattle(BattleHUD& theHUD){
-  sf::RenderWindow& window = *theHUD.GetWindowPtr();
+Winner BearBattle(sf::RenderWindow& window, BattleHUD& theHUD){
   Player& player = *(theHUD.GetPlayerPtr());
   Winner theWinner = Winner::neither;
 
@@ -85,9 +84,9 @@ Winner BearBattle(BattleHUD& theHUD){
 void DrawStuff( sf::RenderWindow& window,
                 BattleHUD& theHUD,
                 const sf::Sprite& background,
-                const bool canPickFromOptions)//Default is true
+                const bool canSelectOptions)//Default is true
 {
-  theHUD.Update(canPickFromOptions);
+  theHUD.Update(sf::Vector2f(sf::Mouse::getPosition(window)), canSelectOptions);
 
   window.clear();
   window.draw(background);
@@ -104,6 +103,7 @@ void WaitForEnter(sf::RenderWindow& window,
     sf::Event event;
     while(window.pollEvent(event)){
       theHUD.playerStats.ToggleMenu(event);
+      theHUD.playerStats.ToggleFeats(event);
       if (event.type == sf::Event::Closed){
         window.close();
       }

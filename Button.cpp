@@ -11,11 +11,10 @@ Button::Button(){
 }
 
 void Button::SetText(const sf::Text& words){
-  sf::FloatRect wordBox = words.getGlobalBounds();
-  button.setPosition(wordBox.left + wordBox.width, wordBox.top);
-  indicator.setPosition(wordBox.left + wordBox.width + 2, wordBox.top + 2);
+  sf::FloatRect hitbox = words.getGlobalBounds();
+  button.setPosition(hitbox.left + hitbox.width, hitbox.top);
+  indicator.setPosition(hitbox.left + hitbox.width + 2, hitbox.top + 2);
 
-  hitbox = wordBox;
   sf::FloatRect box = button.getGlobalBounds();
   hitbox.width = box.left + box.width - hitbox.left +2;
   hitbox.height = std::max(hitbox.height, box.top + box.height - hitbox.top) +1;
@@ -24,11 +23,11 @@ void Button::SetText(const sf::Text& words){
 }
 
 bool Button::Contains(const sf::Vector2f clickLocation) const {
-  return hitbox.contains(clickLocation);
+  return highlightBox.Contains(clickLocation);
 }
 
 void Button::UpdateHighlighting(const sf::Vector2f mouseLocation){
-  highlightBox.AppearIfContains(mouseLocation);
+  highlightBox.UpdateState(mouseLocation);
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const{

@@ -18,7 +18,6 @@
 
 //Color definitions. I use upper case to be consistant with SFML
 sf::Color Gray = sf::Color(192,192,192);
-sf::Color ClearYellow = sf::Color(255,255,0,153);
 sf::Color PowerPoolColor = sf::Color(235,0,0);
 
 //Helper Functions:
@@ -190,13 +189,11 @@ void MessageBox::SetTopString(const sf::String& inputString, bool makeLine){
 }
 
 OptionsBox::OptionsBox(
-  sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
   const std::array <sf::String, 8>& optionString, //Defaults to the battle text
   bool boxHasTwoTitles                            //Defaults to true
 ):
-  window(&theWindow),
   hasTwoTitles(boxHasTwoTitles),
   sizeOfFirstList(4),
   sizeOfSecondList(4),
@@ -247,12 +244,13 @@ OptionsBox::OptionsBox(
 
   //Make the first set of hightlight boxes
   for(int i = 0; i < sizeOfFirstList - 1; i++){
-    highlightBox[i] = optionsText[i + 1].getGlobalBounds();
+    highlightBox[i].AdjustToFit(optionsText[i + 1].getGlobalBounds());
   }
 
   //Make the second set of hightlight boxes
   for(int i = sizeOfFirstList - 1; i < numHighlightBoxes; i++){
-    highlightBox[i] = optionsText[i + 1 + int(hasTwoTitles)].getGlobalBounds();
+    int index = i + 1 + int(hasTwoTitles);
+    highlightBox[i].AdjustToFit(optionsText[index].getGlobalBounds());
   }
 }
 
@@ -273,7 +271,7 @@ int OptionsBox::GetChoice(const sf::Event theEvent){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
     for(int i = 0; i < numHighlightBoxes; i++){
-      if(highlightBox[i].contains(clickLocation)){
+      if(highlightBox[i].Contains(clickLocation)){
         playerChoice = i + 1;
       }
     }
@@ -282,19 +280,17 @@ int OptionsBox::GetChoice(const sf::Event theEvent){
   return playerChoice;
 }
 
-void OptionsBox::Highlight() const{
-  sf::RectangleShape highlight;
-  highlight.setFillColor(ClearYellow);
-
-  for(int i = 0; i < numHighlightBoxes; i++){
-    if(highlightBox[i].contains(sf::Vector2f(sf::Mouse::getPosition(*window)))){
-      highlight.setSize(sf::Vector2f(highlightBox[i].width,
-                                     highlightBox[i].height));
-      highlight.setPosition(highlightBox[i].left,highlightBox[i].top);
-      window -> draw(highlight);
+void OptionsBox::Update(const sf::Vector2f mousePosition, const bool highlight){
+  if(highlight){
+    for(int i = 0; i < numHighlightBoxes; i++){
+      highlightBox[i].UpdateState(mousePosition);
     }
   }
-
+  else{
+    for(int i = 0; i < numHighlightBoxes; i++){
+      highlightBox[i].UpdateState(false);
+    }
+  }
 }
 
 void OptionsBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
@@ -304,6 +300,9 @@ void OptionsBox::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   }
   for(int  i = 0; i < numOptions; i++){
     target.draw(optionsText[i], states);
+  }
+  for(int i = 0; i < numHighlightBoxes; i++){
+    target.draw(highlightBox[i], states);
   }
 }
 
@@ -386,16 +385,6 @@ void BearStats::SetShouldAppear(bool shouldBearAppear){
   shouldAppear = shouldBearAppear;
 }
 
-sf::Vector2f BearStats::GetNameBoxPosition() const{
-  sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
-  return sf::Vector2f(nameBox.left, nameBox.top);
-}
-
-sf::Vector2f BearStats::GetNameBoxSize() const{
-  sf::FloatRect nameBox = bearInfo[1].getGlobalBounds();
-  return sf::Vector2f(nameBox.width, nameBox.height);
-}
-
 void BearStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   if(shouldAppear){
     for(int i = 0; i < numBackground; i++){
@@ -414,14 +403,12 @@ void BearStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 
 
 PlayerStats::PlayerStats(
-  sf::RenderWindow& theWindow,
   sf::Font& titleFont,
   sf::Font& mainFont,
   Player& thePlayer,
   sf::Vector2f thePosition, //Default is sf::Vector2f(600, 0)
   sf::Vector2f theSize      //Default is sf::Vector2f(200, 580)
 ):
-window(&theWindow),
 player(&thePlayer),
 position(thePosition),
 size(theSize)
@@ -566,11 +553,13 @@ size(theSize)
   moreStats.setPosition(moreBackground.getPosition());
   moreStats.move(75,-2);
   moreStats.setString("0:More");
-  moreHighlightBox = moreStats.getGlobalBounds();
+  moreHighlight.AdjustToFit(moreStats.getGlobalBounds());
 }
 
-void PlayerStats::Update(){
-  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
+void PlayerStats::Update( const sf::Vector2f mousePos,
+                          const bool isPickingSpell,
+                          const bool canCastSpells )
+{
   //Health
   sf::String playerHealth = std::to_string(player -> GetHealth());
   playerHealth += "/";
@@ -683,18 +672,40 @@ void PlayerStats::Update(){
 
   //Make sure the highlight boxes are the right size
   for(int i = 0; i < maxSpells - 1; i++){
-    highlightBox[i] = spell[i + 1].getGlobalBounds();
-    sf::FloatRect box = spellCount[i + 1].getGlobalBounds();
-    highlightBox[i].width = box.left + box.width - highlightBox[i].left;
-    highlightBox[i].top--;
-    highlightBox[i].height += 2;
+    sf::FloatRect spellBox = spell[i + 1].getGlobalBounds();
+    sf::FloatRect countBox = spellCount[i + 1].getGlobalBounds();
+    spellBox.width = countBox.left + countBox.width - spellBox.left;
+    spellBox.top--;
+    spellBox.height += 2;
+    spellHighlight[i].AdjustToFit(spellBox);
   }
 
   //If they're hovering over a valid spell, update selectedSpellIndex
   for(int i = 0; i < maxSpells - 1; i++){
-    if(highlightBox[i].contains(mousePos) && IsValidSpellIndex(i)){
+    if(spellHighlight[i].Contains(mousePos) && IsValidSpellIndex(i)){
       selectedSpellIndex = i;
     }
+  }
+
+  //Highlight spells/feats
+  if(onMainMenu && canCastSpells){
+    for(int i = 0; i < maxSpells - 1; i++){
+      spellHighlight[i].UpdateState(mousePos);
+    }
+    if(isPickingSpell){//Highlight even if not hovering
+      spellHighlight[selectedSpellIndex].UpdateState(true);
+    }
+  }
+  else{
+    spellHighlight[selectedSpellIndex].UpdateState(false);
+  }
+
+  //Highlight the "More" button:
+  if(isPickingSpell){
+    moreHighlight.UpdateState(false);
+  }
+  else{
+    moreHighlight.UpdateState(mousePos);
   }
 }
 
@@ -739,7 +750,7 @@ void PlayerStats::ToggleMenu(const sf::Event event){
   else if(event.type == sf::Event::MouseButtonPressed){
     sf::Vector2f clickLocation(float(event.mouseButton.x),
                                float(event.mouseButton.y) );
-    if(moreHighlightBox.contains(clickLocation)){
+    if(moreHighlight.Contains(clickLocation)){
       onMainMenu = !onMainMenu;
     }
   }
@@ -815,7 +826,7 @@ bool PlayerStats::GetSpell(const sf::Event theEvent, int& index){
     sf::Vector2f clickLocation(float(theEvent.mouseButton.x),
                                float(theEvent.mouseButton.y) );
     for(int i = 0; i < maxSpells - 1; i++){
-      if(highlightBox[i].contains(clickLocation) && IsValidSpellIndex(i)){
+      if(spellHighlight[i].Contains(clickLocation) && IsValidSpellIndex(i)){
         if(player -> GetNumSpell(i) > 0){
           index = i;
           return true;
@@ -830,41 +841,6 @@ bool PlayerStats::GetSpell(const sf::Event theEvent, int& index){
 
   index = noChoice;
   return true;
-}
-
-void PlayerStats::Highlight(bool isPickingSpell, bool canCastSpells) const{
-  const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(*window));
-
-  if(onMainMenu && canCastSpells){
-    bool isHoveringOverSpell = false;
-
-    for(int i = 0; i < maxSpells - 1; i++){
-      if(highlightBox[i].contains(mousePos) && IsValidSpellIndex(i)){
-        isHoveringOverSpell = true;
-      }
-    }
-
-    //Highlight the selected spell
-    if(isPickingSpell || isHoveringOverSpell){
-      sf::RectangleShape highlight;
-      highlight.setFillColor(ClearYellow);
-      highlight.setSize(sf::Vector2f( highlightBox[selectedSpellIndex].width,
-                                      highlightBox[selectedSpellIndex].height));
-      highlight.setPosition(highlightBox[selectedSpellIndex].left,
-                            highlightBox[selectedSpellIndex].top);
-      window -> draw(highlight);
-    }
-  }
-
-  //This function also highlights the "More" button:
-  if(!isPickingSpell && moreHighlightBox.contains(mousePos)){
-    sf::RectangleShape highlight;
-    highlight.setFillColor(ClearYellow);
-    highlight.setSize(sf::Vector2f(moreHighlightBox.width,
-                                   moreHighlightBox.height));
-    highlight.setPosition(moreHighlightBox.left, moreHighlightBox.top);
-    window -> draw(highlight);
-  }
 }
 
 bool PlayerStats::IsValidSpellIndex(const int spellIndex) const{
@@ -909,6 +885,7 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     for(int i = 0; i < maxSpells; i++){
       target.draw(spell[i], states);
       target.draw(spellCount[i], states);
+      target.draw(spellHighlight[i], states);
     }
     for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
       if(player -> FeatIsToggleable(featIndex)){
@@ -929,30 +906,25 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
   }
   target.draw(moreStats, states);
+  target.draw(moreHighlight, states);
 }
 
 
-HUD::HUD(sf::RenderWindow& theWindow,
-        sf::Font& titleFont,
-        sf::Font& mainFont,
-        Player& thePlayer
-):
-messages(titleFont,mainFont,"Messages:"),
-options(theWindow,titleFont,mainFont),
-playerStats(theWindow,titleFont,mainFont,thePlayer),
-window(&theWindow),
-player(&thePlayer)
+HUD::HUD(sf::Font& titleFont, sf::Font& mainFont, Player& thePlayer):
+  messages(titleFont,mainFont,"Messages:"),
+  options(titleFont,mainFont),
+  playerStats(titleFont,mainFont,thePlayer),
+  player(&thePlayer)
 {
   player -> SetMessageBox(messages);
 }
 
-BattleHUD::BattleHUD(sf::RenderWindow& theWindow,
-        sf::Font& titleFont,
-        sf::Font& mainFont,
-        Player& thePlayer,
-        const std::array<Bear,4>& bears
+BattleHUD::BattleHUD( sf::Font& titleFont,
+                      sf::Font& mainFont,
+                      Player& thePlayer,
+                      const std::array<Bear,4>& bears
 ):
-HUD(theWindow, titleFont, mainFont, thePlayer),
+HUD(titleFont, mainFont, thePlayer),
 bearStats{
   BearStats(titleFont,mainFont,bears.at(0),true),
   BearStats(titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),
@@ -965,6 +937,7 @@ friendBearStats(titleFont,mainFont,Bear(),true)
   }
   friendBearStats.GetBearPtr() -> SetMessageBox(messages);
   player -> SetLastBear(bears.at(0).GetName());
+  bearHighlight.UpdateState(true);
 }
 
 std::vector<Bear*> BattleHUD::GetAllEnemyBears(){
@@ -1076,30 +1049,17 @@ TurnOf BattleHUD::TakeAction(sf::Event theEvent){
   return TurnOf::player;
 }
 
-void BattleHUD::Update(const bool optionsAvailable){
+void BattleHUD::Update(const sf::Vector2f mousePos,const bool optionsAvailable){
   canPickFromOptions = optionsAvailable;
-  playerStats.Update();
+  options.Update(mousePos, !isPickingSpell && optionsAvailable);
+  playerStats.Update(mousePos, isPickingSpell, optionsAvailable);
+
+  if(GetNumEnemyBears() > 1){
+    bearHighlight.AdjustToFit(bearStats[targetBearIndex].GetNameBox());
+  }
   for(int i = 0; i < GetNumEnemyBears(); i++){
     bearStats[i].Update();
   }
-}
-
-void BattleHUD::Highlight() const{
-  playerStats.Highlight(isPickingSpell, canPickFromOptions);
-  if(!isPickingSpell && canPickFromOptions){
-    options.Highlight();
-  }
-
-  if( bearStats[1].GetShouldAppear() ){
-    sf::RectangleShape bearHighlight;
-
-    bearHighlight.setFillColor(ClearYellow);
-    bearHighlight.setSize(bearStats[targetBearIndex].GetNameBoxSize());
-    bearHighlight.setPosition(bearStats[targetBearIndex].GetNameBoxPosition());
-
-    window -> draw(bearHighlight);
-  }
-
 }
 
 void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{
@@ -1110,6 +1070,7 @@ void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   for(int i = 0; i < GetNumEnemyBears(); i++){
     target.draw(bearStats[i], states);
   }
-
-  Highlight();
+  if(GetNumEnemyBears() > 1){
+    target.draw(bearHighlight, states);
+  }
 }
