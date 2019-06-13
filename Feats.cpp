@@ -6,7 +6,6 @@
 Feat::Feat(const FeatID feat, const BearID theBearID){
   featID = feat;
   if(feat == FeatID::studied_dodge){
-    active = true;
     permanent = true;
     cost = 0;
     if(theBearID == BearID::NUM_BEARS){
@@ -21,7 +20,6 @@ Feat::Feat(const FeatID feat, const BearID theBearID){
   }
   else if(feat == FeatID::escape_artist){
     name = "Escape Artist";
-    active = true;
     permanent = true;
     cost = 0;
   }
@@ -55,4 +53,7 @@ Feat::Feat(const FeatID feat, const BearID theBearID){
     std::cerr << "The number corresponding to the invalid feat was ";
     std::cerr << int(feat) << ".\n\n";
   }
+
+  active = permanent; //Permanent feats start (and are always) active; other
+                      //feats start deactivated
 }
