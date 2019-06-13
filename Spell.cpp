@@ -1,5 +1,5 @@
 #include "Spell.h"
-#include "HUD.h"
+#include "Display/HUD.h"
 #include "Bear.h"
 #include "Player.h"
 #include "BearBattle.h"

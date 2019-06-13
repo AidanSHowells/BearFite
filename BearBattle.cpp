@@ -1,4 +1,4 @@
-#include "HUD.h"
+#include "Display/HUD.h"
 #include "Player.h"
 #include "Bear.h"
 #include "RollDice.h"

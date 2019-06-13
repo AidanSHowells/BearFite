@@ -1,7 +1,7 @@
 #ifndef BEARBATTLE_H
 #define BEARBATTLE_H
 
-#include "HUD.h"
+#include "Display/HUD.h"
 #include "Bear.h"
 
 enum class TurnOf {player, bear, neither};

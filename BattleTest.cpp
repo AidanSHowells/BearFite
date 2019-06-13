@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "HUD.h"
+#include "Display/HUD.h"
 #include "BearBattle.h"
 #include "Player.h"
 #include "Spell.h"

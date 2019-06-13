@@ -4,7 +4,7 @@
 #include "Spell.h"
 #include "BearBattle.h"
 #include "Display/Messages.h"
-#include "HUD.h"
+#include "Display/HUD.h"
 #include <algorithm>//for std::max and std::min
 #include <iostream>//for std::cerr
 
