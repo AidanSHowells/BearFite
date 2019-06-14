@@ -15,7 +15,7 @@ struct Feat{
   FeatID featID;
   sf::String name = sf::String("");
   bool permanent = true;
-  bool active = false;
+  bool active;
   int cost = 0;
   BearID targetBearID = BearID::NUM_BEARS;//Some feats are specific to 1 species
 };
