@@ -28,14 +28,24 @@ enum class Winner;
 
 class HUD : public sf::Drawable{
   public:
-    HUD(sf::Font& titleFont, sf::Font& mainFont, Player& thePlayer);
+    HUD(sf::Font& titleFont,
+        sf::Font& mainFont,
+        Player& thePlayer,
+        const std::vector <sf::String>& optionString,
+        int optionsListBreakPoint,
+        bool optionsHaveTwoTitles = true);
     MessageBox messages;
     OptionsBox options;
     PlayerStats playerStats;
+
     Player* GetPlayerPtr(){return player;}
+    void Update(const sf::Vector2f mousePos, const bool optionsAvailable);
 
   protected:
     Player* player;
+
+  private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 

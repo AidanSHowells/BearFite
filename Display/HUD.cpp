@@ -14,21 +14,40 @@
  *sf::Font instance for creating a text)."
  */
 
-HUD::HUD(sf::Font& titleFont, sf::Font& mainFont, Player& thePlayer):
+HUD::HUD(sf::Font& titleFont,
+    sf::Font& mainFont,
+    Player& thePlayer,
+    const std::vector <sf::String>& optionString,
+    int optionsListBreakPoint,
+    bool optionsTitle
+):
   messages(titleFont,mainFont,"Messages:"),
-  options(titleFont,mainFont),
+  options(titleFont,mainFont,optionString,optionsListBreakPoint,optionsTitle),
   playerStats(titleFont,mainFont,thePlayer),
   player(&thePlayer)
 {
   player -> SetMessageBox(messages);
 }
 
+void HUD::Update(const sf::Vector2f mousePos, const bool optionsAvailable){
+  options.Update(mousePos, optionsAvailable);
+  playerStats.Update(mousePos, false, optionsAvailable);
+}
+
+void HUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(messages, states);
+  target.draw(options, states);
+  target.draw(playerStats, states);
+}
+
+
 BattleHUD::BattleHUD( sf::Font& titleFont,
                       sf::Font& mainFont,
                       Player& thePlayer,
                       const std::array<Bear,4>& bears
 ):
-HUD(titleFont, mainFont, thePlayer),
+HUD(titleFont, mainFont, thePlayer, {"PUNCH:Where Punch Bear?","1:Leg","2:Eye",
+  "3:John Hopkins","ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"}, 4),
 bearStats{
   BearStats(titleFont,mainFont,bears.at(0),true),
   BearStats(titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),

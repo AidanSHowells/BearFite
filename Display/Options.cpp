@@ -5,16 +5,17 @@
 OptionsBox::OptionsBox(
   sf::Font& titleFont,
   sf::Font& mainFont,
-  const std::array <sf::String, 8>& optionString, //Defaults to the battle text
+  const std::vector <sf::String>& optionString,
+  int listBreakPoint,
   bool boxHasTwoTitles                            //Defaults to true
 ):
   hasTwoTitles(boxHasTwoTitles),
-  sizeOfFirstList(4),
-  sizeOfSecondList(4),
-  numOptions(sizeOfFirstList + sizeOfSecondList),
+  numOptions(optionString.size()),
+  sizeOfFirstList(listBreakPoint),
+  sizeOfSecondList(numOptions - sizeOfFirstList),
   numHighlightBoxes(numOptions - 1 - int(boxHasTwoTitles)) //Minus one per title
 {
-  if(sizeOfFirstList + sizeOfSecondList > maxNumOptions){
+  if(numOptions > maxNumOptions){
     std::cerr << "Too many options. They're not all going to fit.\n\n";
   }
 
