@@ -61,15 +61,17 @@ class Player{
     void PostBattleReset();
 
     void AddFeat(const FeatID theFeat, const BearID theBear);
-    int GetNumFeats() const {return featList.size();}
-    sf::String GetFeat(const int index) const {return featList.at(index).name;}
+    int GetNumRegularFeats() const {return mainFeatList.size();}
+    int GetNumExtraFeats() const {return extraFeatList.size();}
+    sf::String GetRegularFeat(const int index) const;
+    sf::String GetExtraFeat(const int index) const;
     bool FeatIsToggleable(const int index) const;
-    int FeatCost(const int index) const {return featList.at(index).cost;}
+    int FeatCost(const int index) const {return mainFeatList.at(index).cost;}
     int GetPower() const {return power;}
     int GetPowerPoolSize() const {return powerPoolSize;}
     TurnOf ActivateFeat(const int index);
     void ToggleFeat(const int index);
-    bool FeatIsActive(const int index) const {return featList.at(index).active;}
+    bool FeatIsActive(const int index) const;
     bool HasFeatActive(const FeatID theFeat) const;
     bool HasFeatActive(const FeatID theFeat, const BearID theBear) const;
 
@@ -95,7 +97,7 @@ class Player{
     void Heal(){Quaff();}//TEMP
     void Replenish(){numDranks++;}//TEMP
     void ClearSpells(){spellList.clear();}//TEMP
-    void ClearFeats(){featList.clear();}//TEMP
+    void ClearFeats(){mainFeatList.clear(); extraFeatList.clear();}//TEMP
     void SetLevel(int newLevel){level = newLevel;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
@@ -104,7 +106,8 @@ class Player{
     std::array<int, int(Abil::NUM_ABIL)> baseAbil = {10,10,10,10,10,10};
     std::array<int, int(Abil::NUM_ABIL)> abilBuff = {0,0,0,0,0,0};
     std::vector<SpellTree> spellList;
-    std::vector<Feat> featList;
+    std::vector<Feat> mainFeatList;
+    std::vector<Feat> extraFeatList;
 
     Body body;
     int maxHealth;

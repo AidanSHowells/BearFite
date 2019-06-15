@@ -142,7 +142,7 @@ size(theSize)
   feats[0].setPosition(position.x, position.y + 250);
 
   //Make the second-page-feat info
-  for(int i = 1; i < numExtraFeats; i++){
+  for(int i = 1; i < maxExtraFeats; i++){
     feats[i].setFont(mainFont);
     feats[i].setCharacterSize(15);
     feats[i].setFillColor(Color::DefaultText);
@@ -243,7 +243,7 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
     spell[spellIndex].move(0,12);
     spellCount[spellIndex].move(0,12);
 
-    sf::String name = player -> GetFeat(featIndex);
+    sf::String name = player -> GetRegularFeat(featIndex);
     spell[spellIndex].setString(AddSpacing(name,19,false));
 
     if((player -> FeatCost(featIndex)) > 0){
@@ -269,8 +269,11 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
     }
   }
 
-  for(int i = 1; i < numExtraFeats; i++){
-    feats[i].setString("Extra Feat " + std::to_string(i));//TEMP
+  for(int i = 1; i <= GetNumExtraFeats(); i++){
+    feats[i].setString( player -> GetExtraFeat(i - 1) );
+  }
+  for(int i = GetNumExtraFeats() + 1; i < maxExtraFeats; i++){
+    feats[i].setString("");
   }
 
   //Make sure the highlight boxes are the right size
@@ -447,8 +450,10 @@ bool PlayerStats::GetSpell(const sf::Event theEvent, int& index){
 }
 
 bool PlayerStats::IsValidSpellIndex(const int spellIndex) const{
+  //Here a "valid spell index" is the index for a spell *or power pool feat*
+  //that the player has enough power to cast. Better teminology welcome
   int featIndex = spellIndex - GetFeatStartingIndex() + 1;
-  if(featIndex < 0 || featIndex >= player -> GetNumFeats()){
+  if(featIndex < 0 || featIndex >= GetNumFeats()){
     return(player -> GetNumSpell(spellIndex) > 0);
   }
   else{
@@ -460,7 +465,21 @@ bool PlayerStats::IsValidSpellIndex(const int spellIndex) const{
 }
 
 int PlayerStats::GetNumFeats() const {
-  return(std::min(maxSpells - GetFeatStartingIndex(),player -> GetNumFeats()));
+  if(maxSpells - GetFeatStartingIndex() < player -> GetNumRegularFeats() ){
+    std::cerr << "Warning! The player has more spells and feats than the HUD ";
+    std::cerr << "is designed to handle\n\n";
+    return(maxSpells - GetFeatStartingIndex());
+  }
+  return(player -> GetNumRegularFeats());
+}
+
+int PlayerStats::GetNumExtraFeats() const {
+  if(maxExtraFeats <= player -> GetNumExtraFeats() ){
+    std::cerr << "Warning! The player has more extra feats than the HUD ";
+    std::cerr << "is designed to handle\n\n";
+    return maxExtraFeats - 1;
+  }
+  return(player -> GetNumExtraFeats());
 }
 
 void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
@@ -488,7 +507,9 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     for(int i = 0; i < maxSpells; i++){
       target.draw(spell[i], states);
       target.draw(spellCount[i], states);
-      target.draw(spellHighlight[i], states);
+      if(IsValidSpellIndex(i)){
+        target.draw(spellHighlight[i], states);
+      }
     }
     for(int featIndex = 0; featIndex < GetNumFeats(); featIndex++){
       if(player -> FeatIsToggleable(featIndex)){
@@ -504,7 +525,7 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     }
   }
   else{
-    for(int i = 0; i < numExtraFeats; i++){
+    for(int i = 0; i < maxExtraFeats; i++){
       target.draw(feats[i], states);
     }
   }

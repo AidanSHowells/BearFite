@@ -289,11 +289,21 @@ void Player::PostBattleReset(){
 
 void Player::AddFeat(const FeatID theFeat, const BearID theBear){
   Feat newFeat(theFeat, theBear);
-  for(std::size_t i = 0; i < featList.size(); i++){
+  for(std::size_t i = 0; i < extraFeatList.size(); i++){
     //The Feat constructor ignores theBear if the feat doesn't care about it.
     //So in that case we can have newFeat.targetBearID != theBear.
-    if( theFeat == featList.at(i).featID &&
-        newFeat.targetBearID == featList.at(i).targetBearID )
+    if( theFeat == extraFeatList.at(i).featID &&
+        newFeat.targetBearID == extraFeatList.at(i).targetBearID )
+    {
+      std::cerr << "Warning! Failed to add feat \"";
+      std::cerr << std::string(newFeat.name) << "\"\n";
+      std::cerr << "The player already has that feat\n\n";
+      return;
+    }
+  }
+  for(std::size_t i = 0; i < mainFeatList.size(); i++){
+    if( theFeat == mainFeatList.at(i).featID &&
+        newFeat.targetBearID == mainFeatList.at(i).targetBearID )
     {
       std::cerr << "Warning! Failed to add feat \"";
       std::cerr << std::string(newFeat.name) << "\"\n";
@@ -303,40 +313,52 @@ void Player::AddFeat(const FeatID theFeat, const BearID theBear){
   }
   if(newFeat.cost > 0){
     bool done = false;
-    for(std::size_t i = 0; !done && i < featList.size(); i++){
-      if(featList.at(i).cost == 0){
-        featList.insert(featList.begin() + i, newFeat);
+    for(std::size_t i = 0; !done && i < mainFeatList.size(); i++){
+      if(mainFeatList.at(i).cost == 0){
+        mainFeatList.insert(mainFeatList.begin() + i, newFeat);
         done = true;
       }
     }
     if(!done){
-      featList.push_back(newFeat);
+      mainFeatList.push_back(newFeat);
     }
   }
   else if(newFeat.permanent){
     bool done = false;
-    for(std::size_t i = 0; !done && i < featList.size(); i++){
-      if(featList.at(i).cost == 0 && !(featList.at(i).permanent)){
-        featList.insert(featList.begin() + i, newFeat);
+    if(extraFeatList.size() < 3){
+        extraFeatList.push_back(newFeat);
+        done = true;
+    }
+    for(std::size_t i = 0; !done && i < mainFeatList.size(); i++){
+      if(mainFeatList.at(i).cost == 0 && !(mainFeatList.at(i).permanent)){
+        mainFeatList.insert(mainFeatList.begin() + i, newFeat);
         done = true;
       }
     }
     if(!done){
-      featList.push_back(newFeat);
+      mainFeatList.push_back(newFeat);
     }
   }
   else{
-    featList.push_back(newFeat);
+    mainFeatList.push_back(newFeat);
   }
 }
 
+sf::String Player::GetRegularFeat(const int index) const {
+  return mainFeatList.at(index).name;
+}
+
+sf::String Player::GetExtraFeat(const int index) const {
+  return extraFeatList.at(index).name;
+}
+
 bool Player::FeatIsToggleable(const int index) const {
-  const Feat theFeat = featList.at(index);
-  return (!(theFeat.permanent) && (0 == theFeat.cost));
+  const Feat theFeat = mainFeatList.at(index);
+  return ((!theFeat.permanent) && (0 == theFeat.cost));
 }
 
 TurnOf Player::ActivateFeat(const int index){
-  Feat& theFeat = featList.at(index);
+  Feat& theFeat = mainFeatList.at(index);
   if(theFeat.permanent){
     std::cerr << "Warning! Cannot activate permanent feats like \"";
     std::cerr << std::string(theFeat.name) << "\"\n";
@@ -358,7 +380,7 @@ TurnOf Player::ActivateFeat(const int index){
 }
 
 void Player::ToggleFeat(const int index){
-  Feat& theFeat = featList.at(index);
+  Feat& theFeat = mainFeatList.at(index);
   if(!FeatIsToggleable(index)){
     std::cerr << "Warning! The feat \"" << std::string(theFeat.name) << "\" ";
     std::cerr << "is not toggleable\n\n";
@@ -368,9 +390,18 @@ void Player::ToggleFeat(const int index){
   }
 }
 
+bool Player::FeatIsActive(const int index) const {
+  return mainFeatList.at(index).active;
+}
+
 bool Player::HasFeatActive(const FeatID theFeat) const {
-  for (size_t i = 0; i < featList.size(); i++) {
-    if(featList.at(i).featID == theFeat && featList.at(i).active){
+  for(size_t i = 0; i < extraFeatList.size(); i++){
+    if(extraFeatList.at(i).featID == theFeat){//Extra feats are always active
+      return true;
+    }
+  }
+  for (size_t i = 0; i < mainFeatList.size(); i++) {
+    if(mainFeatList.at(i).featID == theFeat && mainFeatList.at(i).active){
       return true;
     }
   }
@@ -379,10 +410,17 @@ bool Player::HasFeatActive(const FeatID theFeat) const {
 }
 
 bool Player::HasFeatActive(const FeatID theFeat, const BearID theBear) const {
-  for(size_t i = 0; i < featList.size(); i++){
-    if( featList.at(i).featID == theFeat &&
-        featList.at(i).targetBearID == theBear &&
-        featList.at(i).active)
+  for(size_t i = 0; i < extraFeatList.size(); i++){
+    if( extraFeatList.at(i).featID == theFeat &&
+        extraFeatList.at(i).targetBearID == theBear )
+    {
+      return true;
+    }
+  }
+  for(size_t i = 0; i < mainFeatList.size(); i++){
+    if( mainFeatList.at(i).featID == theFeat &&
+        mainFeatList.at(i).targetBearID == theBear &&
+        mainFeatList.at(i).active)
     {
       return true;
     }
@@ -514,36 +552,40 @@ TurnOf Player::Flee(Bear& bear){
 }
 
 void Player::Toggle(const FeatID theFeat){
-  size_t index = featList.size();
-  for (size_t i = 0; i < featList.size(); i++) {
-    if(featList.at(i).featID == theFeat){
+  bool done = false;
+  size_t index;
+  for (size_t i = 0; i < mainFeatList.size(); i++) {
+    if(mainFeatList.at(i).featID == theFeat){
       index = i;
+      done = true;
     }
   }
-  if(index == featList.size()){
+  if(!done){
     std::cerr << "Warning! Illegal attempt to toggle the feat \"";
     std::cerr << std::string(Feat(theFeat).name) << "\"\n\n";
   }
   else{
-    featList.at(index).active = !(featList.at(index).active);
+    mainFeatList.at(index).active = !(mainFeatList.at(index).active);
   }
 
 }
 
 void Player::Toggle(const FeatID theFeat, const BearID theBear){
-  size_t index = featList.size();
-  for (size_t i = 0; i < featList.size(); i++) {
-    if( featList.at(i).featID == theFeat &&
-        featList.at(i).targetBearID == theBear )
+  bool done = false;
+  size_t index;
+  for (size_t i = 0; i < mainFeatList.size(); i++) {
+    if( mainFeatList.at(i).featID == theFeat &&
+        mainFeatList.at(i).targetBearID == theBear )
     {
       index = i;
+      done = true;
     }
   }
-  if(index == featList.size()){
+  if(!done){
     std::cerr << "Warning! Illegal attempt to toggle the feat \"";
     std::cerr << std::string(Feat(theFeat, theBear).name) << "\"\n\n";
   }
   else{
-    featList.at(index).active = !(featList.at(index).active);
+    mainFeatList.at(index).active = !(mainFeatList.at(index).active);
   }
 }

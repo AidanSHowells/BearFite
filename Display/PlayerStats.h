@@ -44,7 +44,7 @@ class PlayerStats : public sf::Drawable{
     static const int numHealth = 16;
     static const int numAbility = 13;
     static const int maxSpells = 22;
-    static const int numExtraFeats = 4;
+    static const int maxExtraFeats = 4;
     static const int numDivLine = 7;
 
     sf::Text header;
@@ -55,7 +55,7 @@ class PlayerStats : public sf::Drawable{
     sf::Text spell[maxSpells];
     sf::Text spellCount[maxSpells];
     Button button[maxSpells];
-    sf::Text feats[numExtraFeats];
+    sf::Text feats[maxExtraFeats];
     float baseSpellHeight[maxSpells];
     HighlightBox spellHighlight[maxSpells];
     sf::RectangleShape divLine[numDivLine];
@@ -65,6 +65,7 @@ class PlayerStats : public sf::Drawable{
     bool IsValidSpellIndex(const int spellIndex) const;
     int GetFeatStartingIndex() const {return(3 * numReservedSpellTrees + 1);}
     int GetNumFeats() const;
+    int GetNumExtraFeats() const;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
