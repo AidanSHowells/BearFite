@@ -92,6 +92,7 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
       Bear tempBear = *bearStats[i].GetBearPtr();
       if(tempBear.IsDead()){
         player -> IncrementBodyCount();
+        player -> AddExp(tempBear.ExpReward());
       }
       for(int j = i; j < 3; j++){
         bearStats[j].SetBear( *bearStats[j + 1].GetBearPtr() );

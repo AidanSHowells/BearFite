@@ -56,6 +56,9 @@ int main(){
           if(winner == Winner::bear){
             window.close();
           }
+          if(winner == Winner::player){
+            player.LevelUp();
+          }
         }
         else if(choice == 2){
           player.Heal();

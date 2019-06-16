@@ -43,7 +43,6 @@ size(theSize)
   health[4].setFont(titleFont);
   health[4].setString("Exp. Needed:");
   health[5].setFont(mainFont);
-  health[5].setString("                   N/A");//TEMP
   health[6].setFont(titleFont);
   health[6].setString("Level:");
   health[7].setFont(mainFont);
@@ -171,6 +170,9 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
 
   //Dranks
   health[3].setString(AddSpacing(std::to_string(player -> GetNumDranks()), 22));
+
+  //Exp
+  health[5].setString(AddSpacing(std::to_string(player -> GetExpNeeded()), 22));
 
   //Level
   sf::String level = std::to_string(player -> GetLevel());

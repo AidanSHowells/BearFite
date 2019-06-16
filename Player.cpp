@@ -272,6 +272,14 @@ void Player::TimerTick(){
   timeStopTime = std::max(0, timeStopTime -1);
 }
 
+void Player::LevelUp(){
+  while(expNeeded <= 0){
+    level++;
+    expNeeded += 40 + 5* level;
+    Messages -> Update("You have reach level", level);
+  }
+}
+
 void Player::PostBattleReset(){
   hastedTime = 0;
   slowedTime = 0;

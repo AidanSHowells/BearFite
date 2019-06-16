@@ -47,6 +47,8 @@ class Bear{
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
     void FeedFish(int fishSize);
+
+    int ExpReward();
   protected:
     MessageBox* messageBox = nullptr;
     void printMessage(const sf::String& message1,

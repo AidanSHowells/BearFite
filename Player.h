@@ -33,6 +33,7 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks() const {return numDranks;}
+    int GetExpNeeded() const {return expNeeded;}
     int GetLevel() const {return level;}
     int GetBodyCount() const {return bodyCount;}
     void IncrementBodyCount() {bodyCount++;}
@@ -58,6 +59,8 @@ class Player{
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
+    void AddExp(int exp){expNeeded -= exp;}
+    void LevelUp();
     void PostBattleReset();
 
     void AddFeat(const FeatID theFeat, const BearID theBear);
@@ -115,6 +118,7 @@ class Player{
 
     int numDranks = 5;
     int level = 0;
+    int expNeeded = 40;
     int bodyCount = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based

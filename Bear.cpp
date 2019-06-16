@@ -186,6 +186,15 @@ void Bear::FeedFish(int fishSize){
   eatingTime = std::max(1, eatingTime);
 }
 
+int Bear::ExpReward(){
+  int exp = 0;
+  exp += std::max(0, -GetHealth());
+  for(int i = 0; i < int(Abil::NUM_ABIL); i++){
+    exp += std::max(0, -10 * GetAbil(i,true));
+  }
+  return exp;
+}
+
 void Bear::SetHealth(){
   health = body.UpdateHealth(body.baseHealth, level, abil[int(Abil::CON)]);
 }
