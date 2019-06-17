@@ -275,7 +275,7 @@ void Player::TimerTick(){
 void Player::LevelUp(){
   while(expNeeded <= 0){
     level++;
-    expNeeded += 40 + 5* level;
+    expNeeded += baseExp + 5 * level;
     Messages -> Update("You have reach level", level);
   }
 }
@@ -289,7 +289,23 @@ void Player::PostBattleReset(){
   bigFistTime = 0;
   santuaryTime = 0;
   timeStopTime = 0;
-  power = powerPoolSize;//TEMP
+
+  for(int i = 0; i < (GetAbil(int(Abil::CON)) + 2) / 5; i++){
+    if(Roll(1,2) == 1){
+      power++;
+    }
+  }
+  power = std::min(power,powerPoolSize);
+
+  if(!spellList.empty()){
+    for(int i = 0; i < GetAbil(int(Abil::WIS)) / 3; i++){
+      int treeIndex = Roll(1,spellList.size()) - 1;
+      int spellIndex = Roll(1,3) - 1;
+
+      spellList.at(treeIndex).IncrementCount(spellIndex);
+    }
+  }
+
   if(HasFeatActive(FeatID::cobra_strike)){
     Toggle(FeatID::cobra_strike);
   }

@@ -504,7 +504,9 @@ void PlayerStats::draw(sf::RenderTarget& target, sf::RenderStates states) const{
   if(onMainMenu){
     if(7 != numReservedSpellTrees){
       target.draw(featsHeader[0], states);
-      target.draw(featsHeader[1], states);
+      if(player -> ShowPower()){
+        target.draw(featsHeader[1], states);
+      }
     }
     for(int i = 0; i < maxSpells; i++){
       target.draw(spell[i], states);

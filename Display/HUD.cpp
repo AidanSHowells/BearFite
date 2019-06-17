@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Bear.h"
 #include "BearBattle.h"
+#include "RollDice.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to
@@ -81,7 +82,8 @@ int BattleHUD::GetNumEnemyBears() const{
   return numBears;
 }
 
-void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
+int BattleHUD::RemoveDeadCombatants(Winner& winner){
+  int numDranks = 0;
 
   //FriendBear stuff here.
 
@@ -93,6 +95,9 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
       if(tempBear.IsDead()){
         player -> IncrementBodyCount();
         player -> AddExp(tempBear.ExpReward());
+        if(Roll(1,5) > 3){// 2/5 drank per bear, same as calc version default
+          numDranks++;
+        }
       }
       for(int j = i; j < 3; j++){
         bearStats[j].SetBear( *bearStats[j + 1].GetBearPtr() );
@@ -112,15 +117,16 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
   }
 
   if(player -> IsDead()){
-    theWinner = Winner::bear;
+    winner = Winner::bear;
   }
   //The player has won if they're alive and the top bear is dead
   else if(!bearStats[0].GetShouldAppear()){
-    theWinner = Winner::player;
+    winner = Winner::player;
   }
   else{
-    theWinner = Winner::neither;
+    winner = Winner::neither;
   }
+  return numDranks;
 }
 
 TurnOf BattleHUD::TakeAction(sf::Event theEvent){

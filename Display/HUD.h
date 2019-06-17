@@ -60,7 +60,7 @@ class BattleHUD : public HUD{
     Bear* GetBearPtr(){return bearStats[targetBearIndex].GetBearPtr();}
     std::vector<Bear*> GetAllEnemyBears();
     int GetNumEnemyBears() const;
-    void RemoveDeadCombatants(Winner& theWinner);//Updates theWinner
+    int RemoveDeadCombatants(Winner& winner);//Updates winner; returns dranks
     //void AddFriendBear(Bear* friendBearPtr);
     TurnOf TakeAction(sf::Event theEvent);
     void Update(const sf::Vector2f mousePos, const bool optionsAvailable);

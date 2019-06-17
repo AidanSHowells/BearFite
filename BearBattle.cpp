@@ -10,15 +10,18 @@ void DrawStuff( sf::RenderWindow& window,
                 const bool canSelectOptions = true);
 void WaitForEnter(sf::RenderWindow& window,
                   BattleHUD& theHUD,
-                  const sf::Sprite& background);
+                  const sf::Sprite& background,
+                  Winner theWinner,
+                  int NumDranks);
 
 
 Winner BearBattle(sf::RenderWindow& window, BattleHUD& theHUD){
   Player& player = *(theHUD.GetPlayerPtr());
   Winner theWinner = Winner::neither;
 
-  //Keep track of turns
+  //Keep track of turns and dranks
   TurnOf turn = TurnOf::player;
+  int numDranks = 0;
 
   //Make the picture
   sf::Texture finalBear;
@@ -39,9 +42,9 @@ Winner BearBattle(sf::RenderWindow& window, BattleHUD& theHUD){
       turn = TurnOf::player;
     }
 
-    theHUD.RemoveDeadCombatants(theWinner);
+    numDranks += theHUD.RemoveDeadCombatants(theWinner);
     if(theWinner != Winner::neither){
-      WaitForEnter(window, theHUD, background);
+      WaitForEnter(window, theHUD, background, theWinner, numDranks);
       return theWinner;
     }
 
@@ -63,14 +66,14 @@ Winner BearBattle(sf::RenderWindow& window, BattleHUD& theHUD){
       }
     }
 
-    theHUD.RemoveDeadCombatants(theWinner);
+    numDranks += theHUD.RemoveDeadCombatants(theWinner);
     if(theWinner != Winner::neither){
-      WaitForEnter(window, theHUD, background);
+      WaitForEnter(window, theHUD, background, theWinner, numDranks);
       return theWinner;
     }
 
     if(TurnOf::neither == turn){
-      WaitForEnter(window, theHUD, background);
+      WaitForEnter(window, theHUD, background, theWinner, numDranks);
       return Winner::neither; //If it's ever no one's turn, it means the battle
                               //ended. (Presumably because the player fled)
     }
@@ -96,8 +99,18 @@ void DrawStuff( sf::RenderWindow& window,
 
 void WaitForEnter(sf::RenderWindow& window,
                   BattleHUD& theHUD,
-                  const sf::Sprite& background)
+                  const sf::Sprite& background,
+                  Winner theWinner,
+                  int numDranks)
 {
+  if(numDranks > 1){
+    theHUD.messages.Update(sf::String("You find Dranks"), true);
+    theHUD.GetPlayerPtr() -> FindDranks(numDranks);
+  }
+  else if(numDranks == 1){
+    theHUD.messages.Update(sf::String("You find Drank"), true);
+    theHUD.GetPlayerPtr() -> FindDranks(numDranks);
+  }
   theHUD.messages.Update(sf::String("Press Enter"), true);
   while (window.isOpen()){
     sf::Event event;

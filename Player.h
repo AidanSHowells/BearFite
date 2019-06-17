@@ -19,11 +19,12 @@ enum class FeatID;
 
 enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 
-struct SpellTree{
-  SpellTree(const SpellID spellID);//NOTE: See SpellList.cpp for definition
+struct SpellTree{//NOTE: See SpellList.cpp for function definitions
+  SpellTree(const SpellID spellID);
   std::array<SpellID, 3> spellIDList;
   std::array<int, 3> numSpells = {3,0,0};
   std::array<int, 3> maxSpells = {3,0,0};
+  void IncrementCount(int index);
 };
 
 class Player{
@@ -61,6 +62,7 @@ class Player{
     void TimerTick();
     void AddExp(int exp){expNeeded -= exp;}
     void LevelUp();
+    void FindDranks(int dranks){numDranks += dranks;}
     void PostBattleReset();
 
     void AddFeat(const FeatID theFeat, const BearID theBear);
@@ -72,6 +74,7 @@ class Player{
     int FeatCost(const int index) const {return mainFeatList.at(index).cost;}
     int GetPower() const {return power;}
     int GetPowerPoolSize() const {return powerPoolSize;}
+    bool ShowPower() const {return mainFeatList.size() > 0 && FeatCost(0) > 0;}
     TurnOf ActivateFeat(const int index);
     void ToggleFeat(const int index);
     bool FeatIsActive(const int index) const;
@@ -118,7 +121,8 @@ class Player{
 
     int numDranks = 5;
     int level = 0;
-    int expNeeded = 40;
+    const int baseExp = 20;
+    int expNeeded = baseExp;
     int bodyCount = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based
