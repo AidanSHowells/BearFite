@@ -17,6 +17,7 @@ struct Feat{
   bool permanent = true;
   bool active;
   int cost = 0;
+  bool targetBearMatters = false;
   BearID targetBearID = BearID::NUM_BEARS;//Some feats are specific to 1 species
 };
 

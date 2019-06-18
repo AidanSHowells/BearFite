@@ -196,6 +196,7 @@ void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages){
 void UpdatePlayerAbilities(Player& player, MessageBox& messages){
   int tempInt;
   int level;
+  int baseAttackBonus;
   int spellLevel;
   std::array<int,6> newAbil;
 
@@ -222,6 +223,12 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
     return;
   }
 
+  fin >> baseAttackBonus;
+  if(fin.fail()){
+    messages.Update(sf::String("Invalid file format."));
+    return;
+  }
+
   fin >> spellLevel;
   if(fin.fail()){
     messages.Update(sf::String("Invalid file format."));
@@ -237,6 +244,7 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
   }
 
   player.SetLevel(level);
+  player.SetBaseAttackBonus(baseAttackBonus);
   player.SetSpellcastingLevel(spellLevel);
   player.SetAbil(newAbil);
   messages.Update(sf::String("Abilities Updated"));
@@ -259,8 +267,8 @@ void ResetPlayerSpells(Player& player, MessageBox& messages){
     return;
   }
 
-  //First ten things in the file: bear, modifier, lvl, spell lvl, abilities
-  for(int i = 0; i < 10; i++){
+  //First 11 things in the file: bear, modifier, lvl, BAB, spell lvl, abilities
+  for(int i = 0; i < 11; i++){
     fin >> tempInt;
     if(fin.fail()){
       messages.Update(sf::String("Invalid file format."));

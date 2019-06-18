@@ -32,7 +32,7 @@ HUD::HUD(sf::Font& titleFont,
 
 void HUD::Update(const sf::Vector2f mousePos, const bool optionsAvailable){
   options.Update(mousePos, optionsAvailable);
-  playerStats.Update(mousePos, false, optionsAvailable);
+  playerStats.Update(mousePos, false, false);
 }
 
 void HUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{

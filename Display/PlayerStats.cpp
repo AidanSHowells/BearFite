@@ -47,17 +47,20 @@ size(theSize)
   health[6].setString("Level:");
   health[7].setFont(mainFont);
   health[8].setFont(titleFont);
-  health[8].setString("Spellcasting Level:");
+  health[8].setString("Base Attack Bonus:");
   health[9].setFont(mainFont);
   health[10].setFont(titleFont);
-  health[10].setString("Body Count:");
+  health[10].setString("Spellcasting Level:");
   health[11].setFont(mainFont);
   health[12].setFont(titleFont);
-  health[12].setString("Virginities:");
+  health[12].setString("Body Count:");
   health[13].setFont(mainFont);
   health[14].setFont(titleFont);
-  health[14].setString("Bear:");
+  health[14].setString("Virginities:");
   health[15].setFont(mainFont);
+  health[16].setFont(titleFont);
+  health[16].setString("Bear:");
+  health[17].setFont(mainFont);
   for(int i = 0; i < numHealth; i++){
     health[i].setCharacterSize(15);
     health[i].setFillColor(Color::DefaultText);
@@ -138,14 +141,14 @@ size(theSize)
   feats[0].setCharacterSize(15);
   feats[0].setFillColor(Color::DefaultText);
   feats[0].setString("Extra Feats:");
-  feats[0].setPosition(position.x, position.y + 250);
+  feats[0].setPosition(position.x, position.y + 270);
 
   //Make the second-page-feat info
   for(int i = 1; i < maxExtraFeats; i++){
     feats[i].setFont(mainFont);
     feats[i].setCharacterSize(15);
     feats[i].setFillColor(Color::DefaultText);
-    feats[i].setPosition(position.x, position.y + 248 + 20 * i);
+    feats[i].setPosition(position.x, position.y + 268 + 20 * i);
   }
 
   //Make the button that changes which page you're on
@@ -178,20 +181,24 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
   sf::String level = std::to_string(player -> GetLevel());
   health[7].setString(AddSpacing(level, 22));
 
+  //Base Attack Bonus
+  sf::String baseAttackBonus = std::to_string(player -> GetBaseAttackBonus());
+  health[9].setString(AddSpacing(baseAttackBonus, 22));
+
   //Spellcasting Level
   sf::String spellLevel = std::to_string(player -> GetSpellcastingLevel());
-  health[9].setString(AddSpacing(spellLevel, 22));
+  health[11].setString(AddSpacing(spellLevel, 22));
 
   //Body Count
   sf::String bodyCount = std::to_string(player -> GetBodyCount());
-  health[11].setString(AddSpacing(bodyCount, 22));
+  health[13].setString(AddSpacing(bodyCount, 22));
 
   //Virginities
   sf::String numVirginities = std::to_string(player -> GetNumVirginities());
-  health[13].setString(AddSpacing(numVirginities, 22));
+  health[15].setString(AddSpacing(numVirginities, 22));
 
   //Bear
-  health[15].setString(AddSpacing(player -> GetLastBear(), 23));
+  health[17].setString(AddSpacing(player -> GetLastBear(), 23));
 
   //Ability scores
   for(int i = 1; i <= 6; i++){
@@ -199,7 +206,7 @@ void PlayerStats::Update( const sf::Vector2f mousePos,
   }
   for(int i = 0; i < numAbility; i++){
     ability[i].setPosition( ability[i].getPosition().x,
-                            baseAbilityHeight[i] + 120 * (!onMainMenu) );
+                            baseAbilityHeight[i] + 140 * (!onMainMenu) );
   }
 
   //Spells

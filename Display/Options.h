@@ -22,6 +22,9 @@ class OptionsBox : public sf::Drawable{
                const std::vector <sf::String>& optionString,
                int listBreakPoint,
                bool boxHasTwoTitles = true);
+    void NewChoices(const std::vector <sf::String>& optionString,
+                    int listBreakPoint,
+                    bool boxHasTwoTitles = true);
     int GetChoice(sf::Event theEvent);
     void Update(const sf::Vector2f mousePosition, const bool highlight);
   private:
@@ -33,11 +36,13 @@ class OptionsBox : public sf::Drawable{
 
     static const int maxNumOptions = 8;
 
-    const bool hasTwoTitles;
-    const int numOptions;       //Includes the title(s)
-    const int sizeOfFirstList;  //Includes the title
-    const int sizeOfSecondList; //Includes the second title, if one exists
-    const int numHighlightBoxes;
+    bool hasTwoTitles;
+    int numOptions;       //Includes the title(s)
+    int sizeOfFirstList;  //Includes the title
+    int sizeOfSecondList; //Includes the second title, if one exists
+    int numHighlightBoxes;
+    sf::Font& boldFont;
+    sf::Font& regularFont;
 
     sf::Text optionsText[maxNumOptions];
     HighlightBox highlightBox[maxNumOptions];

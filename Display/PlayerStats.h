@@ -29,6 +29,7 @@ class PlayerStats : public sf::Drawable{
     bool SpellChoiceProcessStarted(MessageBox& messages);
     void ToggleMenu(const sf::Event event);
     void ToggleFeats(const sf::Event event);
+    int GetNumReservedSpellTrees() const {return numReservedSpellTrees;}
     bool GetSpell(const sf::Event theEvent, int& index);//true=spell, false=feat
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:
@@ -37,11 +38,11 @@ class PlayerStats : public sf::Drawable{
     const sf::Vector2f size;
     sf::RectangleShape background;
     sf::RectangleShape moreBackground;
-    int selectedSpellIndex;
+    int selectedSpellIndex = 0;
     bool onMainMenu = true;
     int numReservedSpellTrees = 4;
 
-    static const int numHealth = 16;
+    static const int numHealth = 18;
     static const int numAbility = 13;
     static const int maxSpells = 22;
     static const int maxExtraFeats = 4;

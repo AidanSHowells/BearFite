@@ -9,16 +9,9 @@ OptionsBox::OptionsBox(
   int listBreakPoint,
   bool boxHasTwoTitles                            //Defaults to true
 ):
-  hasTwoTitles(boxHasTwoTitles),
-  numOptions(optionString.size()),
-  sizeOfFirstList(listBreakPoint),
-  sizeOfSecondList(numOptions - sizeOfFirstList),
-  numHighlightBoxes(numOptions - 1 - int(boxHasTwoTitles)) //Minus one per title
+  boldFont(titleFont),
+  regularFont(mainFont)
 {
-  if(numOptions > maxNumOptions){
-    std::cerr << "Too many options. They're not all going to fit.\n\n";
-  }
-
   //Make the background rectangle
   background.setSize(size);
   background.setFillColor(Color::HUDBackground);
@@ -29,18 +22,38 @@ OptionsBox::OptionsBox(
   divLine.setFillColor(sf::Color::Black);
   divLine.setPosition(divPosition, position.y);
 
-  //Make the options
-  for(int i = 0; i < numOptions; i++){
+  for(int i = 0; i < maxNumOptions; i++){
     optionsText[i].setCharacterSize(25);
     optionsText[i].setFillColor(Color::DefaultText);
+  }
+
+  NewChoices(optionString,listBreakPoint,boxHasTwoTitles);
+}
+
+void OptionsBox::NewChoices(const std::vector <sf::String>& optionString,
+                            int listBreakPoint,
+                            bool boxHasTwoTitles)
+{
+  hasTwoTitles = boxHasTwoTitles;
+  numOptions = optionString.size();
+  sizeOfFirstList = listBreakPoint;
+  sizeOfSecondList = numOptions - sizeOfFirstList;
+  numHighlightBoxes = numOptions - 1 - int(boxHasTwoTitles);//minus 1 per title
+
+  if(numOptions > maxNumOptions){
+    std::cerr << "Too many options. They're not all going to fit.\n\n";
+  }
+
+  //Make the options
+  for(int i = 0; i < numOptions; i++){
     optionsText[i].setString(optionString.at(i));
 
-    //Headings get titleFont, everything else gets mainFont
+    //Headings get bold, everything else doesn't
     if(0 == i || (sizeOfFirstList == i && hasTwoTitles)){
-      optionsText[i].setFont(titleFont);
+      optionsText[i].setFont(boldFont);
     }
     else{
-      optionsText[i].setFont(mainFont);
+      optionsText[i].setFont(regularFont);
     }
 
     //Positioning depends on which list you're in

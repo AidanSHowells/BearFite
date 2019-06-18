@@ -36,6 +36,7 @@ class Player{
     int GetNumDranks() const {return numDranks;}
     int GetExpNeeded() const {return expNeeded;}
     int GetLevel() const {return level;}
+    int GetBaseAttackBonus() const {return baseAttackBonus;}
     int GetBodyCount() const {return bodyCount;}
     void IncrementBodyCount() {bodyCount++;}
     int GetNumVirginities() const {return numVirginities;}
@@ -56,12 +57,16 @@ class Player{
     sf::String GetSpellName(const int index);
     int GetNumSpell(const int index);
     int GetMaxNumSpell(const int index);
+    bool HasSpell(const SpellID theSpell) const;
     void UnlockSpellTree(SpellTree tree);
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
+
     void AddExp(int exp){expNeeded -= exp;}
     void LevelUp();
+    void IncrementBaseAttackBonus(){baseAttackBonus++;}
+    void IncrementSpellcastingLevel(){spellcastingLevel++;}
     void FindDranks(int dranks){numDranks += dranks;}
     void PostBattleReset();
 
@@ -78,8 +83,8 @@ class Player{
     TurnOf ActivateFeat(const int index);
     void ToggleFeat(const int index);
     bool FeatIsActive(const int index) const;
-    bool HasFeatActive(const FeatID theFeat) const;
-    bool HasFeatActive(const FeatID theFeat, const BearID theBear) const;
+    bool HasFeat(FeatID theFeat, bool checkIfActive) const;
+    bool HasFeat(FeatID theFeat, BearID theBear, bool checkIfActive) const;
 
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -105,6 +110,7 @@ class Player{
     void ClearSpells(){spellList.clear();}//TEMP
     void ClearFeats(){mainFeatList.clear(); extraFeatList.clear();}//TEMP
     void SetLevel(int newLevel){level = newLevel;}//TEMP
+    void SetBaseAttackBonus(int newBAB){baseAttackBonus = newBAB;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
