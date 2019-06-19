@@ -87,7 +87,8 @@ int main(){
 
           Winner winner = BearBattle(window, battleHUD);
           player.SetMessageBox(messages);
-          player.PostBattleReset();
+          player.PostBattleReset(winner == Winner::player);
+
           if(Winner::player == winner){
             scoreArray.at(2 * int(enemyBearID))++;
           }

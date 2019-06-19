@@ -29,7 +29,6 @@ class PlayerStats : public sf::Drawable{
     bool SpellChoiceProcessStarted(MessageBox& messages);
     void ToggleMenu(const sf::Event event);
     void ToggleFeats(const sf::Event event);
-    int GetNumReservedSpellTrees() const {return numReservedSpellTrees;}
     bool GetSpell(const sf::Event theEvent, int& index);//true=spell, false=feat
     enum getSpellResult{noChoice = -1, changedMindAboutCasting = -2};
   private:

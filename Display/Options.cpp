@@ -7,8 +7,10 @@ OptionsBox::OptionsBox(
   sf::Font& mainFont,
   const std::vector <sf::String>& optionString,
   int listBreakPoint,
-  bool boxHasTwoTitles                            //Defaults to true
+  bool boxHasTwoTitles,                           //Defaults to true
+  bool battleProportions                          //Defaults to false
 ):
+  divPosition(310 + 40 * int(battleProportions)),
   boldFont(titleFont),
   regularFont(mainFont)
 {

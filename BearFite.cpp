@@ -5,6 +5,7 @@
 #include "Display/HUD.h"
 #include "BearBattle.h"
 #include "Player.h"
+#include "LevelUp.h"
 
 
 int main(){
@@ -28,9 +29,10 @@ int main(){
   std::vector <sf::String> options = {"What To Do?",
                                       "1:Find Some Bear",
                                       "2:Quaff Drank",
-                                      "3:Retire",
-                                      "4:Save and Quit"};
-  HUD theHUD(courierNewBd, courierNew, player, options, 3, false);
+                                      "",
+                                      "4:Retire",
+                                      "5:Save and Quit"};
+  HUD theHUD(courierNewBd, courierNew, player, options, 4, false);
   bool exiting = false;
 
   while (window.isOpen()){
@@ -52,21 +54,32 @@ int main(){
           const Winner winner = BearBattle(window, battleHUD);
 
           player.SetMessageBox(theHUD.messages);
-          player.PostBattleReset();
+          player.PostBattleReset(winner == Winner::player);
           if(winner == Winner::bear){
             window.close();
           }
           if(winner == Winner::player){
-            player.LevelUp();
+            if( player.ReadyToLevelUp() ){
+              options.at(3) = "3:Level Up";
+              theHUD.options.NewChoices(options,4,false);
+              theHUD.messages.Update("Level Up Available");
+            }
           }
         }
         else if(choice == 2){
           player.Heal();
         }
-        else if(choice == 3){
-          theHUD.messages.Update("Sorry! Retiring is","not supported yet",true);
+        else if(choice == 3 && player.ReadyToLevelUp()){
+          LevelUp(courierNewBd, courierNew, window, player);
+          player.SetMessageBox(theHUD.messages);
+          options.at(3) = "";
+          theHUD.options.NewChoices(options,4,false);
+          theHUD.messages.Clear();
         }
         else if(choice == 4){
+          theHUD.messages.Update("Sorry! Retiring is","not supported yet",true);
+        }
+        else if(choice == 5){
           exiting = true;
           theHUD.messages.Update("Press Esc to cancel", true);
           theHUD.messages.Update("Press Enter to quit", "without saving",false);

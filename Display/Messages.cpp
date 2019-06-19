@@ -44,6 +44,9 @@ void MessageBox::Clear(){
   for(int i = 1; i < numLines; i++){
     line[i].setString("");
   }
+  for(int i = 0; i < numDivLines; i++){
+    displayDivLine[i] = false;
+  }
 }
 
 void MessageBox::Update(const sf::String& inputString, bool makeLine){

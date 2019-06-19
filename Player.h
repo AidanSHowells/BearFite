@@ -58,18 +58,22 @@ class Player{
     int GetNumSpell(const int index);
     int GetMaxNumSpell(const int index);
     bool HasSpell(const SpellID theSpell) const;
+    bool CanUnlockSpellTree() const;
     void UnlockSpellTree(SpellTree tree);
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
 
     void AddExp(int exp){expNeeded -= exp;}
+    bool ReadyToLevelUp() const {return (expNeeded <= 0);}
     void LevelUp();
     void IncrementBaseAttackBonus(){baseAttackBonus++;}
     void IncrementSpellcastingLevel(){spellcastingLevel++;}
     void FindDranks(int dranks){numDranks += dranks;}
-    void PostBattleReset();
+    void PostBattleReset(bool winner);
 
+    bool CanAddMainFeat() const;
+    bool CanAddExtraFeat() const {return extraFeatList.size() < 3;}
     void AddFeat(const FeatID theFeat, const BearID theBear);
     int GetNumRegularFeats() const {return mainFeatList.size();}
     int GetNumExtraFeats() const {return extraFeatList.size();}

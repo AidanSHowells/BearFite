@@ -19,11 +19,12 @@ HUD::HUD(sf::Font& titleFont,
     sf::Font& mainFont,
     Player& thePlayer,
     const std::vector <sf::String>& optionString,
-    int optionsListBreakPoint,
-    bool optionsTitle
+    int breakPoint,
+    bool optionsTitle,
+    bool battleMode
 ):
   messages(titleFont,mainFont,"Messages:"),
-  options(titleFont,mainFont,optionString,optionsListBreakPoint,optionsTitle),
+  options(titleFont,mainFont,optionString,breakPoint,optionsTitle,battleMode),
   playerStats(titleFont,mainFont,thePlayer),
   player(&thePlayer)
 {
@@ -48,7 +49,8 @@ BattleHUD::BattleHUD( sf::Font& titleFont,
                       const std::array<Bear,4>& bears
 ):
 HUD(titleFont, mainFont, thePlayer, {"PUNCH:Where Punch Bear?","1:Leg","2:Eye",
-  "3:John Hopkins","ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"}, 4),
+    "3:John Hopkins","ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
+    4, true, true),
 bearStats{
   BearStats(titleFont,mainFont,bears.at(0),true),
   BearStats(titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),

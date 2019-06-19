@@ -33,7 +33,8 @@ class HUD : public sf::Drawable{
         Player& thePlayer,
         const std::vector <sf::String>& optionString,
         int optionsListBreakPoint,
-        bool optionsHaveTwoTitles = true);
+        bool optionsHaveTwoTitles = true,
+        bool battleMode = false);
     MessageBox messages;
     OptionsBox options;
     PlayerStats playerStats;

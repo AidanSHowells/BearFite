@@ -258,6 +258,19 @@ bool Player::HasSpell(const SpellID theSpell) const{
   return false;
 }
 
+bool Player::CanUnlockSpellTree() const{
+  if(spellList.size() == 7){
+    return false;
+  }
+  else if(spellList.size() == 4 && mainFeatList.size() > 0){
+    return false;
+  }
+  else if(spellList.size() == 1 && mainFeatList.size() > 9){
+    return false;
+  }
+  return true;
+}
+
 void Player::UnlockSpellTree(SpellTree tree){
   spellList.push_back(tree);
 }
@@ -284,14 +297,14 @@ void Player::TimerTick(){
 }
 
 void Player::LevelUp(){
-  while(expNeeded <= 0){
+  if(expNeeded <= 0){
     level++;
     expNeeded += baseExp + 5 * level;
-    Messages -> Update("You have reach level", level);
+    Messages -> Update("You have reach level", level, true);
   }
 }
 
-void Player::PostBattleReset(){
+void Player::PostBattleReset(bool winner){
   hastedTime = 0;
   slowedTime = 0;
   paralyzedTime = 0;
@@ -300,6 +313,11 @@ void Player::PostBattleReset(){
   bigFistTime = 0;
   santuaryTime = 0;
   timeStopTime = 0;
+
+  if(winner){
+    int recoveredHealth = 10 + Roll( 1, GetAbil(int(Abil::CON)) );
+    health = std::min(maxHealth, health + recoveredHealth);
+  }
 
   for(int i = 0; i < (GetAbil(int(Abil::CON)) + 2) / 5; i++){
     if(Roll(1,2) == 1){
@@ -320,6 +338,19 @@ void Player::PostBattleReset(){
   if(HasFeat(FeatID::cobra_strike, true)){
     Toggle(FeatID::cobra_strike);
   }
+}
+
+bool Player::CanAddMainFeat() const{
+  if(mainFeatList.size() == 18){
+    return false;
+  }
+  else if(mainFeatList.size() == 9 && spellList.size() > 1){
+    return false;
+  }
+  else if(spellList.size() > 4){
+    return false;
+  }
+  return true;
 }
 
 void Player::AddFeat(const FeatID theFeat, const BearID theBear){
@@ -470,7 +501,8 @@ void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
 }
 
 int Player::GetLegAttackBonus() const {
-  int attackBonus = GetAbil(int(Abil::STR)) - 10;
+  int attackBonus = baseAttackBonus;
+  attackBonus += GetAbil(int(Abil::STR)) - 10;
   if(HasFeat(FeatID::power_attack, true)){
     attackBonus -= 5;
   }
@@ -489,7 +521,8 @@ int Player::GetLegDamageBonus() const {
 }
 
 int Player::GetEyeAttackBonus() const {
-  int attackBonus = GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
+  int attackBonus = baseAttackBonus;
+  attackBonus += GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
   if(HasFeat(FeatID::power_attack, true)){
     attackBonus -= 5;
   }

@@ -21,7 +21,8 @@ class OptionsBox : public sf::Drawable{
                sf::Font& mainFont,
                const std::vector <sf::String>& optionString,
                int listBreakPoint,
-               bool boxHasTwoTitles = true);
+               bool boxHasTwoTitles = true,
+               bool battleMode = false);
     void NewChoices(const std::vector <sf::String>& optionString,
                     int listBreakPoint,
                     bool boxHasTwoTitles = true);
@@ -30,7 +31,7 @@ class OptionsBox : public sf::Drawable{
   private:
     const sf::Vector2f position = sf::Vector2f(0,465);
     const sf::Vector2f size = sf::Vector2f(595, 135);
-    const float divPosition = 350.0f;
+    const float divPosition;
     sf::RectangleShape background;
     sf::RectangleShape divLine;
 
