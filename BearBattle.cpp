@@ -103,13 +103,15 @@ void WaitForEnter(sf::RenderWindow& window,
                   Winner theWinner,
                   int numDranks)
 {
-  if(numDranks > 1){
-    theHUD.messages.Update(sf::String("You find Dranks"), true);
-    theHUD.GetPlayerPtr() -> FindDranks(numDranks);
-  }
-  else if(numDranks == 1){
-    theHUD.messages.Update(sf::String("You find Drank"), true);
-    theHUD.GetPlayerPtr() -> FindDranks(numDranks);
+  if(Winner::player == theWinner){
+    if(numDranks > 1){
+      theHUD.messages.Update(sf::String("You find Dranks"), true);
+      theHUD.GetPlayerPtr() -> FindDranks(numDranks);
+    }
+    else if(numDranks == 1){
+      theHUD.messages.Update(sf::String("You find Drank"), true);
+      theHUD.GetPlayerPtr() -> FindDranks(numDranks);
+    }
   }
   theHUD.messages.Update(sf::String("Press Enter"), true);
   while (window.isOpen()){
