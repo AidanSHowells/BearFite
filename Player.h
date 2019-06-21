@@ -22,7 +22,7 @@ enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 struct SpellTree{//NOTE: See SpellList.cpp for function definitions
   SpellTree(const SpellID spellID);
   std::array<SpellID, 3> spellIDList;
-  std::array<int, 3> numSpells = {3,0,0};
+  std::array<int, 3> numSpells = {1,0,0};
   std::array<int, 3> maxSpells = {3,0,0};
   void IncrementCount(int index);
 };
@@ -51,15 +51,17 @@ class Player{
                       Bear& theBear,
                       std::vector<Bear*> enemyBears);
     TurnOf Cast(const int index, BattleHUD& environment);
-    int GetSpellcastingLevel(){return spellcastingLevel;}
-    int GetSpellSchoolBonus(const SpellSchool school);
-    int GetNumSpellTrees(){return spellList.size();}
-    sf::String GetSpellName(const int index);
-    int GetNumSpell(const int index);
-    int GetMaxNumSpell(const int index);
+    int GetSpellcastingLevel() const {return spellcastingLevel;}
+    int GetSpellSchoolBonus(const SpellSchool school) const;
+    int GetNumSpellTrees() const {return spellList.size();}
+    std::vector<int> GetIncompleteSpellTrees() const;
+    sf::String GetSpellName(const int index) const;
+    int GetNumSpell(const int index) const;
+    int GetMaxNumSpell(const int index) const;
     bool HasSpell(const SpellID theSpell) const;
     bool CanUnlockSpellTree() const;
     void UnlockSpellTree(SpellTree tree);
+    void UnlockSpell(const int index);
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();

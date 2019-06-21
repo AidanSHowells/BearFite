@@ -8,7 +8,8 @@
 #include "Spell.h"
 #include "RollDice.h"
 
-void GetAndAddSpell( sf::Font& titleFont,
+bool GetAndAddSpell(sf::RenderWindow& window, HUD& theHUD, Player& player);
+void GetAndAddTree( sf::Font& titleFont,
                     sf::Font& mainFont,
                     sf::RenderWindow& window,
                     Player& player,
@@ -22,6 +23,7 @@ void GetAndAddFeat(sf::Font& titleFont,
 BearID GetBear( sf::RenderWindow& window,
                 HUD& theHUD,
                 const std::vector<BearID>& potentialBears);
+int GetIncompleteSpellIndex(const Player& player, const int treeIndex);
 
 
 void LevelUp( sf::Font& titleFont,
@@ -31,21 +33,28 @@ void LevelUp( sf::Font& titleFont,
 {
   bool needBonus = true;
   bool needSkill = ( (1 + player.GetLevel()) % 5 == 0 );
+
   const bool canAddFeat = player.CanAddMainFeat() || player.CanAddExtraFeat();
-  const bool canAddSpell = player.CanUnlockSpellTree();
+  const bool canGetTree = player.CanUnlockSpellTree();
+  const bool incompleteTree = !player.GetIncompleteSpellTrees().empty();
+  const bool canAddSpell = canGetTree || incompleteTree;
+
 
   if( (!canAddFeat) && (!canAddSpell) ){
     needSkill = false;//Can't add a feat or spell, so we don't try
   }
 
   std::vector <sf::String> options = {"Fighting?","1:Base Attack Bonus","",
-                                      "SpellCasting?","3:Spell Level", ""};
+                                      "SpellCasting?","3:Spell Level", "", ""};
   if(needSkill){
     if(canAddFeat){
       options.at(2) = "2:New Feat";
     }
-    if(canAddSpell){
-      options.at(5) = "4:New Spell";
+    if(canGetTree){
+      options.at(5) = "4:New Spell Tree";
+    }
+    if(incompleteTree){
+      options.at(6) = "5:Unlock Spell";
     }
   }
   HUD theHUD(titleFont, mainFont, player, options, 3, true);
@@ -104,6 +113,7 @@ void LevelUp( sf::Font& titleFont,
             needSkill = false;
             options.at(2) = "";
             options.at(5) = "";
+            options.at(6) = "";
             theHUD.options.NewChoices(options,3,true);
           }
         }
@@ -114,7 +124,7 @@ void LevelUp( sf::Font& titleFont,
           options.at(4) = "";
           theHUD.options.NewChoices(options,3,true);
         }
-        else if(choice == 4 && needSkill && canAddSpell){
+        else if(choice == 4 && needSkill && canGetTree){
           std::vector<SpellID> potentialCandidates;
           for(int i = 1; i < int(SpellID::NUM_SPELLS); i += 3){
             if(!player.HasSpell(SpellID(i))){
@@ -126,12 +136,22 @@ void LevelUp( sf::Font& titleFont,
               potentialCandidates.push_back(SpellID(i));
             }
           }
-          GetAndAddSpell(titleFont,mainFont,window,player,potentialCandidates);
+          GetAndAddTree(titleFont,mainFont,window,player,potentialCandidates);
           needSkill = false;
           options.at(2) = "";
           options.at(5) = "";
+          options.at(6) = "";
           theHUD.options.NewChoices(options,3,true);
-        }//End choice == 4
+        }
+        else if(choice == 5 && needSkill && incompleteTree){
+          if(GetAndAddSpell(window,theHUD,player)){
+            needSkill = false;
+            options.at(2) = "";
+            options.at(5) = "";
+            options.at(6) = "";
+            theHUD.options.NewChoices(options,3,true);
+          }
+        }//End choice == 5
       }
     }//End while(window.pollEvent(event))
 
@@ -142,7 +162,54 @@ void LevelUp( sf::Font& titleFont,
   }//end while(window.isOpen())
 }
 
-void GetAndAddSpell( sf::Font& titleFont,
+
+
+bool GetAndAddSpell(sf::RenderWindow& window, HUD& theHUD, Player& player){
+  std::vector<int> incompleteTrees = player.GetIncompleteSpellTrees();
+  const int numTrees = incompleteTrees.size();
+  for(int i = 0; i < numTrees; i++){
+    sf::String name = player.GetSpellName(GetIncompleteSpellIndex(player, i));
+    theHUD.messages.Update(std::to_string(i + 1) + ":" + name);
+  }
+  theHUD.messages.Update("9:Go Back");
+
+  while (window.isOpen()){
+
+    sf::Event event;
+    while (window.pollEvent(event)){
+      theHUD.playerStats.ToggleMenu(event);
+      theHUD.playerStats.ToggleFeats(event);
+      if(event.type == sf::Event::Closed){
+        window.close();
+      }
+      else if(event.type == sf::Event::KeyPressed){
+        for(int i = 0; i < numTrees; i++){
+          if(event.key.code == (i + sf::Keyboard::Num1) ||
+             event.key.code == (i + sf::Keyboard::Numpad1) )
+          {
+            player.UnlockSpell(GetIncompleteSpellIndex(player, i));
+            theHUD.messages.Clear();
+            return true;
+          }
+        }
+        if(event.key.code == (sf::Keyboard::Num9) ||
+           event.key.code == (sf::Keyboard::Numpad9))
+        {
+          theHUD.messages.Clear();
+          return false;
+        }
+      }
+    }//End while(window.pollEvent(event))
+
+    window.clear();
+    theHUD.Update(sf::Vector2f(sf::Mouse::getPosition(window)), false);
+    window.draw(theHUD);
+    window.display();
+  }//end while(window.isOpen())
+  return false;
+}
+
+void GetAndAddTree( sf::Font& titleFont,
                     sf::Font& mainFont,
                     sf::RenderWindow& window,
                     Player& player,
@@ -300,4 +367,15 @@ BearID GetBear( sf::RenderWindow& window,
   }//end while(window.isOpen())
 
   return BearID::NUM_BEARS;//Should only get here if they quit the game
+}
+
+int GetIncompleteSpellIndex(const Player& player, const int treeIndex){
+  std::vector<int> incompleteTrees = player.GetIncompleteSpellTrees();
+
+  int spellIndex = 3 * incompleteTrees.at(treeIndex) + 1;//Second spell in tree
+  if(player.GetMaxNumSpell(spellIndex) > 0){
+    spellIndex++;//If they have the 2nd spell already, target the 3rd instead
+  }
+
+  return spellIndex;
 }

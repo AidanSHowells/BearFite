@@ -180,7 +180,7 @@ TurnOf Player::Cast(const int index, BattleHUD& environment){
   return nextTurn;
 }
 
-int Player::GetSpellSchoolBonus(const SpellSchool school){
+int Player::GetSpellSchoolBonus(const SpellSchool school) const{
   int bonus;
   if(school == SpellSchool::STR){
     bonus = GetAbil(int(Abil::STR)) + 2 * GetAbil(int(Abil::INT));
@@ -214,7 +214,19 @@ int Player::GetSpellSchoolBonus(const SpellSchool school){
   return bonus;
 }
 
-sf::String Player::GetSpellName(const int index){
+std::vector<int> Player::GetIncompleteSpellTrees() const{
+  std::vector<int> incompleteSpellTrees;
+  for(std::size_t i = 0; i < spellList.size(); i++){
+    if( spellList.at(i).maxSpells.at(1) == 0 ||
+        spellList.at(i).maxSpells.at(2) == 0 )
+    {
+      incompleteSpellTrees.push_back(i);
+    }
+  }
+  return incompleteSpellTrees;
+}
+
+sf::String Player::GetSpellName(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return sf::String("");
   }
@@ -225,7 +237,7 @@ sf::String Player::GetSpellName(const int index){
   return Spell(spellID).GetName();
 }
 
-int Player::GetNumSpell(const int index){
+int Player::GetNumSpell(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return 0;
   }
@@ -236,7 +248,7 @@ int Player::GetNumSpell(const int index){
   }
 }
 
-int Player::GetMaxNumSpell(const int index){
+int Player::GetMaxNumSpell(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return 0;
   }
@@ -275,6 +287,13 @@ void Player::UnlockSpellTree(SpellTree tree){
   spellList.push_back(tree);
 }
 
+void Player::UnlockSpell(int index){
+  int spellTreeIndex = index / 3;
+  int spellIndex = index % 3;
+  spellList.at(spellTreeIndex).maxSpells.at(spellIndex) = 3;
+  spellList.at(spellTreeIndex).numSpells.at(spellIndex) = 1;
+}
+
 bool Player::TouchAttackSucceeds(const Bear& bear) const{
   return (Roll(1,60) + GetTouchAttackBonus() >= bear.GetAC(Action::cast));
 }
@@ -300,6 +319,28 @@ void Player::LevelUp(){
   if(expNeeded <= 0){
     level++;
     expNeeded += baseExp + 5 * level;
+
+    //When you gain a spell, you have three castings. Three levels later you get
+    //a fourth, and four levels after that you get a fifth.
+    if(level % 5 == 3){
+      for(std::size_t i = 0; i < spellList.size(); i++){
+        for (int j = 0; j < 3; j++) {
+          if(spellList.at(i).maxSpells.at(j) == 3){
+            spellList.at(i).maxSpells.at(j) = 4;
+          }
+        }
+      }
+    }
+    else if(level % 5 == 2){
+      for(std::size_t i = 0; i < spellList.size(); i++){
+        for (int j = 0; j < 3; j++) {
+          if(spellList.at(i).maxSpells.at(j) == 4){
+            spellList.at(i).maxSpells.at(j) = 5;
+          }
+        }
+      }
+    }
+
     Messages -> Update("You have reach level", level, true);
   }
 }
