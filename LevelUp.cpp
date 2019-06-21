@@ -24,6 +24,8 @@ BearID GetBear( sf::RenderWindow& window,
                 HUD& theHUD,
                 const std::vector<BearID>& potentialBears);
 int GetIncompleteSpellIndex(const Player& player, const int treeIndex);
+std::vector<FeatID> GetPotentialFeats(const Player& player);
+
 
 
 void LevelUp( sf::Font& titleFont,
@@ -34,7 +36,10 @@ void LevelUp( sf::Font& titleFont,
   bool needBonus = true;
   bool needSkill = ( (1 + player.GetLevel()) % 5 == 0 );
 
-  const bool canAddFeat = player.CanAddMainFeat() || player.CanAddExtraFeat();
+  const bool roomForFeat = player.CanAddMainFeat() || player.CanAddExtraFeat();
+  const bool hasAllPotentialFeats = GetPotentialFeats(player).empty();
+  const bool canAddFeat = roomForFeat && !hasAllPotentialFeats;
+
   const bool canGetTree = player.CanUnlockSpellTree();
   const bool incompleteTree = !player.GetIncompleteSpellTrees().empty();
   const bool canAddSpell = canGetTree || incompleteTree;
@@ -85,37 +90,13 @@ void LevelUp( sf::Font& titleFont,
           theHUD.options.NewChoices(options,3,true);
         }
         else if(choice == 2 && needSkill && canAddFeat){
-          std::vector<FeatID> potentialCandidates;
-          const bool canAddMainFeat = player.CanAddMainFeat();
-          for(int i = 0; i < int(FeatID::NUM_FEATS); i++){
-            if( Feat(FeatID(i)).permanent || canAddMainFeat){
-              if(!player.HasFeat(FeatID(i),false)){
-                potentialCandidates.push_back(FeatID(i));
-              }
-              else if(Feat(FeatID(i)).targetBearMatters){
-                bool done = false;
-                for(int j = 0; (!done) && ( j < int(BearID::NUM_BEARS) ); j++){
-                  if(!player.HasFeat(FeatID(i),BearID(j),false)){
-                    potentialCandidates.push_back(FeatID(i));
-                    done = true;
-                  }
-                }
-              }
-            }
-          }
-
-          if(potentialCandidates.empty()){
-            theHUD.messages.Update( "Sorry! You have all",
-                                    "feats you can get", true);
-          }
-          else{
-            GetAndAddFeat(titleFont,mainFont,window,player,potentialCandidates);
-            needSkill = false;
-            options.at(2) = "";
-            options.at(5) = "";
-            options.at(6) = "";
-            theHUD.options.NewChoices(options,3,true);
-          }
+          std::vector<FeatID> potentialCandidates = GetPotentialFeats(player);
+          GetAndAddFeat(titleFont,mainFont,window,player,potentialCandidates);
+          needSkill = false;
+          options.at(2) = "";
+          options.at(5) = "";
+          options.at(6) = "";
+          theHUD.options.NewChoices(options,3,true);
         }
         else if(choice == 3 && needBonus){
           player.IncrementSpellcastingLevel();
@@ -378,4 +359,26 @@ int GetIncompleteSpellIndex(const Player& player, const int treeIndex){
   }
 
   return spellIndex;
+}
+
+std::vector<FeatID> GetPotentialFeats(const Player& player){
+  std::vector<FeatID> potentialCandidates;
+  const bool canAddMainFeat = player.CanAddMainFeat();
+  for(int i = 0; i < int(FeatID::NUM_FEATS); i++){
+    if( Feat(FeatID(i)).permanent || canAddMainFeat){
+      if(!player.HasFeat(FeatID(i),false)){
+        potentialCandidates.push_back(FeatID(i));
+      }
+      else if(Feat(FeatID(i)).targetBearMatters){
+        bool done = false;
+        for(int j = 0; (!done) && ( j < int(BearID::NUM_BEARS) ); j++){
+          if(!player.HasFeat(FeatID(i),BearID(j),false)){
+            potentialCandidates.push_back(FeatID(i));
+            done = true;
+          }
+        }
+      }
+    }
+  }
+  return potentialCandidates;
 }
