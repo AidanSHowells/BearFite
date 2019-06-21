@@ -63,6 +63,22 @@ void LevelUp( sf::Font& titleFont,
     }
   }
   HUD theHUD(titleFont, mainFont, player, options, 3, true);
+  if(needSkill && canAddFeat && canGetTree && incompleteTree){
+    theHUD.messages.Update( "Press either 1 or 3,",
+                            "and one of 2, 4, or 5", false);
+  }
+  else if(needSkill && canAddFeat && canGetTree){
+    theHUD.messages.Update("Press either 1 or 3,", "and either 2 or 4", false);
+  }
+  else if(needSkill && canAddFeat && incompleteTree){
+    theHUD.messages.Update("Press either 1 or 3,", "and either 2 or 5", false);
+  }
+  else if(needSkill && canGetTree && incompleteTree){
+    theHUD.messages.Update("Press either 1 or 3,", "and either 4 or 5", false);
+  }
+  else{
+    theHUD.messages.Update("Press either 1 or 3", false);
+  }
   player.LevelUp();
 
   while (window.isOpen()){
