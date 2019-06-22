@@ -400,21 +400,5 @@ std::array<Bear,4> GetBears(const BearSelectionMethod method,
     }
   }
 
-  std::vector<Bear> bears = tempBear.ApplyModifier(theModifier);
-  std::array<Bear,4> realBears;
-  for(std::size_t i = 0; i < bears.size(); i++){
-    realBears.at(i) = bears.at(i);
-  }
-  for(std::size_t i = bears.size(); i < 4; i++){
-    realBears.at(i) = Bear();
-  }
-
-  return realBears;
+  return tempBear.ApplyModifier(theModifier);
 }
-
-//Eventual Algorithm (for FindBear, which will be distinct from GetBears):
-//Make vector of bears whose base level is small enough
-//Choose a bear from the vector at random
-//Some (25% ?) chance of no modifier. Else:
-  //Make vector of modifiers whose effective level is small enough (none, etc.)
-  //Choose a modifier from the vector at random

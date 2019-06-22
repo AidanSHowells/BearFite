@@ -6,6 +6,7 @@
 #include "BearBattle.h"
 #include "Player.h"
 #include "LevelUp.h"
+#include "FindBear.h"
 
 
 int main(){
@@ -47,8 +48,7 @@ int main(){
       else if(!exiting){
         const int choice = theHUD.options.GetChoice(event);
         if(choice == 1){
-          std::array<Bear,4> bears;
-          bears.at(0) = Bear(BearID::Polar);//TEMP
+          std::array<Bear,4> bears = FindBear(player);
           BattleHUD battleHUD(courierNewBd,courierNew,player,bears);
 
           const Winner winner = BearBattle(window, battleHUD);
