@@ -9,16 +9,19 @@
 #include "Player.h"
 #include "Spell.h"
 #include "Feats.h"
+#include "FindBear.h"
 
 void UpdateSpecialBear(BearID& bearID, ModifierID& modID, MessageBox& messages);
 void UpdatePlayerAbilities(Player& player, MessageBox& messages);
+void UpdateBodyCount(Player& player, MessageBox& messages);
 void ResetPlayerSpells(Player& player, MessageBox& messages);
 void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
                    MessageBox& messages);
 
-enum class BearSelectionMethod {random, preselected};
+enum class BearSelectionMethod {random, preselected, normal};
 
 std::array<Bear,4> GetBears(const BearSelectionMethod method,
+                            const Player& player,
                             const BearID bearID,
                             const ModifierID modID);
 
@@ -47,8 +50,9 @@ int main(){
   MessageBox messages(courierNewBd,courierNew,"Messages:");
   messages.Update("A/S/G:Get Abilities,",
                   "Bear, or Spells.",
-                  "F:Fight Special Bear.",
-                  "Z:Fight Random Bear.");
+                  "Q:Lock Body Count.",
+                  "F/Z/X:Fight Special,",
+                  "Rand, or Normal Bear.");
 
   Player player;
   player.SetMessageBox(messages);
@@ -56,6 +60,7 @@ int main(){
 
   BearID specialBearID;
   ModifierID specialModID;
+  bool bodyCountLocked = false;
 
   UpdateSpecialBear(specialBearID, specialModID, messages);
 
@@ -70,7 +75,8 @@ int main(){
       }
       else if (event.type == sf::Event::KeyPressed){
         if(event.key.code == sf::Keyboard::F ||
-           event.key.code == sf::Keyboard::Z)
+           event.key.code == sf::Keyboard::Z ||
+           event.key.code == sf::Keyboard::X)
         {
           BearSelectionMethod method;
           if(event.key.code == sf::Keyboard::F){
@@ -79,9 +85,12 @@ int main(){
           else if(event.key.code == sf::Keyboard::Z){
             method = BearSelectionMethod::random;
           }
+          else if(event.key.code == sf::Keyboard::X){
+            method = BearSelectionMethod::normal;
+          }
 
           std::array<Bear,4> bears;
-          bears = GetBears(method,specialBearID,specialModID);
+          bears = GetBears(method, player, specialBearID, specialModID);
           BearID enemyBearID = bears.at(0).GetID();
           BattleHUD battleHUD(courierNewBd,courierNew,player,bears);
 
@@ -105,11 +114,23 @@ int main(){
           MessageBox::Style bearStyle = MessageBox::Style::alignLastLineRight;
           messages.Update("Last Bear Living Was:", name, false, bearStyle);
 
-          messages.Update("A/S/G:Get Abilities,",
-                          "Bear, or Spells.",
-                          "F:Fight Special Bear.",
-                          "Z:Fight Random Bear.",
-                          "D:Dranks, H:Heal.");
+          if(bodyCountLocked){
+            UpdateBodyCount(player,messages);
+            messages.Update("A/S/G:Get Abilities,",
+                            "Bear, or Spells.",
+                            "Q:Unlock Body Count.",
+                            "F/Z/X:Fight Special,",
+                            "Rand, or Normal Bear.",
+                            "D:Dranks, H:Heal.");
+          }
+          else{
+            messages.Update("A/S/G:Get Abilities,",
+                            "Bear, or Spells.",
+                            "Q:Lock Body Count.",
+                            "F/Z/X:Fight Special,",
+                            "Rand, or Normal Bear.",
+                            "D:Dranks, H:Heal.");
+          }
         }
         else if(event.key.code == sf::Keyboard::A){
           UpdatePlayerAbilities(player, messages);
@@ -119,6 +140,16 @@ int main(){
         }
         else if(event.key.code == sf::Keyboard::G){
           ResetPlayerSpells(player, messages);
+        }
+        else if(event.key.code == sf::Keyboard::Q){
+          bodyCountLocked = !bodyCountLocked;
+          if(bodyCountLocked){
+            UpdateBodyCount(player,messages);
+            messages.Update("Body Count Locked");
+          }
+          else{
+            messages.Update("Body Count Unlocked");
+          }
         }
         else if(event.key.code == sf::Keyboard::D){
           player.Replenish();
@@ -236,6 +267,13 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
     return;
   }
 
+  //Next is the body count
+  fin >> tempInt;
+  if(fin.fail()){
+    messages.Update(sf::String("Invalid file format."));
+    return;
+  }
+
   for(int i = 0; i < 6; i++){
     fin >> newAbil.at(i);
     if(fin.fail()){
@@ -253,6 +291,36 @@ void UpdatePlayerAbilities(Player& player, MessageBox& messages){
   fin.close();
 }
 
+void UpdateBodyCount(Player& player, MessageBox& messages){
+  int tempInt;
+  int bodyCount;
+
+  //Open the input file
+  std::ifstream fin;
+  fin.open("input.txt");
+  if(!fin.is_open()){
+    messages.Update(sf::String("Failed to open file"));
+    return;
+  }
+
+  //First 5 things are: bear, modifier, lvl, BAB, spell lvl
+  for(int i = 0; i < 5; i++){
+    fin >> tempInt;
+    if(fin.fail()){
+      messages.Update(sf::String("Invalid file format."));
+      return;
+    }
+  }
+
+  fin >> bodyCount;
+  if(fin.fail()){
+    messages.Update(sf::String("Invalid file format."));
+    return;
+  }
+
+  player.SetBodyCount(bodyCount);
+}
+
 void ResetPlayerSpells(Player& player, MessageBox& messages){
   int tempInt;
   int spellInt;
@@ -268,8 +336,8 @@ void ResetPlayerSpells(Player& player, MessageBox& messages){
     return;
   }
 
-  //First 11 things in the file: bear, modifier, lvl, BAB, spell lvl, abilities
-  for(int i = 0; i < 11; i++){
+  //First 12 things are: bear, modifier, lvl, BAB, spell lvl, body count, abils
+  for(int i = 0; i < 12; i++){
     fin >> tempInt;
     if(fin.fail()){
       messages.Update(sf::String("Invalid file format."));
@@ -367,6 +435,7 @@ void RecordWinLoss(const std::array<int, 2 * int(BearID::NUM_BEARS)>& winLoss,
 #include "RollDice.h"
 
 std::array<Bear,4> GetBears(const BearSelectionMethod method,
+                            const Player& player,
                             const BearID bearID,
                             const ModifierID modID)
 {
@@ -398,6 +467,9 @@ std::array<Bear,4> GetBears(const BearSelectionMethod method,
     else{
       theModifier = modID;
     }
+  }
+  else if(BearSelectionMethod::normal == method){
+    return FindBear(player);
   }
 
   return tempBear.ApplyModifier(theModifier);

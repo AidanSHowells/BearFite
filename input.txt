@@ -5,6 +5,8 @@
 0
 0
 
+0
+
 10
 10
 10
@@ -29,6 +31,8 @@ This file's purpose is to hold information that you want to give the program. Th
 *Fourth is the base attack bonus you want to have.
 
 *Fifth is the spellcasting level you want to have.
+
+*Sixth is the body count you want to have. This is useful when using the "normal" selection method (the selection method used in the actual game), which depends on the player's body count.
 
 *The next six integers are the ability scores you want to have.
 

@@ -118,6 +118,7 @@ class Player{
     void SetLevel(int newLevel){level = newLevel;}//TEMP
     void SetBaseAttackBonus(int newBAB){baseAttackBonus = newBAB;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
+    void SetBodyCount(int kills){bodyCount = kills;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
