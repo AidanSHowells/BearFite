@@ -4,22 +4,22 @@
 
 std::array<Bear,4> FindBear(const Player& player){
   std::vector<BearID> potentialBears;
-  int difficulty = player.GetBodyCount();
+  int maxDifficulty = player.GetBodyCount();
   for(int i = 0; i < int(BearID::NUM_BEARS); i++){
-    if(Bear(BearID(i)).GetDifficulty() <= difficulty){
+    if(Bear(BearID(i)).GetDifficulty() <= maxDifficulty){
       potentialBears.push_back(BearID(i));
     }
   }
 
   Bear foundbear(potentialBears.at( Roll(1, potentialBears.size()) - 1 ));
-  difficulty -= foundbear.GetDifficulty();
+  maxDifficulty -= foundbear.GetDifficulty();
 
   ModifierID modifier;
 
-  if(difficulty < 10){
+  if(maxDifficulty < 10){
     modifier = ModifierID::none;
   }
-  else if(difficulty < 20 && Roll(1,2) == 1){
+  else if(maxDifficulty < 20 && Roll(1,2) == 1){
     modifier = ModifierID::none;
   }
   else if(Roll(1,5) == 1){
