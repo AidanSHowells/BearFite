@@ -19,11 +19,12 @@ enum class FeatID;
 
 enum class Action {nothing, leg, eye, john_hopkins, quaff, cast, flee};
 
-struct SpellTree{
-  SpellTree(const SpellID spellID);//NOTE: See SpellList.cpp for definition
+struct SpellTree{//NOTE: See SpellList.cpp for function definitions
+  SpellTree(const SpellID spellID);
   std::array<SpellID, 3> spellIDList;
-  std::array<int, 3> numSpells = {3,0,0};
+  std::array<int, 3> numSpells = {1,0,0};
   std::array<int, 3> maxSpells = {3,0,0};
+  void IncrementCount(int index);
 };
 
 class Player{
@@ -33,7 +34,9 @@ class Player{
     int GetHealth();
     int GetMaxHealth();
     int GetNumDranks() const {return numDranks;}
+    int GetExpNeeded() const {return expNeeded;}
     int GetLevel() const {return level;}
+    int GetBaseAttackBonus() const {return baseAttackBonus;}
     int GetBodyCount() const {return bodyCount;}
     void IncrementBodyCount() {bodyCount++;}
     int GetNumVirginities() const {return numVirginities;}
@@ -48,18 +51,31 @@ class Player{
                       Bear& theBear,
                       std::vector<Bear*> enemyBears);
     TurnOf Cast(const int index, BattleHUD& environment);
-    int GetSpellcastingLevel(){return spellcastingLevel;}
-    int GetSpellSchoolBonus(const SpellSchool school);
-    int GetNumSpellTrees(){return spellList.size();}
-    sf::String GetSpellName(const int index);
-    int GetNumSpell(const int index);
-    int GetMaxNumSpell(const int index);
+    int GetSpellcastingLevel() const {return spellcastingLevel;}
+    int GetSpellSchoolBonus(const SpellSchool school) const;
+    int GetNumSpellTrees() const {return spellList.size();}
+    std::vector<int> GetIncompleteSpellTrees() const;
+    sf::String GetSpellName(const int index) const;
+    int GetNumSpell(const int index) const;
+    int GetMaxNumSpell(const int index) const;
+    bool HasSpell(const SpellID theSpell) const;
+    bool CanUnlockSpellTree() const;
     void UnlockSpellTree(SpellTree tree);
+    void UnlockSpell(const int index);
     bool TouchAttackSucceeds(const Bear& bear) const;
     void MakeSweetLove();
     void TimerTick();
-    void PostBattleReset();
 
+    void AddExp(int exp){expNeeded -= exp;}
+    bool ReadyToLevelUp() const {return (expNeeded <= 0);}
+    void LevelUp();
+    void IncrementBaseAttackBonus(){baseAttackBonus++;}
+    void IncrementSpellcastingLevel(){spellcastingLevel++;}
+    void FindDranks(int dranks){numDranks += dranks;}
+    void PostBattleReset(bool winner);
+
+    bool CanAddMainFeat() const;
+    bool CanAddExtraFeat() const {return extraFeatList.size() < 3;}
     void AddFeat(const FeatID theFeat, const BearID theBear);
     int GetNumRegularFeats() const {return mainFeatList.size();}
     int GetNumExtraFeats() const {return extraFeatList.size();}
@@ -69,11 +85,12 @@ class Player{
     int FeatCost(const int index) const {return mainFeatList.at(index).cost;}
     int GetPower() const {return power;}
     int GetPowerPoolSize() const {return powerPoolSize;}
+    bool ShowPower() const {return mainFeatList.size() > 0 && FeatCost(0) > 0;}
     TurnOf ActivateFeat(const int index);
     void ToggleFeat(const int index);
     bool FeatIsActive(const int index) const;
-    bool HasFeatActive(const FeatID theFeat) const;
-    bool HasFeatActive(const FeatID theFeat, const BearID theBear) const;
+    bool HasFeat(FeatID theFeat, bool checkIfActive) const;
+    bool HasFeat(FeatID theFeat, BearID theBear, bool checkIfActive) const;
 
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Slow(int time){slowedTime = std::max(time, slowedTime);}
@@ -99,7 +116,9 @@ class Player{
     void ClearSpells(){spellList.clear();}//TEMP
     void ClearFeats(){mainFeatList.clear(); extraFeatList.clear();}//TEMP
     void SetLevel(int newLevel){level = newLevel;}//TEMP
+    void SetBaseAttackBonus(int newBAB){baseAttackBonus = newBAB;}//TEMP
     void SetSpellcastingLevel(int newLevel){spellcastingLevel = newLevel;}//TEMP
+    void SetBodyCount(int kills){bodyCount = kills;}//TEMP
     void SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil);//TEMP
   private:
     MessageBox* Messages; //So damage statements know where to print
@@ -115,6 +134,8 @@ class Player{
 
     int numDranks = 5;
     int level = 0;
+    const int baseExp = 20;
+    int expNeeded = baseExp;
     int bodyCount = 0;
     int numVirginities = 0;
     int baseAttackBonus = 0; //This will be level-based

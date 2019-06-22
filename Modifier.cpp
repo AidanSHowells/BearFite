@@ -68,10 +68,10 @@ sf::String ModifierName(const ModifierID modID){
 }
 
 
-std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
+std::array<Bear, 4> Bear::ApplyModifier(const ModifierID modID){
   modifier = modID;
 
-  std::vector<Bear> theBears(1);
+  std::array<Bear, 4> theBears = {Bear(), Bear(), Bear(), Bear()};
 
   if(ModifierID::none == modID){
     //Do nothing
@@ -95,8 +95,8 @@ std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
     abil.at(int(Abil::CHA)) += 10;
   }
   else if(ModifierID::numerous == modID){
-    theBears.push_back(*this);
-    theBears.push_back(*this);
+    theBears.at(1) = (*this);
+    theBears.at(2) = (*this);
   }
   else if(ModifierID::experienced == modID){
     level += 5;
@@ -126,7 +126,7 @@ std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
   else if(ModifierID::mother == modID){
     int numBabbies = Roll(1,2);
     for(int i = 0; i < numBabbies; i++){
-      theBears.push_back(Bear(BearID::Babby));
+      theBears.at(i + 1) = Bear(BearID::Babby);
     }
   }
   else if(ModifierID::life_saving == modID){
@@ -145,12 +145,6 @@ std::vector<Bear> Bear::ApplyModifier(const ModifierID modID){
   }
 
   theBears.at(0) = *this;
-
-  if(theBears.size() > 4){
-    std::cerr << "Warning! Too many extra bears when applying modifier ";
-    std::cerr << std::string(ModifierName(modID)) << ".\n\n";
-    theBears.resize(4);
-  }
 
   return theBears;
 }

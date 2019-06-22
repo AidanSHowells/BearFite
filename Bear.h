@@ -21,13 +21,14 @@ class Bear{
     Bear(){canBeFought = false;}
     Bear(const BearID bearID);
 
-    std::vector<Bear> ApplyModifier(const ModifierID modID);
+    std::array<Bear, 4> ApplyModifier(const ModifierID modID);
     void SetMessageBox(MessageBox& theMessages);
 
     int GetAC(const Action attackType) const;
     sf::String GetName() const;
     BearID GetID(){return identifier;}
     sf::String GetModifier();
+    int GetDifficulty() const {return difficulty;}
     int GetHealth();
     int GetSave(const SaveType saveType);
     int GetAbil(const int index, const bool isCheckingDeath = false) const;
@@ -47,6 +48,8 @@ class Bear{
     void Haste(int time){hastedTime = std::max(time, hastedTime);}
     void Cry(int time){cryingTime = std::max(time, cryingTime);}
     void FeedFish(int fishSize);
+
+    int ExpReward();
   protected:
     MessageBox* messageBox = nullptr;
     void printMessage(const sf::String& message1,
@@ -88,6 +91,7 @@ class Bear{
     void Bash(Player& thePlayer);
     void TimerTick();
 
+    int difficulty = 0;
     bool canBeFought = true;
     void SetAbil(int STR, int DEX, int CON, int INT, int WIS, int CHA);
 };

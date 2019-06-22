@@ -70,7 +70,7 @@ void Player::BuffAbil(const int index, const int buff){
 
 int Player::GetAC(const BearID attacker) const {
   int AC = baseAC + armor + GetAbil(int(Abil::DEX)) - 10;
-  if(HasFeatActive(FeatID::studied_dodge, attacker)){
+  if(HasFeat(FeatID::studied_dodge, attacker, true)){
     AC += 20;
   }
   return AC;
@@ -105,7 +105,7 @@ TurnOf Player::TakeAction(const Action theAction,
   }
   else if(theAction == Action::leg){
     nextTurn = TurnOf::bear;
-    if(HasFeatActive(FeatID::whirlwind_attack)){
+    if(HasFeat(FeatID::whirlwind_attack, true)){
       for(std::size_t i = 0; i < enemyBears.size(); i++){
         LegPunch(*(enemyBears.at(i)));
       }
@@ -116,7 +116,7 @@ TurnOf Player::TakeAction(const Action theAction,
   }
   else if(theAction == Action::eye){
     nextTurn = TurnOf::bear;
-    if(HasFeatActive(FeatID::whirlwind_attack)){
+    if(HasFeat(FeatID::whirlwind_attack, true)){
       for(std::size_t i = 0; i < enemyBears.size(); i++){
         EyePunch(*(enemyBears.at(i)));
       }
@@ -180,7 +180,7 @@ TurnOf Player::Cast(const int index, BattleHUD& environment){
   return nextTurn;
 }
 
-int Player::GetSpellSchoolBonus(const SpellSchool school){
+int Player::GetSpellSchoolBonus(const SpellSchool school) const{
   int bonus;
   if(school == SpellSchool::STR){
     bonus = GetAbil(int(Abil::STR)) + 2 * GetAbil(int(Abil::INT));
@@ -214,7 +214,19 @@ int Player::GetSpellSchoolBonus(const SpellSchool school){
   return bonus;
 }
 
-sf::String Player::GetSpellName(const int index){
+std::vector<int> Player::GetIncompleteSpellTrees() const{
+  std::vector<int> incompleteSpellTrees;
+  for(std::size_t i = 0; i < spellList.size(); i++){
+    if( spellList.at(i).maxSpells.at(1) == 0 ||
+        spellList.at(i).maxSpells.at(2) == 0 )
+    {
+      incompleteSpellTrees.push_back(i);
+    }
+  }
+  return incompleteSpellTrees;
+}
+
+sf::String Player::GetSpellName(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return sf::String("");
   }
@@ -225,7 +237,7 @@ sf::String Player::GetSpellName(const int index){
   return Spell(spellID).GetName();
 }
 
-int Player::GetNumSpell(const int index){
+int Player::GetNumSpell(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return 0;
   }
@@ -236,7 +248,7 @@ int Player::GetNumSpell(const int index){
   }
 }
 
-int Player::GetMaxNumSpell(const int index){
+int Player::GetMaxNumSpell(const int index) const{
   if(index < 0 || index >= 3 * GetNumSpellTrees()){
     return 0;
   }
@@ -247,8 +259,39 @@ int Player::GetMaxNumSpell(const int index){
   }
 }
 
+bool Player::HasSpell(const SpellID theSpell) const{
+  for(std::size_t i = 0; i < spellList.size(); i++){
+    for(int j = 0; j < 3; j++){
+      if( theSpell == spellList.at(i).spellIDList.at(j) ){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool Player::CanUnlockSpellTree() const{
+  if(spellList.size() == 7){
+    return false;
+  }
+  else if(spellList.size() == 4 && mainFeatList.size() > 0){
+    return false;
+  }
+  else if(spellList.size() == 1 && mainFeatList.size() > 9){
+    return false;
+  }
+  return true;
+}
+
 void Player::UnlockSpellTree(SpellTree tree){
   spellList.push_back(tree);
+}
+
+void Player::UnlockSpell(int index){
+  int spellTreeIndex = index / 3;
+  int spellIndex = index % 3;
+  spellList.at(spellTreeIndex).maxSpells.at(spellIndex) = 3;
+  spellList.at(spellTreeIndex).numSpells.at(spellIndex) = 1;
 }
 
 bool Player::TouchAttackSucceeds(const Bear& bear) const{
@@ -272,7 +315,37 @@ void Player::TimerTick(){
   timeStopTime = std::max(0, timeStopTime -1);
 }
 
-void Player::PostBattleReset(){
+void Player::LevelUp(){
+  if(expNeeded <= 0){
+    level++;
+    expNeeded += baseExp + 5 * level;
+
+    //When you gain a spell, you have three castings. Three levels later you get
+    //a fourth, and four levels after that you get a fifth.
+    if(level % 5 == 3){
+      for(std::size_t i = 0; i < spellList.size(); i++){
+        for (int j = 0; j < 3; j++) {
+          if(spellList.at(i).maxSpells.at(j) == 3){
+            spellList.at(i).maxSpells.at(j) = 4;
+          }
+        }
+      }
+    }
+    else if(level % 5 == 2){
+      for(std::size_t i = 0; i < spellList.size(); i++){
+        for (int j = 0; j < 3; j++) {
+          if(spellList.at(i).maxSpells.at(j) == 4){
+            spellList.at(i).maxSpells.at(j) = 5;
+          }
+        }
+      }
+    }
+
+    Messages -> Update("You have reach level", level, true);
+  }
+}
+
+void Player::PostBattleReset(bool winner){
   hastedTime = 0;
   slowedTime = 0;
   paralyzedTime = 0;
@@ -281,10 +354,44 @@ void Player::PostBattleReset(){
   bigFistTime = 0;
   santuaryTime = 0;
   timeStopTime = 0;
-  power = powerPoolSize;//TEMP
-  if(HasFeatActive(FeatID::cobra_strike)){
+
+  if(winner){
+    int recoveredHealth = 10 + Roll( 1, GetAbil(int(Abil::CON)) );
+    health = std::min(maxHealth, health + recoveredHealth);
+  }
+
+  for(int i = 0; i < (GetAbil(int(Abil::CON)) + 2) / 5; i++){
+    if(Roll(1,2) == 1){
+      power++;
+    }
+  }
+  power = std::min(power,powerPoolSize);
+
+  if(!spellList.empty()){
+    for(int i = 0; i < GetAbil(int(Abil::WIS)) / 3; i++){
+      int treeIndex = Roll(1,spellList.size()) - 1;
+      int spellIndex = Roll(1,3) - 1;
+
+      spellList.at(treeIndex).IncrementCount(spellIndex);
+    }
+  }
+
+  if(HasFeat(FeatID::cobra_strike, true)){
     Toggle(FeatID::cobra_strike);
   }
+}
+
+bool Player::CanAddMainFeat() const{
+  if(mainFeatList.size() == 18){
+    return false;
+  }
+  else if(mainFeatList.size() == 9 && spellList.size() > 1){
+    return false;
+  }
+  else if(spellList.size() > 4){
+    return false;
+  }
+  return true;
 }
 
 void Player::AddFeat(const FeatID theFeat, const BearID theBear){
@@ -394,14 +501,15 @@ bool Player::FeatIsActive(const int index) const {
   return mainFeatList.at(index).active;
 }
 
-bool Player::HasFeatActive(const FeatID theFeat) const {
+bool Player::HasFeat(FeatID theFeat, bool checkIfActive) const {
   for(size_t i = 0; i < extraFeatList.size(); i++){
     if(extraFeatList.at(i).featID == theFeat){//Extra feats are always active
       return true;
     }
   }
   for (size_t i = 0; i < mainFeatList.size(); i++) {
-    if(mainFeatList.at(i).featID == theFeat && mainFeatList.at(i).active){
+    bool active = !checkIfActive || mainFeatList.at(i).active;
+    if(mainFeatList.at(i).featID == theFeat && active){
       return true;
     }
   }
@@ -409,7 +517,7 @@ bool Player::HasFeatActive(const FeatID theFeat) const {
   return false;
 }
 
-bool Player::HasFeatActive(const FeatID theFeat, const BearID theBear) const {
+bool Player::HasFeat(FeatID theFeat, BearID theBear, bool checkIfActive) const {
   for(size_t i = 0; i < extraFeatList.size(); i++){
     if( extraFeatList.at(i).featID == theFeat &&
         extraFeatList.at(i).targetBearID == theBear )
@@ -418,9 +526,10 @@ bool Player::HasFeatActive(const FeatID theFeat, const BearID theBear) const {
     }
   }
   for(size_t i = 0; i < mainFeatList.size(); i++){
+    bool active = !checkIfActive || mainFeatList.at(i).active;
     if( mainFeatList.at(i).featID == theFeat &&
         mainFeatList.at(i).targetBearID == theBear &&
-        mainFeatList.at(i).active)
+        active)
     {
       return true;
     }
@@ -433,11 +542,12 @@ void Player::SetAbil(std::array<int,int(Abil::NUM_ABIL)> newAbil){
 }
 
 int Player::GetLegAttackBonus() const {
-  int attackBonus = GetAbil(int(Abil::STR)) - 10;
-  if(HasFeatActive(FeatID::power_attack)){
+  int attackBonus = baseAttackBonus;
+  attackBonus += GetAbil(int(Abil::STR)) - 10;
+  if(HasFeat(FeatID::power_attack, true)){
     attackBonus -= 5;
   }
-  if(HasFeatActive(FeatID::whirlwind_attack)){
+  if(HasFeat(FeatID::whirlwind_attack, true)){
     attackBonus -= 10;
   }
   return attackBonus;
@@ -445,18 +555,19 @@ int Player::GetLegAttackBonus() const {
 
 int Player::GetLegDamageBonus() const {
   int damageBonus = (GetAbil(int(Abil::STR)) - 10)/2;
-  if(HasFeatActive(FeatID::power_attack)){
+  if(HasFeat(FeatID::power_attack, true)){
     damageBonus += 5;
   }
   return damageBonus;
 }
 
 int Player::GetEyeAttackBonus() const {
-  int attackBonus = GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
-  if(HasFeatActive(FeatID::power_attack)){
+  int attackBonus = baseAttackBonus;
+  attackBonus += GetAbil(int(Abil::STR)) - 10 + GetAbil(int(Abil::DEX)) - 10;
+  if(HasFeat(FeatID::power_attack, true)){
     attackBonus -= 5;
   }
-  if(HasFeatActive(FeatID::whirlwind_attack)){
+  if(HasFeat(FeatID::whirlwind_attack, true)){
     attackBonus -= 10;
   }
   return attackBonus;
@@ -464,7 +575,7 @@ int Player::GetEyeAttackBonus() const {
 
 int Player::GetEyeDamageBonus() const {
   int damageBonus = 2*(GetAbil(int(Abil::STR)) - 10) + 5;
-  if(HasFeatActive(FeatID::power_attack)){
+  if(HasFeat(FeatID::power_attack, true)){
     damageBonus += 5;
   }
   return damageBonus;
@@ -483,7 +594,7 @@ void Player::LegPunch(Bear& bear){
                 || roll + GetLegAttackBonus() >= bear.GetAC(Action::leg)){
     if(roll > 60 - legCritThreat){
       dmg = Roll(2,8) + 2 * GetLegDamageBonus();
-      if(HasFeatActive(FeatID::cobra_strike)){
+      if(HasFeat(FeatID::cobra_strike, true)){
         dmg = 69;
         Toggle(FeatID::cobra_strike);
       }
@@ -505,7 +616,7 @@ void Player::EyePunch(Bear& bear){
                 ||  roll + GetEyeAttackBonus() >= bear.GetAC(Action::eye)){
     if(roll > 60 - eyeCritThreat){
       dmg = Roll(4,12) + 2 * GetEyeDamageBonus();
-      if(HasFeatActive(FeatID::cobra_strike)){
+      if(HasFeat(FeatID::cobra_strike, true)){
         dmg = 69;
         Toggle(FeatID::cobra_strike);
       }
@@ -539,7 +650,7 @@ TurnOf Player::Quaff(){
 
 TurnOf Player::Flee(Bear& bear){
   int fleeAttempt = Roll(1,60) + GetAbil(int(Abil::DEX));
-  if(HasFeatActive(FeatID::escape_artist)){
+  if(HasFeat(FeatID::escape_artist, true)){
     fleeAttempt += 10;
   }
   //FIXME: The odds of successfully fleeing need to be fine-tuned

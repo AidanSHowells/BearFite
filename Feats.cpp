@@ -8,9 +8,8 @@ Feat::Feat(const FeatID feat, const BearID theBearID){
   if(feat == FeatID::studied_dodge){
     permanent = true;
     cost = 0;
+    targetBearMatters = true;
     if(theBearID == BearID::NUM_BEARS){
-      std::cerr << "Warning! The \"Studied Dodge\" feat must be provided a ";
-      std::cerr << "bear in order to function correctly\n\n";
       name = "Studied Dodge";
     }
     else{

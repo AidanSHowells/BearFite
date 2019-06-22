@@ -7,6 +7,8 @@
 
 enum class TurnOf;
 
+//NUM_SPELLS must be last, and spells in the same spelltree should be together
+//and in order
 enum class SpellID{none, pain, death, pleasure, leech, reversal, abilDrain,
                    inferno, blizzard, storm, rage, warCry, bigFist,
                    santuary, fish, refuge, slow, haste, timeStop,

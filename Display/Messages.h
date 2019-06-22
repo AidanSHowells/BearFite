@@ -18,6 +18,7 @@ class MessageBox : public sf::Drawable{
                sf::String theTitle,
                sf::Vector2f thePosition = sf::Vector2f(0,0),
                sf::Vector2f theSize = sf::Vector2f(200, 460) );
+    void Clear();
     enum class Style{normal,alignLastLineRight};
     void Update(const sf::String& inputString,
                 bool makeLine = false);//Details of Update below

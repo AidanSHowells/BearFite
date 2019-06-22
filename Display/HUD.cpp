@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Bear.h"
 #include "BearBattle.h"
+#include "RollDice.h"
 
 /*Why force the person creating a HUD object to provide fonts? Two reasons.
  *First, constructors can't return values, so we can't tell the constructor to
@@ -14,21 +15,42 @@
  *sf::Font instance for creating a text)."
  */
 
-HUD::HUD(sf::Font& titleFont, sf::Font& mainFont, Player& thePlayer):
+HUD::HUD(sf::Font& titleFont,
+    sf::Font& mainFont,
+    Player& thePlayer,
+    const std::vector <sf::String>& optionString,
+    int breakPoint,
+    bool optionsTitle,
+    bool battleMode
+):
   messages(titleFont,mainFont,"Messages:"),
-  options(titleFont,mainFont),
+  options(titleFont,mainFont,optionString,breakPoint,optionsTitle,battleMode),
   playerStats(titleFont,mainFont,thePlayer),
   player(&thePlayer)
 {
   player -> SetMessageBox(messages);
 }
 
+void HUD::Update(const sf::Vector2f mousePos, const bool optionsAvailable){
+  options.Update(mousePos, optionsAvailable);
+  playerStats.Update(mousePos, false, false);
+}
+
+void HUD::draw(sf::RenderTarget& target, sf::RenderStates states) const{
+  target.draw(messages, states);
+  target.draw(options, states);
+  target.draw(playerStats, states);
+}
+
+
 BattleHUD::BattleHUD( sf::Font& titleFont,
                       sf::Font& mainFont,
                       Player& thePlayer,
                       const std::array<Bear,4>& bears
 ):
-HUD(titleFont, mainFont, thePlayer),
+HUD(titleFont, mainFont, thePlayer, {"PUNCH:Where Punch Bear?","1:Leg","2:Eye",
+    "3:John Hopkins","ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
+    4, true, true),
 bearStats{
   BearStats(titleFont,mainFont,bears.at(0),true),
   BearStats(titleFont,mainFont,bears.at(1),false,sf::Vector2f(205,50)),
@@ -62,7 +84,8 @@ int BattleHUD::GetNumEnemyBears() const{
   return numBears;
 }
 
-void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
+int BattleHUD::RemoveDeadCombatants(Winner& winner){
+  int numDranks = 0;
 
   //FriendBear stuff here.
 
@@ -73,6 +96,10 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
       Bear tempBear = *bearStats[i].GetBearPtr();
       if(tempBear.IsDead()){
         player -> IncrementBodyCount();
+        player -> AddExp(tempBear.ExpReward());
+        if(Roll(1,5) > 3){// 2/5 drank per bear, same as calc version default
+          numDranks++;
+        }
       }
       for(int j = i; j < 3; j++){
         bearStats[j].SetBear( *bearStats[j + 1].GetBearPtr() );
@@ -92,15 +119,16 @@ void BattleHUD::RemoveDeadCombatants(Winner& theWinner){
   }
 
   if(player -> IsDead()){
-    theWinner = Winner::bear;
+    winner = Winner::bear;
   }
   //The player has won if they're alive and the top bear is dead
   else if(!bearStats[0].GetShouldAppear()){
-    theWinner = Winner::player;
+    winner = Winner::player;
   }
   else{
-    theWinner = Winner::neither;
+    winner = Winner::neither;
   }
+  return numDranks;
 }
 
 TurnOf BattleHUD::TakeAction(sf::Event theEvent){

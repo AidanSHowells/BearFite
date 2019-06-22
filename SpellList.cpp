@@ -1,5 +1,6 @@
 #include <iostream> //For std::cerr
 #include <string>
+#include <algorithm> //For std::min
 #include "RollDice.h"
 #include "Spell.h"
 #include "Player.h"
@@ -410,4 +411,8 @@ void Spell::ApplyEffects(Player& player, Bear& targetBear, bool saveMade){
   }
 
   targetBear.Hurt(damage);
+}
+
+void SpellTree::IncrementCount(int index){
+  numSpells.at(index) = std::min(maxSpells.at(index), numSpells.at(index) + 1);
 }

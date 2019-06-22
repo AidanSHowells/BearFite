@@ -19,26 +19,31 @@ class OptionsBox : public sf::Drawable{
   public:
     OptionsBox(sf::Font& titleFont,
                sf::Font& mainFont,
-               const std::array <sf::String, 8>& optionString
-                 = {"PUNCH:Where Punch Bear?","1:Leg","2:Eye","3:John Hopkins",
-                    "ELSE:What Do?","4:Quaff Drank","5:Cast Spell","6:Flee"},
-               bool boxHasTwoTitles = true);
+               const std::vector <sf::String>& optionString,
+               int listBreakPoint,
+               bool boxHasTwoTitles = true,
+               bool battleMode = false);
+    void NewChoices(const std::vector <sf::String>& optionString,
+                    int listBreakPoint,
+                    bool boxHasTwoTitles = true);
     int GetChoice(sf::Event theEvent);
     void Update(const sf::Vector2f mousePosition, const bool highlight);
   private:
     const sf::Vector2f position = sf::Vector2f(0,465);
     const sf::Vector2f size = sf::Vector2f(595, 135);
-    const float divPosition = 350.0f;
+    const float divPosition;
     sf::RectangleShape background;
     sf::RectangleShape divLine;
 
     static const int maxNumOptions = 8;
 
-    const bool hasTwoTitles;
-    const int sizeOfFirstList;  //Includes the title
-    const int sizeOfSecondList; //Includes the second title, if one exists
-    const int numOptions;       //Includes the title(s)
-    const int numHighlightBoxes;
+    bool hasTwoTitles;
+    int numOptions;       //Includes the title(s)
+    int sizeOfFirstList;  //Includes the title
+    int sizeOfSecondList; //Includes the second title, if one exists
+    int numHighlightBoxes;
+    sf::Font& boldFont;
+    sf::Font& regularFont;
 
     sf::Text optionsText[maxNumOptions];
     HighlightBox highlightBox[maxNumOptions];
