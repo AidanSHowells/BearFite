@@ -29,10 +29,11 @@ int main(){
   Player player;
   std::vector <sf::String> options = {"What To Do?",
                                       "1:Find Some Bear",
-                                      "2:Quaff Drank",
                                       "",
-                                      "4:Retire",
-                                      "5:Save and Quit"};
+                                      "",
+                                      "4:Quaff Drank",
+                                      "5:Retire",
+                                      "6:Save and Quit"};
   HUD theHUD(courierNewBd, courierNew, player, options, 4, false);
   bool exiting = false;
 
@@ -60,26 +61,26 @@ int main(){
           }
           if(winner == Winner::player){
             if( player.ReadyToLevelUp() ){
-              options.at(3) = "3:Level Up";
+              options.at(2) = "2:Level Up";
               theHUD.options.NewChoices(options,4,false);
               theHUD.messages.Update("Level Up Available");
             }
           }
         }
-        else if(choice == 2){
-          player.Heal();
-        }
-        else if(choice == 3 && player.ReadyToLevelUp()){
+        else if(choice == 2 && player.ReadyToLevelUp()){
           LevelUp(courierNewBd, courierNew, window, player);
           player.SetMessageBox(theHUD.messages);
-          options.at(3) = "";
+          options.at(2) = "";
           theHUD.options.NewChoices(options,4,false);
           theHUD.messages.Clear();
         }
         else if(choice == 4){
-          theHUD.messages.Update("Sorry! Retiring is","not supported yet",true);
+          player.Heal();
         }
         else if(choice == 5){
+          theHUD.messages.Update("Sorry! Retiring is","not supported yet",true);
+        }
+        else if(choice == 6){
           exiting = true;
           theHUD.messages.Update("Press Esc to cancel", true);
           theHUD.messages.Update("Press Enter to quit", "without saving",false);
@@ -98,7 +99,7 @@ int main(){
     }//End while(window.pollEvent(event))
 
     window.clear();
-    theHUD.Update(sf::Vector2f(sf::Mouse::getPosition(window)), true);
+    theHUD.Update(sf::Vector2f(sf::Mouse::getPosition(window)), !exiting);
     window.draw(theHUD);
     window.display();
   }//end while(window.isOpen())
